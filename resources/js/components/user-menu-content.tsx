@@ -22,6 +22,8 @@ export function UserMenuContent({ user }: UserMenuContentProps) {
     const handleLogout = () => {
         cleanup();
         router.flushAll();
+
+        window.location.href = '/';
     };
 
     return (
