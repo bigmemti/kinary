@@ -15,10 +15,10 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->string('slug')->unique();
-            $table->text('description');
-            $table->string('thumbnail');
-            $table->string('intro_video_url');
-            $table->enum('status', ['draft', 'published']);
+            $table->text('description')->nullable();
+            $table->string('thumbnail')->nullable();
+            $table->string('intro_video_url')->nullable();
+            $table->enum('status', ['draft', 'published'])->default('published');
             $table->timestamps();
             $table->softDeletes();
         });
