@@ -29,7 +29,7 @@ class StoreCourseRequest extends FormRequest
             'description' => 'nullable|string|max:4096',
             'thumbnail' => 'nullable|string|max:255',
             'intro_video_url' => 'nullable|string|max:255',
-            'status' => 'nullable|in:draft,published',
+            'status' => 'in:draft,published',
         ];
     }
 }
