@@ -41,3 +41,16 @@ export interface User {
     updated_at: string;
     [key: string]: unknown; // This allows for additional properties...
 }
+
+export interface Course{
+    id: number;
+    title: string;
+    slug: string;
+    description: string;
+    thumbnail: string;
+    intro_video_url: string;
+    status: string;
+    created_at: string;
+    updated_at: string;
+    deleted_at: string;
+}
