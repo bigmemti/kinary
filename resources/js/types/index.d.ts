@@ -53,4 +53,15 @@ export interface Course{
     created_at: DateTime;
     updated_at: DateTime;
     deleted_at: DateTime;
+    plans?: Plan[];
+}
+
+export interface Plan{
+    id: number;
+    course_id: number;
+    course?: Course;
+    name: string;
+    price: number;
+    created_at: DateTime;
+    updated_at: DateTime;
 }
