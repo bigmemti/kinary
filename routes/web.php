@@ -13,6 +13,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('dashboard');
 
     Route::resource('course', CourseController::class)->except(['crate']);
+    Route::resource('course', PlanController::class)->only(['store']);
 });
 
 require __DIR__.'/settings.php';
