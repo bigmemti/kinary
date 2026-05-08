@@ -31,4 +31,8 @@ class Course extends Model
         'intro_video_url',
         'status',
     ];
+
+    public function plans(){
+        return $this->hasMany(Plan::class);
+    }
 }
