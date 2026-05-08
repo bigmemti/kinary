@@ -19,4 +19,8 @@ class Plan extends Model
     public function course(){
         return $this->belongsTo(Course::class);
     }
+
+    public function users(){
+        return $this->belongsToMany(Plan::class);
+    }
 }

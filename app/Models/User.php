@@ -49,4 +49,8 @@ class User extends Authenticatable
             'two_factor_confirmed_at' => 'datetime',
         ];
     }
+
+    public function plans(){
+        return $this->belongsToMany(Plan::class);
+    }
 }
