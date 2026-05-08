@@ -21,6 +21,6 @@ class Plan extends Model
     }
 
     public function users(){
-        return $this->belongsToMany(Plan::class);
+        return $this->belongsToMany(User::class);
     }
 }
