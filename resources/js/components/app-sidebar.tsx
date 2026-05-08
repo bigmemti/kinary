@@ -10,10 +10,10 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { dashboard } from '@/routes';
+import { dashboard, studying } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { LayoutGrid } from 'lucide-react';
+import { Book, LayoutGrid } from 'lucide-react';
 import AppLogo from './app-logo';
 import { index as course } from '@/routes/course';
 
@@ -26,7 +26,12 @@ const mainNavItems: NavItem[] = [
     {
         title: 'Course',
         href: course(),
-        icon: LayoutGrid,
+        icon: Book,
+    },
+    {
+        title: 'Studying',
+        href: studying(),
+        icon: Book,
     },
 ];
 
