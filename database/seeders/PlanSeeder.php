@@ -13,6 +13,6 @@ class PlanSeeder extends Seeder
      */
     public function run(): void
     {
-        Course::all()->each(fn($course) => Plan::factory(fake()->numberBetween(1, 3))->for($course)->create());
+        Course::all()->each(fn($course) => Plan::factory(rand(1, 3))->for($course)->create());
     }
 }
