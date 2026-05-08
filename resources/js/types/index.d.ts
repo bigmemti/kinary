@@ -50,7 +50,7 @@ export interface Course{
     thumbnail: string;
     intro_video_url: string;
     status: 'published' | 'draft';
-    created_at: string;
-    updated_at: string;
-    deleted_at: string;
+    created_at: DateTime;
+    updated_at: DateTime;
+    deleted_at: DateTime;
 }
