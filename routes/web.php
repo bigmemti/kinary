@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\PlanController;
+use App\Http\Controllers\StudentController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -11,6 +12,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {
         return Inertia::render('dashboard');
     })->name('dashboard');
+
+    Route::get('studying', [StudentController::class, 'course'])->name('studying');
 
     Route::resource('course', CourseController::class)->except(['crate']);
     Route::resource('course.plan', PlanController::class)->only(['store'])->shallow();
