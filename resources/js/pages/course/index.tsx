@@ -1,4 +1,5 @@
 import ButtonLink from '@/components/button-link';
+import { DashboardContainer } from '@/components/dashboard';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -290,10 +291,3 @@ function CourseCreateDialog(){
     );
 }
 
-function DashboardContainer({ children }: PropsWithChildren){
-    return(
-        <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-            {children}
-        </div>
-    );
-}
