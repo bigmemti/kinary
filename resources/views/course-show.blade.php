@@ -71,11 +71,13 @@
         </header>
         <div class="flex items-center justify-center w-full transition-opacity opacity-100 duration-750 lg:grow starting:opacity-0">
             <main class="flex w-full flex-col lg:max-w-4xl gap-4">
-                @forelse ($courses as $course)
+                <div class="dark:text-white">{{ $course->title }}:</div>
+                @forelse ($course->plans as $plan)
                     <div class="dark:text-white">
-                        <div>{{ $course->title }}</div>
+                        <div>{{ $plan->name }}</div>
+                        <div>{{ $plan->price }}</div>
                         <div>
-                            <a href="{{ route('frontend.course.show', ['course' => $course]) }}">show</a>
+                            <a href="{{ route('plan.buy', ['plan' => $plan]) }}">buy</a>
                         </div>
                     </div>
                 @empty
