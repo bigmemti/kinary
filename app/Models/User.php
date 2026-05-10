@@ -53,5 +53,8 @@ class User extends Authenticatable
     public function plans(){
         return $this->belongsToMany(Plan::class);
     }
-
+    
+    public function transactions(){
+        return $this->hasMany(Transaction::class);
+    }
 }

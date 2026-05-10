@@ -10,6 +10,11 @@ class Plan extends Model
     /** @use HasFactory<\Database\Factories\PlanFactory> */
     use HasFactory;
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var list<string>
+     */
     protected $fillable = [
         'course_id',
         'name',
