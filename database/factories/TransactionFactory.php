@@ -17,7 +17,9 @@ class TransactionFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'gateway' => fake()->randomElement(['zarinpal']),
+            'authority' => fake()->randomAscii(),
+            'paid_at' => fake()->dateTime(),
         ];
     }
 }
