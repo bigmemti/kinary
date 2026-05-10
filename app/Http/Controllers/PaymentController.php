@@ -27,6 +27,7 @@ class PaymentController extends Controller
             'user_id' => Auth::user()->id,
             'plan_id' => $plan->id,
             'amount' => $plan->price,
+            'gateway' => 'zarinpal',
             'authority' => $body['data']["authority"],
         ]);
 

@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreignIdFor(User::class)->constrained();
             $table->foreignIdFor(Plan::class)->constrained();
             $table->integer('amount')->unsigned();
-            $table->enum('gateway ', ['zarinpal'])->default('zarinpal');
+            $table->enum('gateway', ['zarinpal'])->default('zarinpal');
             $table->string('authority');
             $table->enum('status', ['pending', 'paid', 'failed'])->default('pending');
             $table->timestamp('paid_at')->nullable();
