@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrig
 import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
 import { dashboard } from '@/routes';
-import { destroy, index, show, store } from '@/routes/course';
+import { destroy, index, show, store } from '@/routes/admin/course';
 import { Course, type BreadcrumbItem } from '@/types';
 import { Form, Head } from '@inertiajs/react';
 import { Eye, Pen, Plus, Trash, X } from 'lucide-react';

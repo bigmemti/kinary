@@ -15,7 +15,7 @@ import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
 import { Book, LayoutGrid } from 'lucide-react';
 import AppLogo from './app-logo';
-import { index as course } from '@/routes/course';
+import { index as course } from '@/routes/admin/course';
 
 const mainNavItems: NavItem[] = [
     {
