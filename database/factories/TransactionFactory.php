@@ -18,7 +18,7 @@ class TransactionFactory extends Factory
     {
         return [
             'gateway' => fake()->randomElement(['zarinpal']),
-            'authority' => fake()->randomAscii(),
+            'authority' => fake()->text(),
             'paid_at' => fake()->dateTime(),
         ];
     }
