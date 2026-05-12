@@ -2,64 +2,35 @@
 
 namespace App\Http\Controllers\Student;
 
+use App\Enums\TransactionStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Plan;
 use App\Models\Transaction;
-use GuzzleHttp\Client;
-use Illuminate\Support\Facades\Auth;
+use App\Services\PaymentService;
 
 class PaymentController extends Controller
 {
-    public function buy(Plan $plan){
-        $client = new Client();
+    public function buy(Plan $plan, PaymentService $service){
+        $authority = $service->request(['amount' => $plan->price, 'description' => 'test']);
 
-        $response = $client->post('https://sandbox.zarinpal.com/pg/v4/payment/request.json', [
-            'json' => [
-                'merchant_id' => '1344b5d4-0048-11e8-94db-005056a205be',
-                'amount' => $plan->price,
-                'description' => 'test',
-                'callback_url' => 'http://127.0.0.1:8000/pay/callback',
-            ]
-        ]);
+        $plan->buy($authority);
 
-        $body = json_decode($response->getBody(), true);
-
-        $transaction = Transaction::create([
-            'user_id' => Auth::user()->id,
-            'plan_id' => $plan->id,
-            'amount' => $plan->price,
-            'gateway' => 'zarinpal',
-            'authority' => $body['data']["authority"],
-        ]);
-
-        return redirect()->away('https://sandbox.zarinpal.com/pg/StartPay/' . $transaction->authority);
+        return redirect()->away($service->getPage($authority));
     }
 
-    public function callback(){
+    public function callback(PaymentService $service){
         $authority = request('Authority');
         $transaction = Transaction::where('authority', $authority)->where('status', 'pending')->first();
+        if (!$transaction) 
+            return to_route('home')->withErrors(['payment' => 'Invalid transaction']);
+        
 
-        if(request('Status') == 'OK'){
-            $client = new Client();
-    
-            $response = $client->post('https://sandbox.zarinpal.com/pg/v4/payment/verify.json', [
-                'json' => [
-                    'merchant_id' => '1344b5d4-0048-11e8-94db-005056a205be',
-                    'amount' => $transaction->amount,
-                    'authority' => $authority ,
-                ]
-            ]);
-    
-            $body = json_decode($response->getBody(), true);
-            $code = $body['data']['code'];
-        }else{
-            $code = 403;
-        }
+        $success = $service->verify($transaction->amount, $authority);
 
-        $transaction->update(($code == 100)? ['status' => 'paid', 'paid_at' => now()]: ['status' => 'failed']);
+        $transaction->update($success? ['status' => TransactionStatus::Paid, 'paid_at' => now()]: ['status' => TransactionStatus::Failed]);
+        if ($success)
+            $transaction->user->plans()->syncWithoutDetaching([$transaction->plan_id]);
 
-        $code == 100 && $transaction->user->plans()->attach($transaction->plan_id);
-
-        return to_route(($code == 100)? 'studying': 'home');
+        return to_route($success? 'studying': 'home');
     }
 }

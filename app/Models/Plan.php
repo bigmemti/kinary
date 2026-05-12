@@ -28,4 +28,14 @@ class Plan extends Model
     public function users(){
         return $this->belongsToMany(User::class);
     }
+
+    public function buy(string $authority){
+        return Transaction::create([
+            'user_id' => auth()->user()->id,
+            'plan_id' => $this->id,
+            'amount' => $this->price,
+            'gateway' => 'zarinpal',
+            'authority' => $authority,
+        ]);
+    }
 }
