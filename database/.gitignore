@@ -1,1 +1,3 @@
 *.sqlite*
+*.vpp.lck
+*.vpp.bak_*
