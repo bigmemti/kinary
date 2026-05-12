@@ -1,10 +1,10 @@
 <?php
 
-use App\Http\Controllers\CourseController;
+use App\Http\Controllers\Admin\CourseController;
+use App\Http\Controllers\Admin\PlanController;
 use App\Http\Controllers\FrontEnd\CourseController as FrontEndCourseController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PaymentController;
-use App\Http\Controllers\PlanController;
 use App\Http\Controllers\StudentController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
