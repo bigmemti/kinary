@@ -3,9 +3,9 @@
 use App\Http\Controllers\Admin\CourseController;
 use App\Http\Controllers\Admin\PlanController;
 use App\Http\Controllers\FrontEnd\CourseController as FrontEndCourseController;
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\PaymentController;
-use App\Http\Controllers\StudentController;
+use App\Http\Controllers\FrontEnd\HomeController;
+use App\Http\Controllers\Student\PaymentController;
+use App\Http\Controllers\Student\StudentController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
