@@ -2,9 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Models\Plan;
+use App\Models\Order;
 use App\Models\Transaction;
-use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class TransactionSeeder extends Seeder
@@ -15,57 +14,34 @@ class TransactionSeeder extends Seeder
     public function run(): void
     {
         //failed
-        Plan::inRandomOrder()
-            ->take(rand(5, 10))
-            ->get()
+        Order::getInRandomOrder(rand(5, 10))
             ->each(
-                fn($plan) => User::inRandomOrder()
-                                ->take(rand(2, 5))
-                                ->get()
-                                ->each(
-                                    fn($user) => Transaction::factory(state:[
-                                            'user_id' => $user->id, 
-                                            'plan_id' => $plan->id, 
-                                            'amount' => $plan->price, 
-                                            'status' => 'failed',
-                                        ])->create()
-                                )
+                fn($order) => Transaction::factory(rand(1, 3), [
+                                    'amount' => $order->plans()->sum('price'), 
+                                    'status' => 'failed',
+                                ])->for($order)->create()
             );
         
         //paid
-        Plan::has('users')
-            ->with('users')
+        Order::where('status', 'paid')
             ->get()
             ->each(
-                fn($plan) => $plan
-                                ->users
-                                ->each(
-                                    fn($user) => Transaction::factory(state:[
-                                            'user_id' => $user->id, 
-                                            'plan_id' => $plan->id, 
-                                            'amount' => $plan->price, 
+                fn($order) => Transaction::factory(state:[
+                                            'amount' => $order->plans()->sum('price'), 
                                             'status' => 'paid',
-                                        ])->create()
-                                )
+                                        ])->for($order)->create()
+                                
             );
         
         //pending
-        Plan::doesntHave('users')
+        Order::whereNot('status', 'paid')
             ->inRandomOrder()
-            ->take(rand(5, 10))
+            ->take(rand(5, 8))
             ->get()
             ->each(
-                fn($plan) => User::inRandomOrder()
-                                ->take(rand(2, 5))
-                                ->get()
-                                ->each(
-                                    fn($user) => Transaction::factory(state:[
-                                            'user_id' => $user->id, 
-                                            'plan_id' => $plan->id, 
-                                            'amount' => $plan->price, 
-                                            'status' => 'pending',
-                                        ])->create()
-                                )
+                fn($order) => Transaction::factory(state:[
+                    'amount' => $order->plans()->sum('price')
+                ])->for($order)->create()
             );
     }
 }

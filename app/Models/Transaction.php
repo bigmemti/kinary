@@ -39,11 +39,7 @@ class Transaction extends Model
         ];
     }
 
-    public function user(){
-        return $this->belongsTo(User::class);
-    }
-    
-    public function plan(){
-        return $this->belongsTo(Plan::class);
+    public function order(){
+        return $this->belongsTo(Order::class);
     }
 }
