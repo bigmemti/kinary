@@ -2,8 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+
 class Lesson extends Model
 {
+    /** @use HasFactory<\Database\Factories\LessonFactory> */
+    use HasFactory;
+
     /**
      * The attributes that are mass assignable.
      *
