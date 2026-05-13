@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Course;
+use App\Models\Teacher;
 use Illuminate\Database\Seeder;
 
 class CourseSeeder extends Seeder
@@ -12,6 +13,11 @@ class CourseSeeder extends Seeder
      */
     public function run(): void
     {
-        Course::factory(10)->create();
+        Teacher::inRandomOrder()
+            ->take(rand(2, 4))
+            ->get()
+            ->each(
+                fn ($teacher) => Course::factory(rand(1, 4))->for($teacher)->create()
+            );
     }
 }
