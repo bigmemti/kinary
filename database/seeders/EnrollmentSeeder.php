@@ -13,6 +13,19 @@ class EnrollmentSeeder extends Seeder
      */
     public function run(): void
     {
-        (User::factory(10)->create())->each(fn($user) => $user->plans()->sync(Plan::pluckInRandomOrder(rand(2,5))));
+        User::factory(10)
+            ->create()
+            ->load(['student', 'wallet'])
+            ->each(
+                function($user) {
+                    $plans = Plan::getInRandomOrder(rand(2,5));
+                    
+                    $user->student->plans()->sync($plans->pluck('id'));
+
+                    $order = $user->wallet->orders()->create(['status' => 'paid']);
+
+                    $order->plans()->sync($plans->pluck('id'));
+                }
+            );
     }
 }

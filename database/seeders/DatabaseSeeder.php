@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
             LessonSeeder::class,
             PlanSeeder::class,
             EnrollmentSeeder::class,
+            OrderSeeder::class,
             TransactionSeeder::class,
         ]);
     }
