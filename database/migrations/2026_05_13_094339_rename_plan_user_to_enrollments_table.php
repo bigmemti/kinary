@@ -25,6 +25,8 @@ return new class extends Migration
         Schema::rename('plan_user', 'enrollments');
 
         Schema::table('enrollments', function (Blueprint $table) {
+            $table->id()->first();
+            
             $table->foreignIdFor(Student::class)->after('plan_id')->constrained();
 
             $table->foreign('plan_id')->references('id')->on('plans');

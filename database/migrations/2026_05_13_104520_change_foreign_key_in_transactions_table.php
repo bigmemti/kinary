@@ -17,7 +17,7 @@ return new class extends Migration
         Schema::table('transactions', function (Blueprint $table) {
             $table->dropConstrainedForeignId('user_id');
             $table->dropConstrainedForeignId('plan_id');
-            $table->foreignIdFor(Order::class)->constrained();
+            $table->foreignIdFor(Order::class)->after('id')->constrained();
 
         });
     }
