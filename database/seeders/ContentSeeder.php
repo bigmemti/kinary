@@ -13,6 +13,6 @@ class ContentSeeder extends Seeder
      */
     public function run(): void
     {
-        Lesson::getInRandomOrder(rand(20, 25))->each(fn ($lesson) => Content::factory(rand(5, 8))->create());
+        Lesson::getInRandomOrder(rand(20, 25))->each(fn ($lesson) => Content::factory(rand(5, 8))->for($lesson)->create());
     }
 }
