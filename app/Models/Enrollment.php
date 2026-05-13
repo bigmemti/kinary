@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-class Content extends Model
+class Enrollment extends Model
 {
     //
 }
