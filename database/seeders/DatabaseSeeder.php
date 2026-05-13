@@ -24,6 +24,7 @@ class DatabaseSeeder extends Seeder
             PlanSeeder::class,
             EnrollmentSeeder::class,
             OrderSeeder::class,
+            OrderPlanSeeder::class,
             TransactionSeeder::class,
         ]);
     }
