@@ -4,8 +4,8 @@ namespace App\Models;
 
 use App\Enums\TransactionGateway;
 use App\Enums\TransactionStatus;
+use App\Models\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 
 class Transaction extends Model
 {
