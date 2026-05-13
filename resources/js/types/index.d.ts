@@ -35,11 +35,21 @@ export interface User {
     name: string;
     email: string;
     avatar?: string;
+    wallet?: Wallet
     email_verified_at: string | null;
     two_factor_enabled?: boolean;
     created_at: string;
     updated_at: string;
     [key: string]: unknown; // This allows for additional properties...
+}
+
+export interface Wallet{
+    id: number;
+    user_id: number;
+    user?: User;
+    balance: number;
+    created_at: DateTime;
+    updated_at: DateTime;
 }
 
 export interface Course{

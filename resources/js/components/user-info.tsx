@@ -26,6 +26,7 @@ export function UserInfo({
                         {user.email}
                     </span>
                 )}
+                <span className="truncate font-medium">balance: {user.wallet?.balance}</span>
             </div>
         </>
     );
