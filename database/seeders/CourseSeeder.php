@@ -13,9 +13,6 @@ class CourseSeeder extends Seeder
      */
     public function run(): void
     {
-        Teacher::getInRandomOrder(rand(2, 4))
-            ->each(
-                fn ($teacher) => Course::factory(rand(1, 4))->for($teacher)->create()
-            );
+        Teacher::getInRandomOrder(rand(2, 4))->each(fn ($teacher) => Course::factory(rand(1, 4))->for($teacher)->create());
     }
 }

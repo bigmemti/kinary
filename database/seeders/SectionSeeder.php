@@ -13,9 +13,6 @@ class SectionSeeder extends Seeder
      */
     public function run(): void
     {
-        Course::getInRandomOrder(rand(4, 6))
-            ->each(
-                fn ($course) => Section::factory(rand(2, 5))->for($course)->create()
-            );
+        Course::getInRandomOrder(rand(4, 6))->each(fn ($course) => Section::factory(rand(2, 5))->for($course)->create());
     }
 }
