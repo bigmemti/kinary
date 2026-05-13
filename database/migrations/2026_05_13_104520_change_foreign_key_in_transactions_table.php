@@ -15,8 +15,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('transactions', function (Blueprint $table) {
-            $table->dropConstrainedForeignId(User::class);
-            $table->dropConstrainedForeignId(Plan::class);
+            $table->dropConstrainedForeignId('user_id');
+            $table->dropConstrainedForeignId('plan_id');
             $table->foreignIdFor(Order::class)->constrained();
 
         });
@@ -28,7 +28,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('transactions', function (Blueprint $table) {
-            $table->dropConstrainedForeignId(Order::class);
+            $table->dropConstrainedForeignId('order_id');
             $table->foreignIdFor(User::class)->constrained();
             $table->foreignIdFor(Plan::class)->constrained();
         });

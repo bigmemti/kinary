@@ -42,7 +42,7 @@ return new class extends Migration
             $table->dropForeign('enrollments_student_id_foreign'); 
             $table->dropForeign('enrollments_plan_id_foreign'); 
             $table->dropIndex('enrollments_student_id_foreign');
-            $table->dropUnique('PUI');
+            $table->dropUnique('PSI');
 
             $table->dropForeignIdFor(Student::class);
 
