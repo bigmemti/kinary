@@ -1,7 +1,7 @@
 <?php
 
-use App\Http\Controllers\FrontEnd\CourseController;
-use App\Http\Controllers\FrontEnd\HomeController;
+use App\Http\Controllers\Frontend\CourseController;
+use App\Http\Controllers\Frontend\HomeController;
 use Illuminate\Support\Facades\Route;
 
 //frontend
