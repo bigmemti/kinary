@@ -13,5 +13,5 @@ Route::middleware(['auth', 'verified'])->prefix('student')->name('student.')->gr
     
     // Route::resource('lesson.content', ContentController::class)->only(['index', 'show'])->shallow();
 
-    Route::get('studying', [StudentController::class, 'course'])->name('studying');
 });
+Route::get('studying', [StudentController::class, 'course'])->name('studying');
