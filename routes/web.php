@@ -1,7 +1,5 @@
 <?php
 
-use App\Http\Controllers\Admin\CourseController;
-use App\Http\Controllers\Admin\PlanController;
 use App\Http\Controllers\FrontEnd\CourseController as FrontEndCourseController;
 use App\Http\Controllers\FrontEnd\HomeController;
 use App\Http\Controllers\Student\PaymentController;
@@ -24,12 +22,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('studying', [StudentController::class, 'course'])->name('studying');
 
     //teacher
-
-    //admin
-    Route::prefix('admin')->name('admin.')->group(function () {
-        Route::resource('course', CourseController::class)->except(['crate']);
-        Route::resource('course.plan', PlanController::class)->only(['store'])->shallow();
-    });
 });
 
 require __DIR__.'/settings.php';
+require __DIR__.'/admin.php';
