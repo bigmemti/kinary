@@ -27,5 +27,7 @@ function createBreakpointHook(query: string) {
 
 export const useIsMobile = createBreakpointHook("(max-width: 767px)")
 export const useIsTablet = createBreakpointHook("(min-width: 768px) and (max-width: 1023px)")
+export const useIsAboveTablet = createBreakpointHook("(min-width: 768px)")
 export const useIsDesktop = createBreakpointHook("(min-width: 1024px) and (max-width: 1279px)")
+export const useIsAboveDesktop = createBreakpointHook("(min-width: 1024px)")
 export const useIsLarge = createBreakpointHook("(min-width: 1280px)")
