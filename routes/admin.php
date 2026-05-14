@@ -8,38 +8,38 @@ use App\Http\Controllers\Admin\CourseController;
 
 Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(function () {
     
-    // Route::resource('user', CourseController::class);
+    // Route::resource('user', UserController::class);
 
-    // Route::resource('student', CourseController::class);
-    // Route::resource('student.enrollment', PlanController::class)->only(['index', 'create', 'store'])->shallow();
+    // Route::resource('student', StudentController::class);
+    // Route::resource('student.enrollment', StudentEnrollmentController::class)->only(['index', 'create', 'store'])->shallow();
 
-    // Route::resource('wallet', CourseController::class);
-    // Route::resource('wallet.order', PlanController::class)->only(['index', 'create', 'store'])->shallow();
+    // Route::resource('wallet', WalletController::class);
+    // Route::resource('wallet.order', WalletOrderController::class)->only(['index', 'create', 'store'])->shallow();
 
-    // Route::resource('teacher', CourseController::class);
-    // Route::resource('teacher.course', PlanController::class)->only(['index', 'create', 'store'])->shallow();
+    // Route::resource('teacher', TeacherController::class);
+    // Route::resource('teacher.course', TeacherCourseController::class)->only(['index', 'create', 'store'])->shallow();
 
     Route::resource('course', CourseController::class);
     Route::resource('course.plan', PlanController::class)->only(['index', 'create', 'store'])->shallow();
-    // Route::resource('course.section', PlanController::class)->only(['index', 'create', 'store'])->shallow();
+    // Route::resource('course.section', CourseSectionController::class)->only(['index', 'create', 'store'])->shallow();
     
-    // Route::resource('plan', CourseController::class);
-    // Route::resource('plan.order', PlanController::class)->only(['index', 'create', 'store'])->shallow();
-    // Route::resource('plan.enrollment', PlanController::class)->only(['index', 'create', 'store'])->shallow();
+    // Route::resource('plan', PlanController::class);
+    // Route::resource('plan.order', PlanOrderController::class)->only(['index'])->shallow();
+    // Route::resource('plan.enrollment', PlanEnrollmentController::class)->only(['index'])->shallow();
     
-    // Route::resource('section', CourseController::class);
-    // Route::resource('section.lesson', PlanController::class)->only(['index', 'create', 'store'])->shallow();
+    // Route::resource('section', SectionController::class);
+    // Route::resource('section.lesson', SectionLessonController::class)->only(['index', 'create', 'store'])->shallow();
     
-    // Route::resource('lesson', CourseController::class);
-    // Route::resource('lesson.content', PlanController::class)->only(['index', 'create', 'store'])->shallow();
+    // Route::resource('lesson', LessonController::class);
+    // Route::resource('lesson.content', LessonContentController::class)->only(['index', 'create', 'store'])->shallow();
     
-    // Route::resource('content', CourseController::class);
+    // Route::resource('content', ContentController::class);
     
-    // Route::resource('enrollment', CourseController::class);
+    // Route::resource('enrollment', EnrollmentController::class);
     
-    // Route::resource('order', CourseController::class);
-    // Route::resource('order.plan', PlanController::class)->only(['index', 'create', 'store'])->shallow();
-    // Route::resource('order.transaction', PlanController::class)->only(['index', 'create', 'store'])->shallow();
+    // Route::resource('order', OrderController::class);
+    // Route::resource('order.plan', OrderPlanController::class)->only(['index'])->shallow();
+    // Route::resource('order.transaction', OrderTransactionController::class)->only(['index', 'create', 'store'])->shallow();
 
-    // Route::resource('transaction', CourseController::class);
+    // Route::resource('transaction', TransactionController::class);
 });
