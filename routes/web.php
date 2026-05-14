@@ -3,11 +3,10 @@
 use App\Http\Controllers\FrontEnd\CourseController as FrontEndCourseController;
 use App\Http\Controllers\FrontEnd\HomeController;
 use App\Http\Controllers\Student\PaymentController;
-use App\Http\Controllers\Student\StudentController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-//web
+//frontend
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('course/{course:slug}', [FrontEndCourseController::class, 'show'])->name('frontend.course.show');
 
@@ -18,11 +17,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     //dashboard
     Route::get('dashboard', fn() => Inertia::render('dashboard'))->name('dashboard');
-
-    //student
-    Route::get('studying', [StudentController::class, 'course'])->name('studying');
 });
 
 require __DIR__.'/admin.php';
+require __DIR__.'/student.php';
 require __DIR__.'/teacher.php';
 require __DIR__.'/settings.php';
