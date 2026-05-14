@@ -13,9 +13,10 @@ import {
 import { dashboard, studying } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { Book, LayoutGrid } from 'lucide-react';
+import { Book, LayoutGrid, User } from 'lucide-react';
 import AppLogo from './app-logo';
 import { index as course } from '@/routes/admin/course';
+import { index as users} from '@/routes/admin/user';
 
 const mainNavItems: NavItem[] = [
     {
@@ -32,6 +33,14 @@ const mainNavItems: NavItem[] = [
         title: 'Studying',
         href: studying(),
         icon: Book,
+    },
+];
+
+const adminNavItems: NavItem[] = [
+    {
+        title: 'Users',
+        href: users(),
+        icon: User,
     },
 ];
 
@@ -53,6 +62,7 @@ export function AppSidebar() {
             </SidebarHeader>
 
             <SidebarContent>
+                <NavMain label='Admin' items={adminNavItems} />
                 <NavMain items={mainNavItems} />
             </SidebarContent>
 
