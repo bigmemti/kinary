@@ -6,7 +6,7 @@ use App\Models\Plan;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Http\FormRequest;
 
-class StorePlanRequest extends FormRequest
+class StoreCoursePlanRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
