@@ -15,14 +15,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     //payment
     Route::get('buy/plan/{plan}', [PaymentController::class, 'buy'])->name('plan.buy');
     Route::get('pay/callback', [PaymentController::class, 'callback'])->name('callback');
+
     //dashboard
     Route::get('dashboard', fn() => Inertia::render('dashboard'))->name('dashboard');
 
     //student
     Route::get('studying', [StudentController::class, 'course'])->name('studying');
-
-    //teacher
 });
 
-require __DIR__.'/settings.php';
 require __DIR__.'/admin.php';
+require __DIR__.'/teacher.php';
+require __DIR__.'/settings.php';
