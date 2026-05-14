@@ -12,9 +12,6 @@ Route::middleware(['auth', 'verified'])->prefix('student')->name('student.')->gr
     // Route::resource('section.lesson', LessonController::class)->only(['index', 'show'])->shallow();
     
     // Route::resource('lesson.content', ContentController::class)->only(['index', 'show'])->shallow();
-    
-    // Route::resource('wallet.order', OrderController::class)->only(['index', 'show'])->shallow();
-    // Route::resource('order.transaction', TransactionController::class)->only(['index', 'show'])->shallow();
 
     Route::get('studying', [StudentController::class, 'course'])->name('studying');
 });
