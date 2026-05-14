@@ -1,5 +1,6 @@
 <x-layouts.web>
-    <div class="dark:text-white">{{ $course->title }}:</div>
+    <div class="dark:text-white">{{ $course->title }}</div>
+    <div class="dark:text-white">{{ $course->teacher->user->name }}:</div>
     @forelse ($course->plans as $plan)
         <div class="dark:text-white">
             <div>{{ $plan->name }}</div>

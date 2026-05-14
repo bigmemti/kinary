@@ -3,7 +3,7 @@
         <div class="dark:text-white">
             <div>{{ $course->title }}</div>
             <div>
-                <a href="{{ route('frontend.course.show', ['course' => $course]) }}">show</a>
+                <a href="{{ route('course.show', ['course' => $course]) }}">show</a>
             </div>
         </div>
     @empty
