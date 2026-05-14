@@ -14,7 +14,9 @@ class UserController extends Controller
      */
     public function index()
     {
-        //
+        return inertia('admin/user/index', [
+            'users' => User::all()->load(['wallet', 'student', 'teacher']),
+        ]);
     }
 
     /**
@@ -22,7 +24,7 @@ class UserController extends Controller
      */
     public function create()
     {
-        //
+        return inertia('admin/user/create');
     }
 
     /**
@@ -30,7 +32,7 @@ class UserController extends Controller
      */
     public function store(StoreUserRequest $request)
     {
-        //
+        User::create($request->validated());
     }
 
     /**
@@ -38,7 +40,9 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        //
+        return inertia('admin/user/show', [
+            'user' => $user->load(['wallet', 'student', 'teacher'])
+        ]);
     }
 
     /**
@@ -46,7 +50,9 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
-        //
+        return inertia('admin/user/edit', [
+            'user' => $user
+        ]);
     }
 
     /**
@@ -54,7 +60,7 @@ class UserController extends Controller
      */
     public function update(UpdateUserRequest $request, User $user)
     {
-        //
+        $user->update($request->validated());
     }
 
     /**
@@ -62,6 +68,6 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
-        //
+        $user->delete();
     }
 }
