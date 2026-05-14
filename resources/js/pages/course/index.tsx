@@ -1,5 +1,6 @@
 import ButtonLink from '@/components/button-link';
 import { DashboardContainer } from '@/components/dashboard';
+import FormButton from '@/components/form-button';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -69,11 +70,9 @@ function CourseCardsContainer({ courses }: { courses: Course[]}){
 
 function CourseDeleteButton({ course }: { course: Course }) {
     return(
-        <Form {...destroy.form(course)} options={{ preserveScroll: true }}>
-            <Button variant='destructive'>
-                <Trash />
-            </Button>
-        </Form>
+        <FormButton form={destroy.form(course)} options={{ preserveScroll: true }}>
+            <Trash />
+        </FormButton>
     );
 }
 
