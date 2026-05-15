@@ -19,7 +19,7 @@ class Order extends Model
     ];
     
     public function plans(){
-        return $this->belongsToMany(Plan::class);
+        return $this->belongsToMany(Plan::class)->withTimestamps();;
     }
     
     public function wallet(){

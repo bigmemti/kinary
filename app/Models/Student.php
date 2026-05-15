@@ -18,7 +18,7 @@ class Student extends Model
     }
 
     public function plans(){
-        return $this->belongsToMany(Plan::class, Enrollment::class);
+        return $this->belongsToMany(Plan::class, Enrollment::class)->withTimestamps();;
     }
 
     public function enrollments(){

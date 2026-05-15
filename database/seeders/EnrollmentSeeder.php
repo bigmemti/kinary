@@ -20,11 +20,11 @@ class EnrollmentSeeder extends Seeder
                 function($user) {
                     $plans = Plan::getInRandomOrder(rand(2,5));
                     
-                    $user->student->plans()->sync($plans->pluck('id'));
+                    $user->student->plans()->syncWithPivotValues($plans->pluck('id'));
 
                     $order = $user->wallet->orders()->create(['status' => 'paid']);
 
-                    $order->plans()->sync($plans->pluck('id'));
+                    $order->plans()->syncWithPivotValues($plans->pluck('id'));
                 }
             );
     }
