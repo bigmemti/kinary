@@ -19,7 +19,7 @@ class OrderPlanSeeder extends Seeder
                 function($order){
                     $plans = Plan::getInRandomOrder(rand(3, 5));
 
-                    $order->plans()->syncWithPivotValues($plans->pluck('id'));
+                    $order->plans()->syncWithPivotValues($plans->pluck('id'), ['updated_at' => now()]);
                 }
             );
     }

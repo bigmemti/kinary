@@ -15,17 +15,17 @@ class EnrollmentSeeder extends Seeder
     {
         User::factory(10)
             ->create()
-            ->add(User::has('teacher')->inRandomOrder()->take(2)->get())
+            ->merge(User::has('teacher')->inRandomOrder()->take(2)->get())
             ->load(['student', 'wallet'])
             ->each(
                 function($user) {
                     $plans = Plan::getInRandomOrder(rand(2,5));
                     
-                    $user->student->plans()->syncWithPivotValues($plans->pluck('id'));
+                    $user->student->plans()->syncWithPivotValues($plans->pluck('id'), ['updated_at' => now()]);
 
                     $order = $user->wallet->orders()->create(['status' => 'paid']);
 
-                    $order->plans()->syncWithPivotValues($plans->pluck('id'));
+                    $order->plans()->syncWithPivotValues($plans->pluck('id'), ['updated_at' => now()]);
                 }
             );
     }
