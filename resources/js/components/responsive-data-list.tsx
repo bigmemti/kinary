@@ -26,11 +26,11 @@ export default function ResponsiveDataList<T>({ data, columns }: Props<T>) {
 // TODO: refactor
 function DataCard<T>({ data, columns }: Props<T>) {
     return(
-        <ul className="grid lg:grid-cols-2 gap-4">
+        <ul className="grid lg:grid-cols-2 gap-4 mx-4 mt-4">
             {data.map((item, i) => (
-                <li key={i}>
+                <li key={i} className="border border-foreground p-4 rounded-xl">
                     {columns.map((col, j) => (
-                        <div key={j}>
+                        <div key={j} className="text-center">
                             {col.header} :  {col.card? col.card(item): col.cell(item)}
                         </div>
                     ))}
@@ -42,7 +42,7 @@ function DataCard<T>({ data, columns }: Props<T>) {
 
 function DataTable<T>({ data, columns }: Props<T>) {
     return(
-        <table className="border-separate border-spacing-y-2">
+        <table className="border-separate border-spacing-y-2 mx-4 w-full">
             <thead>
                 <tr>
                     {columns.map((col, i) => (

@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
 use App\Http\Requests\Admin\StoreUserRequest;
 use App\Http\Requests\Admin\UpdateUserRequest;
+use App\Models\User;
 
 class UserController extends Controller
 {
@@ -32,7 +32,9 @@ class UserController extends Controller
      */
     public function store(StoreUserRequest $request)
     {
-        User::create($request->validated());
+        User::create([...$request->validated(), 'password' => '']);
+
+        return to_route('admin.user.index');
     }
 
     /**
@@ -41,7 +43,14 @@ class UserController extends Controller
     public function show(User $user)
     {
         return inertia('admin/user/show', [
-            'user' => $user->load(['wallet', 'student', 'teacher'])
+            'user' => $user->load([
+                'wallet' => fn($query) => $query->withCount('orders'),
+                'wallet.orders' => fn($query) => $query->withSum('plans as amount', 'price'), 
+                'student' => fn($query) => $query->withCount('enrollments'), 
+                'student.enrollments.plan.course', 
+                'teacher' => fn($query) => $query->withCount('courses'),
+                'teacher.courses', 
+            ])
         ]);
     }
 
@@ -61,6 +70,8 @@ class UserController extends Controller
     public function update(UpdateUserRequest $request, User $user)
     {
         $user->update($request->validated());
+
+        return to_route('admin.user.index');
     }
 
     /**

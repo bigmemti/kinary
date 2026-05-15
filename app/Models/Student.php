@@ -20,4 +20,8 @@ class Student extends Model
     public function plans(){
         return $this->belongsToMany(Plan::class, Enrollment::class);
     }
+
+    public function enrollments(){
+        return $this->hasMany(Enrollment::class);
+    }
 }

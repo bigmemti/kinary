@@ -35,9 +35,9 @@ export interface User {
     name: string;
     email: string;
     avatar?: string;
-    wallet?: Wallet
-    student?: Student
-    teacher?: Teacher
+    wallet?: Wallet;
+    student?: Student;
+    teacher?: Teacher;
     email_verified_at: string | null;
     two_factor_enabled?: boolean;
     created_at: string;
@@ -49,21 +49,49 @@ export interface Wallet{
     id: number;
     user_id: number;
     user?: User;
+    orders?: Orders[];
+    orders_count?: number;
     balance: number;
     created_at: DateTime;
     updated_at: DateTime;
 }
+
+export interface Orders{
+    id: number;
+    wallet_id: number;
+    wallet?: Wallet;
+    status: string;
+    amount?: number;
+    created_at: DateTime;
+    updated_at: DateTime;
+}
+
 export interface Student{
     id: number;
     user_id: number;
     user?: User;
+    enrollments_count?: number;
+    enrollments: Enrollment[];  
     created_at: DateTime;
     updated_at: DateTime;
 }
+
+export interface Enrollment{
+    id: number;
+    student_id: number;
+    student?: Student;
+    plan_id: number;
+    plan?: Plan;
+    created_at: DateTime;
+    updated_at: DateTime;
+}
+
 export interface Teacher{
     id: number;
     user_id: number;
     user?: User;
+    courses?: Course[];
+    courses_count?: number;
     created_at: DateTime;
     updated_at: DateTime;
 }
