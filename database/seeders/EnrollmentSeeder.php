@@ -15,6 +15,7 @@ class EnrollmentSeeder extends Seeder
     {
         User::factory(10)
             ->create()
+            ->add(User::has('teacher')->inRandomOrder()->take(2)->get())
             ->load(['student', 'wallet'])
             ->each(
                 function($user) {
