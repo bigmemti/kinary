@@ -47,7 +47,7 @@ class UserController extends Controller
                 'wallet' => fn($query) => $query->withCount('orders'),
                 'wallet.orders' => fn($query) => $query->withSum('plans as amount', 'price'), 
                 'student' => fn($query) => $query->withCount('enrollments'), 
-                'student.enrollments.plan.course', 
+                'student.enrollments.plan.course.teacher.user', 
                 'teacher' => fn($query) => $query->withCount('courses'),
                 'teacher.courses', 
             ])
