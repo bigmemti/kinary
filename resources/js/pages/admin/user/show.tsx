@@ -10,9 +10,10 @@ import { index as courses } from "@/routes/admin/teacher/course";
 import { show as student } from "@/routes/admin/student";
 import { show as wallet } from "@/routes/admin/wallet";
 import { show as teacher } from "@/routes/admin/teacher";
-import { BreadcrumbItem, User } from "@/types";
+import { BreadcrumbItem, Course, Enrollment, Order, Student, Teacher, User, Wallet } from "@/types";
 import { Head } from "@inertiajs/react";
 import ResponsiveDataList from "@/components/responsive-data-list";
+import { PropsWithChildren, ReactNode } from "react";
 
 export default function Show({ user }: { user: User}) {
     const breadcrumbs: BreadcrumbItem[] = [
@@ -35,106 +36,204 @@ export default function Show({ user }: { user: User}) {
             <Head title="Show User" />
             <DashboardContainer>
                 <DashboardHeader header={`Show ${user.name} info`} />
-                <div className="space-y-4">
-                    <div>ID: {user.id}</div>
-                    <div>Name: {user.name}</div>
-                    <div>Email: {user.email}</div>
-                    <div>Email Verified? <CheckX condition={!!user.email_verified_at} /></div>
-                    <div>Tow Factor? <CheckX condition={!!user.two_factor_confirmed_at} /></div>
-                    <div>Created At: {user.created_at}</div>
-                    <div>Updated At: {user.updated_at}</div>
-                    {!!user.wallet &&(
-                        <>
-                            <DashboardHeader header={`Wallet info`} containerClassName="my-4">
-                                <div className="space-x-3">
-                                    <ButtonLink href={wallet(user).url}>
-                                        Wallet
-                                    </ButtonLink>
-                                    <ButtonLink href={orders(user).url}>
-                                        Orders
-                                    </ButtonLink>
-                                </div>
-                            </DashboardHeader>
-                            <div>Wallet ID: {user.wallet.id}</div>
-                            <div>Wallet Balance: {user.wallet.balance}</div>
-                            <div>Wallet Created At: {user.wallet.created_at}</div>
-                            <div>Wallet Updated At: {user.wallet.updated_at}</div>
-                            <div>Wallet Orders Count: {user.wallet.orders_count}</div>
-                            {(!!user.wallet.orders && user.wallet.orders?.length > 0) && 
-                                <ResponsiveDataList
-                                    data={user.wallet.orders}
-                                    columns={[
-                                        { header: "ID", cell: (order) => order.id, },
-                                        { header: "Status", cell: (order) => order.status, },
-                                        { header: "Amount", cell: (order) => order.amount, },
-                                        { header: "Created At", cell: (order) => order.created_at, },
-                                        { header: "Updated At", cell: (order) => order.updated_at, },
-                                    ]}
-                                />
-                            }
-                        </>
-                    )}
-                    {!!user.student &&(
-                        <>
-                            <DashboardHeader header={`Student info`} containerClassName="my-4">
-                                <div className="space-x-3">
-                                    <ButtonLink href={student(user).url}>
-                                        Student
-                                    </ButtonLink>
-                                    <ButtonLink href={enrollments(user).url}>
-                                        Enrollments
-                                    </ButtonLink>
-                                </div>
-                            </DashboardHeader>
-                            <div>Student ID: {user.student.id}</div>
-                            <div>Student Created At: {user.student.created_at}</div>
-                            <div>Student Updated At: {user.student.updated_at}</div>
-                            <div>Student Enrollments Count: {user.student.enrollments_count}</div>
-                            {(!!user.student.enrollments && user.student.enrollments?.length > 0) && 
-                                <ResponsiveDataList
-                                    data={user.student.enrollments}
-                                    columns={[
-                                        { header: "ID", cell: (enrollment) => enrollment.id, },
-                                        { header: "Course", cell: (enrollment) => enrollment.plan?.course?.title, },
-                                        { header: "Plan", cell: (enrollment) => enrollment.plan?.name, },
-                                        { header: "Created At", cell: (enrollment) => enrollment.created_at, },
-                                        { header: "Updated At", cell: (enrollment) => enrollment.updated_at, },
-                                    ]}
-                                />
-                            }
-                        </>
-                    )}
-                    {!!user.teacher &&(
-                        <>
-                            <DashboardHeader header={`Teacher info`} containerClassName="my-4">
-                                <div className="space-x-3">
-                                    <ButtonLink href={teacher(user).url}>
-                                        Teacher
-                                    </ButtonLink>
-                                    <ButtonLink href={courses(user).url}>
-                                        Courses
-                                    </ButtonLink>
-                                </div>
-                            </DashboardHeader>
-                            <div>Teacher ID: {user.teacher.id}</div>
-                            <div>Teacher Created At: {user.teacher.created_at}</div>
-                            <div>Teacher Updated At: {user.teacher.updated_at}</div>
-                            <div>Teacher Courses Count: {user.teacher.courses_count}</div>
-                            {(!!user.teacher.courses && user.teacher.courses?.length > 0) && 
-                                <ResponsiveDataList
-                                    data={user.teacher.courses}
-                                    columns={[
-                                        { header: "ID", cell: (course) => course.id, },
-                                        { header: "Course", cell: (course) => course.title, },
-                                        { header: "Created At", cell: (course) => course.created_at, },
-                                        { header: "Updated At", cell: (course) => course.updated_at, },
-                                    ]}
-                                />
-                            }
-                        </>
-                    )}
-                </div>
+                <DataContainer>
+                    <UserMeta user={user} />
+                    {!!user.wallet && <WalletInfo user={user} wallet={user.wallet} />}
+                    {!!user.student && <StudentInfo user={user} student={user.student} />}
+                    {!!user.teacher && <TeacherInfo user={user} teacher={user.teacher} />}
+                </DataContainer>
             </DashboardContainer>
         </AppLayout>
     );
+}
+
+function TeacherInfo({ user, teacher }: { user: User, teacher: Teacher }) {
+    return (
+        <>
+            <DashboardHeader header={`Teacher info`} containerClassName="my-4">
+                <TeacherActions user={user} />
+            </DashboardHeader>
+            <TeacherMeta teacher={teacher} />
+            {(!!teacher.courses && teacher.courses?.length > 0) && <ResponsiveCourseList courses={teacher.courses} />}
+        </>
+    );
+}
+
+function ResponsiveCourseList({ courses }: { courses: Course[]}) {
+    return (
+        <ResponsiveDataList
+            data={courses}
+            columns={[
+                { header: "ID", cell: (course) => course.id, },
+                { header: "Course", cell: (course) => course.title, },
+                { header: "Created At", cell: (course) => course.created_at, },
+                { header: "Updated At", cell: (course) => course.updated_at, },
+            ]}
+        />
+    );
+}
+
+function TeacherMeta({ teacher }: { teacher: Teacher }) {
+    return(
+        <>
+            <InfoBlock label="Teacher ID" value={teacher.id} />
+            <InfoBlock label="Teacher Created At" value={teacher.created_at} />
+            <InfoBlock label="Teacher Updated At" value={teacher.updated_at} />
+            <InfoBlock label="Teacher Courses Count" value={teacher.courses_count} />
+        </>
+    );
+}
+
+function TeacherActions({ user }: { user: User }) {
+    return (
+        <ActionButtonContainer>
+            <ButtonLink href={teacher(user).url}>
+                Teacher
+            </ButtonLink>
+            <ButtonLink href={courses(user).url}>
+                Courses
+            </ButtonLink>
+        </ActionButtonContainer>
+    );
+}
+
+function StudentInfo({ user, student }: { user: User, student: Student }) {
+    return (
+        <>
+            <DashboardHeader header={`Student info`} containerClassName="my-4">
+                <StudentActions user={user} />
+            </DashboardHeader>
+            <StudentMeta student={student} />
+            {(!!student.enrollments && student.enrollments?.length > 0) && <ResponsiveEnrollmentList enrollments={student.enrollments} />}
+        </>
+    );
+}
+
+function ResponsiveEnrollmentList({ enrollments }: { enrollments: Enrollment[]}) {
+    return (
+        <ResponsiveDataList
+            data={enrollments}
+            columns={[
+                { header: "ID", cell: (enrollment) => enrollment.id, },
+                { header: "Course", cell: (enrollment) => enrollment.plan?.course?.title, },
+                { header: "Plan", cell: (enrollment) => enrollment.plan?.name, },
+                { header: "Created At", cell: (enrollment) => enrollment.created_at, },
+                { header: "Updated At", cell: (enrollment) => enrollment.updated_at, },
+            ]}
+        />
+    );
+}
+
+function StudentMeta({ student }: { student: Student }) {
+    return(
+        <>
+            <InfoBlock label="Student ID" value={student.id} />
+            <InfoBlock label="Student Created At" value={student.created_at} />
+            <InfoBlock label="Student Updated At" value={student.updated_at} />
+            <InfoBlock label="Student Enrollments Count" value={student.enrollments_count} />
+        </>
+    );
+}
+
+function StudentActions({ user }: { user: User }) {
+    return (
+        <ActionButtonContainer>
+            <ButtonLink href={student(user).url}>
+                Student
+            </ButtonLink>
+            <ButtonLink href={enrollments(user).url}>
+                Enrollments
+            </ButtonLink>
+        </ActionButtonContainer>
+    );
+}
+
+function WalletInfo({ user, wallet }: { user: User, wallet: Wallet }) {
+    return (
+        <>
+            <DashboardHeader header={`Wallet info`} containerClassName="my-4">
+                <WalletActions user={user} />
+            </DashboardHeader>
+            <WalletMeta wallet={wallet} />
+            {(!!wallet.orders && wallet.orders?.length > 0) && <ResponsiveOrderList orders={wallet.orders} />}
+        </>
+    );
+}
+
+function ResponsiveOrderList({ orders }: { orders: Order[]}) {
+    return (
+        <ResponsiveDataList
+            data={orders}
+            columns={[
+                { header: "ID", cell: (order) => order.id, },
+                { header: "Status", cell: (order) => order.status, },
+                { header: "Amount", cell: (order) => order.amount, },
+                { header: "Created At", cell: (order) => order.created_at, },
+                { header: "Updated At", cell: (order) => order.updated_at, },
+            ]}
+        />
+    );
+}
+
+function WalletMeta({ wallet }: { wallet: Wallet }) {
+    return(
+        <>
+            <InfoBlock label="Wallet ID" value={wallet.id} />
+            <InfoBlock label="Wallet Balance" value={wallet.balance} />
+            <InfoBlock label="Wallet Created At" value={wallet.created_at} />
+            <InfoBlock label="Wallet Updated At" value={wallet.updated_at} />
+            <InfoBlock label="Wallet Order Count" value={wallet.orders_count} />
+        </>
+    );
+}
+
+function WalletActions({ user }: { user: User }) {
+    return (
+        <ActionButtonContainer>
+            <ButtonLink href={wallet(user).url}>
+                Wallet
+            </ButtonLink>
+            <ButtonLink href={orders(user).url}>
+                Orders
+            </ButtonLink>
+        </ActionButtonContainer>
+    );
+}
+
+function ActionButtonContainer({ children }: PropsWithChildren) {
+    return(
+        <div className="space-x-3">
+            {children}
+        </div>
+    );
+}
+
+function UserMeta({ user }: { user: User }) {
+    return(
+        <>
+            <InfoBlock label="ID" value={user.id} />
+            <InfoBlock label="Name" value={user.name} />
+            <InfoBlock label="Email" value={user.email} />
+            <InfoBlock label="Email Verified" operator="?" value={<CheckX condition={!!user.email_verified_at} />} />
+            <InfoBlock label="Tow Factor" operator="?" value={<CheckX condition={!!user.two_factor_confirmed_at} />} />
+            <InfoBlock label="Created At" value={user.created_at} />
+            <InfoBlock label="Updated At" value={user.updated_at} />
+        </>
+    );
+}
+
+function InfoBlock({ label, value, operator = ':' }: { label: string, value: string | number | ReactNode, operator?: ':' | '?' }) {
+    return (
+        <div>
+            {label}{operator} {value}
+        </div>
+    );
+}
+
+function DataContainer({ children }: PropsWithChildren) {
+    return (
+        <div className="space-y-4">
+            {children}
+        </div>
+    )
 }
