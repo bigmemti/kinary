@@ -17,7 +17,7 @@ export default function Edit({ student, users }: { student: Student, users: User
             href: index().url
         },
         {
-            title: student.id.toString(),
+            title: student.user?.name?? student.id.toString(),
             href: show(student).url
         },
         {
@@ -30,7 +30,7 @@ export default function Edit({ student, users }: { student: Student, users: User
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Edit Student" />
             <DashboardContainer>
-                <DashboardHeader header={`Edit Student ${student.id} info`} />
+                <DashboardHeader header={`Edit Student ${student.user?.name?? student.id} info`} />
                 <EditStudentForm student={student} users={users} />
             </DashboardContainer>
         </AppLayout>

@@ -2,12 +2,14 @@ import { dashboard } from "@/routes";
 import { Head } from "@inertiajs/react";
 import AppLayout from "@/layouts/app-layout";
 import ButtonLink from "@/components/button-link";
-import { index, show } from "@/routes/admin/student";
+import { destroy, edit, index, show } from "@/routes/admin/student";
 import { show as student } from "@/routes/admin/student";
 import { BreadcrumbItem, Enrollment, Student } from "@/types";
 import ResponsiveDataList from "@/components/responsive-data-list";
 import { index as enrollments } from "@/routes/admin/student/enrollment";
 import { ActionButtonContainer, DashboardContainer, DashboardHeader, DataContainer, InfoBlock } from "@/components/dashboard";
+import { File, Pen, Trash } from "lucide-react";
+import FormButton from "@/components/form-button";
 
 export default function Show({ student }: { student: Student}) {
     const breadcrumbs: BreadcrumbItem[] = [
@@ -20,7 +22,7 @@ export default function Show({ student }: { student: Student}) {
             href: index().url
         },
         {
-            title: student.id.toString(),
+            title: student.user?.name ?? student.id.toString(),
             href: show(student).url
         },
     ];
@@ -29,7 +31,9 @@ export default function Show({ student }: { student: Student}) {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Show Student" />
             <DashboardContainer>
-                <DashboardHeader header={`Show Student ${student.id} info`} />
+                <DashboardHeader header={`Show Student ${student.user?.name?? student.id} info`} >
+                    <StudentActions student={student} />
+                </DashboardHeader>
                 <DataContainer>
                     <StudentMeta student={student} />
                     <EnrollmentsInfo student={student} />
@@ -94,5 +98,21 @@ function StudentMeta({ student }: { student: Student }) {
             <InfoBlock label="Created At" value={student.created_at} />
             <InfoBlock label="Updated At" value={student.updated_at} />
         </>
+    );
+}
+
+function StudentActions({ student }: { student: Student}) {
+    return (
+        <ActionButtonContainer>
+            {!!student.enrollments_count && (
+                    <FormButton className="inline" form={destroy.form(student)} options={{ preserveScroll: true }}>
+                        <Trash />
+                    </FormButton>
+                )
+            }
+            <ButtonLink href={edit(student).url}>
+                <Pen />
+            </ButtonLink>
+        </ActionButtonContainer>
     );
 }

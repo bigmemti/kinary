@@ -3,7 +3,7 @@ import CheckX from "@/components/check-x";
 import { ActionButtonContainer, DashboardContainer, DashboardHeader, DataContainer, InfoBlock } from "@/components/dashboard";
 import AppLayout from "@/layouts/app-layout";
 import { dashboard } from "@/routes";
-import { index, show } from "@/routes/admin/user";
+import { destroy, edit, index, show } from "@/routes/admin/user";
 import { index as orders } from "@/routes/admin/wallet/order";
 import { index as enrollments } from "@/routes/admin/student/enrollment";
 import { index as courses } from "@/routes/admin/teacher/course";
@@ -13,6 +13,8 @@ import { show as teacher } from "@/routes/admin/teacher";
 import { BreadcrumbItem, Course, Enrollment, Order, Student, Teacher, User, Wallet } from "@/types";
 import { Head } from "@inertiajs/react";
 import ResponsiveDataList from "@/components/responsive-data-list";
+import { Pen, Trash } from "lucide-react";
+import FormButton from "@/components/form-button";
 
 export default function Show({ user }: { user: User}) {
     const breadcrumbs: BreadcrumbItem[] = [
@@ -34,7 +36,9 @@ export default function Show({ user }: { user: User}) {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Show User" />
             <DashboardContainer>
-                <DashboardHeader header={`Show ${user.name} info`} />
+                <DashboardHeader header={`Show ${user.name} info`}>
+                    <UserActions user={user} />
+                </DashboardHeader>
                 <DataContainer>
                     <UserMeta user={user} />
                     {!!user.wallet && <WalletInfo user={user} wallet={user.wallet} />}
@@ -211,5 +215,18 @@ function UserMeta({ user }: { user: User }) {
             <InfoBlock label="Created At" value={user.created_at} />
             <InfoBlock label="Updated At" value={user.updated_at} />
         </>
+    );
+}
+
+function UserActions({ user }: { user: User}) {
+    return (
+        <ActionButtonContainer>
+            {!( user.teacher || user.student || user.wallet) && <FormButton className="inline" form={destroy.form(user)} options={{ preserveScroll: true }}>
+                <Trash />
+            </FormButton>}
+            <ButtonLink href={edit(user).url}>
+                <Pen />
+            </ButtonLink>
+        </ActionButtonContainer>
     );
 }
