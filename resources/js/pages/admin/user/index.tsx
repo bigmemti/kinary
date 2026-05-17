@@ -63,12 +63,6 @@ function UserActions({ user }: { user: User}) {
                     <Presentation />
                 </ButtonLink>
             }
-            <ButtonLink href={show(user).url}>
-                <Eye />
-            </ButtonLink>
-            <ButtonLink href={edit(user).url}>
-                <Pen />
-            </ButtonLink>
             { !!user.student && 
                 <ButtonLink href={student(user.student).url}>
                     <GraduationCap />
@@ -79,9 +73,15 @@ function UserActions({ user }: { user: User}) {
                     <Wallet />
                 </ButtonLink>
             }
-            <FormButton className="inline" form={destroy.form(user)} options={{ preserveScroll: true }}>
+            {!( user.teacher || user.student || user.wallet) && <FormButton className="inline" form={destroy.form(user)} options={{ preserveScroll: true }}>
                 <Trash />
-            </FormButton>
+            </FormButton>}
+            <ButtonLink href={edit(user).url}>
+                <Pen />
+            </ButtonLink>
+                <ButtonLink href={show(user).url}>
+                    <Eye />
+            </ButtonLink>
         </div>
     );
 }
