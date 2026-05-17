@@ -42,7 +42,7 @@ function DataCard<T>({ data, columns }: Props<T>) {
 
 function DataTable<T>({ data, columns }: Props<T>) {
     return(
-        <table className="border-separate border-spacing-y-2 mx-4 w-full">
+        <table className="border-separate border-spacing-y-2 w-full">
             <thead>
                 <tr>
                     {columns.map((col, i) => (
@@ -62,13 +62,13 @@ function DataTable<T>({ data, columns }: Props<T>) {
                     </tr>
                 ))}
             </tbody>
-            <tfoot>
+            {/* <tfoot>
                 <tr>
                     {columns.map((col, i) => (
                         <th key={i}>{col.header}</th>
                     ))}
                 </tr>
-            </tfoot>
+            </tfoot> */}
         </table>
     );
 }
