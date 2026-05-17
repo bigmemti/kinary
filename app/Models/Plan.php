@@ -24,8 +24,8 @@ class Plan extends Model
         return $this->belongsTo(Course::class);
     }
 
-    public function users(){
-        return $this->belongsToMany(User::class, Enrollment::class);
+    public function students(){
+        return $this->belongsToMany(Student::class, Enrollment::class);
     }
 
     public function buy(string $authority){
