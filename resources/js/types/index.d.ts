@@ -49,14 +49,14 @@ export interface Wallet{
     id: number;
     user_id: number;
     user?: User;
-    orders?: Orders[];
+    orders?: Order[];
     orders_count?: number;
     balance: number;
     created_at: DateTime;
     updated_at: DateTime;
 }
 
-export interface Orders{
+export interface Order{
     id: number;
     wallet_id: number;
     wallet?: Wallet;
