@@ -16,7 +16,7 @@ export default function Show({ student }: { student: Student}) {
             href: dashboard().url
         },
         {
-            title: 'User',
+            title: 'Student',
             href: index().url
         },
         {
@@ -27,7 +27,7 @@ export default function Show({ student }: { student: Student}) {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Show User" />
+            <Head title="Show Student" />
             <DashboardContainer>
                 <DashboardHeader header={`Show Student ${student.id} info`} />
                 <DataContainer>
