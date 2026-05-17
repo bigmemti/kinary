@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Admin;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreStudentEnrollmentRequest extends FormRequest
 {
@@ -11,7 +12,7 @@ class StoreStudentEnrollmentRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +23,7 @@ class StoreStudentEnrollmentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'plan_id' => ['required','integer','exists:plans,id',  Rule::unique('enrollments')->where('student_id', request('student')->id)],
         ];
     }
 }

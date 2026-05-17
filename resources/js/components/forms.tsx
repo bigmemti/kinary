@@ -5,9 +5,57 @@ import { Label } from "@/components/ui/label";
 import { Spinner } from "@/components/ui/spinner";
 import user_links from "@/routes/admin/user";
 import student_links from "@/routes/admin/student";
-import { Student, User } from "@/types";
+import { Plan, Student, User } from "@/types";
 import { Form } from "@inertiajs/react";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
+import { Combobox, ComboboxContent, ComboboxEmpty, ComboboxInput, ComboboxItem, ComboboxList } from "./ui/combobox";
+
+export function StudentEnrollmentForm({ student, plans }: { student: Student, plans: Plan[] }){
+    return(
+        <Form
+            {...student_links.enrollment.store.form(student)}
+            disableWhileProcessing
+            className="flex flex-col mt-4"
+        >
+            {({ processing, errors }) => (
+                <>
+                    <div className="grid gap-6">
+                        <div className="grid gap-2">
+                            <Label htmlFor="plan_id">Plan</Label>
+                            <Combobox items={plans} name="plan_id">
+                                <ComboboxInput placeholder="Select a plan" />
+                                <ComboboxContent>
+                                <ComboboxEmpty>No items found.</ComboboxEmpty>
+                                <ComboboxList>
+                                    {(item) => (
+                                    <ComboboxItem key={item.id} value={item.id}>
+                                        {item.id}.{item.course?.title} - {item.name} - {item.course?.teacher?.user?.name}
+                                    </ComboboxItem>
+                                    )}
+                                </ComboboxList>
+                                </ComboboxContent>
+                            </Combobox>
+                            <InputError
+                                message={errors.plan_id}
+                                className="mt-2"
+                            />
+                        </div>
+
+                        <div className="mt-2 text-end">
+                            <Button
+                                type="submit"
+                                tabIndex={2}
+                            >
+                                {processing && <Spinner />}
+                                Submit
+                            </Button>
+                        </div>
+                    </div>
+                </>
+            )}
+        </Form>
+    );
+}
 
 export function StudentForm({ type, student, users }: { type: "create" | "edit", student?: Student, users: User[] }){
     const form = (type === 'create')? student_links.store.form(): student_links.update.form(student?? 0);
