@@ -1,6 +1,6 @@
 import ButtonLink from "@/components/button-link";
 import CheckX from "@/components/check-x";
-import { DashboardContainer, DashboardHeader } from "@/components/dashboard";
+import { ActionButtonContainer, DashboardContainer, DashboardHeader, DataContainer, InfoBlock } from "@/components/dashboard";
 import AppLayout from "@/layouts/app-layout";
 import { dashboard } from "@/routes";
 import { index, show } from "@/routes/admin/user";
@@ -13,7 +13,6 @@ import { show as teacher } from "@/routes/admin/teacher";
 import { BreadcrumbItem, Course, Enrollment, Order, Student, Teacher, User, Wallet } from "@/types";
 import { Head } from "@inertiajs/react";
 import ResponsiveDataList from "@/components/responsive-data-list";
-import { PropsWithChildren, ReactNode } from "react";
 
 export default function Show({ user }: { user: User}) {
     const breadcrumbs: BreadcrumbItem[] = [
@@ -90,7 +89,7 @@ function TeacherActions({ user }: { user: User }) {
             <ButtonLink href={teacher(user).url}>
                 Teacher
             </ButtonLink>
-            <ButtonLink href={courses(user).url}>
+            <ButtonLink href={courses(user.teacher?? 0).url}>
                 Courses
             </ButtonLink>
         </ActionButtonContainer>
@@ -116,6 +115,7 @@ function ResponsiveEnrollmentList({ enrollments }: { enrollments: Enrollment[]})
             columns={[
                 { header: "ID", cell: (enrollment) => enrollment.id, },
                 { header: "Course", cell: (enrollment) => enrollment.plan?.course?.title, },
+                { header: "Teacher", cell: (enrollment) => enrollment.plan?.course?.teacher?.user?.name, },
                 { header: "Plan", cell: (enrollment) => enrollment.plan?.name, },
                 { header: "Created At", cell: (enrollment) => enrollment.created_at, },
                 { header: "Updated At", cell: (enrollment) => enrollment.updated_at, },
@@ -141,7 +141,7 @@ function StudentActions({ user }: { user: User }) {
             <ButtonLink href={student(user).url}>
                 Student
             </ButtonLink>
-            <ButtonLink href={enrollments(user).url}>
+            <ButtonLink href={enrollments(user.student?? 0).url}>
                 Enrollments
             </ButtonLink>
         </ActionButtonContainer>
@@ -193,18 +193,10 @@ function WalletActions({ user }: { user: User }) {
             <ButtonLink href={wallet(user).url}>
                 Wallet
             </ButtonLink>
-            <ButtonLink href={orders(user).url}>
+            <ButtonLink href={orders(user.wallet?? 0).url}>
                 Orders
             </ButtonLink>
         </ActionButtonContainer>
-    );
-}
-
-function ActionButtonContainer({ children }: PropsWithChildren) {
-    return(
-        <div className="space-x-3">
-            {children}
-        </div>
     );
 }
 
@@ -220,20 +212,4 @@ function UserMeta({ user }: { user: User }) {
             <InfoBlock label="Updated At" value={user.updated_at} />
         </>
     );
-}
-
-function InfoBlock({ label, value, operator = ':' }: { label: string, value: string | number | ReactNode, operator?: ':' | '?' }) {
-    return (
-        <div>
-            {label}{operator} {value}
-        </div>
-    );
-}
-
-function DataContainer({ children }: PropsWithChildren) {
-    return (
-        <div className="space-y-4">
-            {children}
-        </div>
-    )
 }

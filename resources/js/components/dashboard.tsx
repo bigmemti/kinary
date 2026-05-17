@@ -1,4 +1,4 @@
-import { PropsWithChildren } from "react";
+import { PropsWithChildren, ReactNode } from "react";
 import ButtonLink from "./button-link";
 import { Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -28,4 +28,29 @@ export function DashboardHeader({ children, header, containerClassName }: PropsW
             {children}
         </div>
     );
+}
+
+export function ActionButtonContainer({ children }: PropsWithChildren) {
+    return(
+        <div className="space-x-3">
+            {children}
+        </div>
+    );
+}
+
+
+export function InfoBlock({ label, value, operator = ':' }: { label: string, value: string | number | ReactNode, operator?: ':' | '?' }) {
+    return (
+        <div>
+            {label}{operator} {value}
+        </div>
+    );
+}
+
+export function DataContainer({ children }: PropsWithChildren) {
+    return (
+        <div className="space-y-4">
+            {children}
+        </div>
+    )
 }
