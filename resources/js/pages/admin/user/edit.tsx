@@ -28,7 +28,7 @@ export default function Edit({ user }: { user: User}) {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Create User" />
+            <Head title="Edit User" />
             <DashboardContainer>
                 <DashboardHeader header={`Edit ${user.name} info`} />
                 <EditUserForm user={user} />
