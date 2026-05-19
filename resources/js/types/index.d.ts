@@ -60,6 +60,10 @@ export interface Order{
     id: number;
     wallet_id: number;
     wallet?: Wallet;
+    plans?: Plan[];
+    plans_count?: number;
+    transactions?: Transaction[];
+    transactions_count?: number;
     status: string;
     amount?: number;
     created_at: DateTime;

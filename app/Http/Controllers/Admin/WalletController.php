@@ -3,9 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Wallet;
 use App\Http\Requests\Admin\StoreWalletRequest;
 use App\Http\Requests\Admin\UpdateWalletRequest;
+use App\Models\User;
+use App\Models\Wallet;
 
 class WalletController extends Controller
 {
@@ -14,7 +15,10 @@ class WalletController extends Controller
      */
     public function index()
     {
-        //
+        return inertia('admin/wallet/index', [
+            'wallets' => ($meta = Wallet::with(['user'])->withCount('orders')->paginate(10)->toArray())['data'],
+            'meta' => $meta,
+        ]);
     }
 
     /**
@@ -22,7 +26,9 @@ class WalletController extends Controller
      */
     public function create()
     {
-        //
+        return inertia('admin/wallet/create', [
+            'users' => User::doesntHave('wallet')->get(),
+        ]);
     }
 
     /**
@@ -30,7 +36,9 @@ class WalletController extends Controller
      */
     public function store(StoreWalletRequest $request)
     {
-        //
+        Wallet::create($request->validated());
+
+        return to_route('admin.wallet.index');
     }
 
     /**
@@ -38,7 +46,15 @@ class WalletController extends Controller
      */
     public function show(Wallet $wallet)
     {
-        //
+        return inertia('admin/wallet/show', [
+            'wallet' => $wallet->load([
+                'user', 
+                'orders' => fn($query) => $query
+                                                // ->with(['plans.course.teacher.user', 'transactions'])
+                                                ->withCount(['plans', 'transactions'])
+                                                ->withSum('plans as amount', 'price')]
+            )->loadCount('orders'),
+        ]);
     }
 
     /**
@@ -46,7 +62,10 @@ class WalletController extends Controller
      */
     public function edit(Wallet $wallet)
     {
-        //
+        return inertia('admin/wallet/edit', [
+            'users' => [...User::doesntHave('wallet')->get(), $wallet->user],
+            'wallet' => $wallet->load('user'),
+        ]);
     }
 
     /**
@@ -54,7 +73,9 @@ class WalletController extends Controller
      */
     public function update(UpdateWalletRequest $request, Wallet $wallet)
     {
-        //
+        $wallet->update($request->validated());
+
+        return to_route('admin.wallet.index');
     }
 
     /**
@@ -62,6 +83,6 @@ class WalletController extends Controller
      */
     public function destroy(Wallet $wallet)
     {
-        //
+        $wallet->delete();
     }
 }
