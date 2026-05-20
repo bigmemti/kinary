@@ -13,7 +13,9 @@ class WalletOrderController extends Controller
      */
     public function index(Wallet $wallet)
     {
-        //
+        return inertia('admin/wallet/order/index', [
+            'wallet' => $wallet->load(['user',  'orders' => fn($query) => $query->withCount(['plans', 'transactions'])->withSum('plans as amount', 'price')]),
+        ]);
     }
 
     /**
@@ -21,7 +23,9 @@ class WalletOrderController extends Controller
      */
     public function create(Wallet $wallet)
     {
-        //
+        return inertia('admin/wallet/order/create', [
+            'wallet' => $wallet->load(['user']),
+        ]);
     }
 
     /**
@@ -29,6 +33,8 @@ class WalletOrderController extends Controller
      */
     public function store(StoreWalletOrderRequest $request, Wallet $wallet)
     {
-        //
+        $wallet->orders()->create($request->validated());
+
+        return to_route('admin.wallet.order.index', ['wallet' => $wallet]);
     }
 }

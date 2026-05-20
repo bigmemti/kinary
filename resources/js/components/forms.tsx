@@ -11,6 +11,58 @@ import { Form } from "@inertiajs/react";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { Combobox, ComboboxContent, ComboboxEmpty, ComboboxInput, ComboboxItem, ComboboxList } from "./ui/combobox";
 
+export function WalletOrderForm({ wallet }: { wallet: Wallet}){
+    return(
+        <Form
+            {...wallet_links.order.store.form(wallet)}
+            disableWhileProcessing
+            className="flex flex-col mt-4"
+        >
+            {({ processing, errors }) => (
+                <>
+                    <div className="grid gap-6">
+                        <div className="grid gap-2">
+                            <Label htmlFor="status">Status</Label>
+                            <Select 
+                                id="status"
+                                tabIndex={1}
+                                name="status"
+                                required
+                                autoFocus
+                            >
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Select a status" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectGroup>
+                                        {['pending', 'paid'].map(status => (
+                                            <SelectItem key={status} value={status}>{status}</SelectItem>
+                                        ))}
+                                    </SelectGroup>
+                                </SelectContent>
+                            </Select>
+                            <InputError
+                                message={errors.status}
+                                className="mt-2"
+                            />
+                        </div>
+
+                        <div className="mt-2 text-end">
+                            <Button
+                                type="submit"
+                                tabIndex={2}
+                            >
+                                {processing && <Spinner />}
+                                Submit
+                            </Button>
+                        </div>
+                    </div>
+                </>
+            )}
+        </Form>
+    );
+}
+
 export function StudentEnrollmentForm({ student, plans }: { student: Student, plans: Plan[] }){
     return(
         <Form

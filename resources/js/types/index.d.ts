@@ -75,7 +75,7 @@ export interface Student{
     user_id: number;
     user?: User;
     enrollments_count?: number;
-    enrollments: Enrollment[];  
+    enrollments?: Enrollment[];  
     created_at: DateTime;
     updated_at: DateTime;
 }
