@@ -3,9 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Teacher;
 use App\Http\Requests\Admin\StoreTeacherRequest;
 use App\Http\Requests\Admin\UpdateTeacherRequest;
+use App\Models\Teacher;
+use App\Models\User;
 
 class TeacherController extends Controller
 {
@@ -14,7 +15,9 @@ class TeacherController extends Controller
      */
     public function index()
     {
-        //
+        return inertia('admin/teacher/index', [
+            'teachers' => Teacher::all()->load(['user'])->loadCount('courses'),
+        ]);
     }
 
     /**
@@ -22,7 +25,9 @@ class TeacherController extends Controller
      */
     public function create()
     {
-        //
+        return inertia('admin/teacher/create', [
+            'users' => User::doesntHave('teacher')->get(),
+        ]);
     }
 
     /**
@@ -30,7 +35,9 @@ class TeacherController extends Controller
      */
     public function store(StoreTeacherRequest $request)
     {
-        //
+        Teacher::create($request->validated());
+
+        return to_route('admin.teacher.index');
     }
 
     /**
@@ -38,7 +45,9 @@ class TeacherController extends Controller
      */
     public function show(Teacher $teacher)
     {
-        //
+        return inertia('admin/teacher/show', [
+            'teacher' => $teacher->load(['user', 'courses'])->loadCount('courses'),
+        ]);
     }
 
     /**
@@ -46,7 +55,10 @@ class TeacherController extends Controller
      */
     public function edit(Teacher $teacher)
     {
-        //
+        return inertia('admin/teacher/edit', [
+            'teacher' => $teacher->load(['user']),
+            'users' => [ ...User::doesntHave('teacher')->get(), $teacher->user],
+        ]);
     }
 
     /**
@@ -54,7 +66,9 @@ class TeacherController extends Controller
      */
     public function update(UpdateTeacherRequest $request, Teacher $teacher)
     {
-        //
+        $teacher->update($request->validated());
+
+        return to_route('admin.teacher.index');
     }
 
     /**
@@ -62,6 +76,8 @@ class TeacherController extends Controller
      */
     public function destroy(Teacher $teacher)
     {
-        //
+        $teacher->delete();
+        
+        return to_route('admin.teacher.index');
     }
 }

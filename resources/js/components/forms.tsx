@@ -6,7 +6,8 @@ import { Spinner } from "@/components/ui/spinner";
 import user_links from "@/routes/admin/user";
 import student_links from "@/routes/admin/student";
 import wallet_links from "@/routes/admin/wallet";
-import { Plan, Student, User, Wallet } from "@/types";
+import teacher_links from "@/routes/admin/teacher";
+import { Plan, Student, Teacher, User, Wallet } from "@/types";
 import { Form } from "@inertiajs/react";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { Combobox, ComboboxContent, ComboboxEmpty, ComboboxInput, ComboboxItem, ComboboxList } from "./ui/combobox";
@@ -124,25 +125,7 @@ export function WalletForm({ type, wallet, users }: { type: "create" | "edit", w
                     <div className="grid gap-6">
                         <div className="grid gap-2">
                             <Label htmlFor="user">User</Label>
-                            <Select 
-                                id="user"
-                                tabIndex={1}
-                                name="user_id"
-                                required
-                                autoFocus
-                                defaultValue={wallet?.user_id.toString()}
-                            >
-                                <SelectTrigger>
-                                    <SelectValue placeholder="Select a user" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectGroup>
-                                        {users.map(user => (
-                                            <SelectItem key={user.id} value={user.id.toString()}>{user.name}</SelectItem>
-                                        ))}
-                                    </SelectGroup>
-                                </SelectContent>
-                            </Select>
+                            <UserSelect users={users}  default_user={wallet?.user} /> 
                             <InputError
                                 message={errors.name}
                                 className="mt-2"
@@ -179,25 +162,44 @@ export function StudentForm({ type, student, users }: { type: "create" | "edit",
                     <div className="grid gap-6">
                         <div className="grid gap-2">
                             <Label htmlFor="user">User</Label>
-                            <Select 
-                                id="user"
-                                tabIndex={1}
-                                name="user_id"
-                                required
-                                autoFocus
-                                defaultValue={student?.user_id.toString()}
+                            <UserSelect users={users}  default_user={student?.user} /> 
+                            <InputError
+                                message={errors.name}
+                                className="mt-2"
+                            />
+                        </div>
+
+                        <div className="mt-2 text-end">
+                            <Button
+                                type="submit"
+                                tabIndex={2}
                             >
-                                <SelectTrigger>
-                                    <SelectValue placeholder="Select a user" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectGroup>
-                                        {users.map(user => (
-                                            <SelectItem key={user.id} value={user.id.toString()}>{user.name}</SelectItem>
-                                        ))}
-                                    </SelectGroup>
-                                </SelectContent>
-                            </Select>
+                                {processing && <Spinner />}
+                                Submit
+                            </Button>
+                        </div>
+                    </div>
+                </>
+            )}
+        </Form>
+    );
+}
+
+export function TeacherForm({ type, teacher, users }: { type: "create" | "edit", teacher?: Teacher, users: User[] }){
+    const form = (type === 'create')? teacher_links.store.form(): teacher_links.update.form(teacher?? 0);
+
+    return(
+        <Form
+            {...form}
+            disableWhileProcessing
+            className="flex flex-col mt-4"
+        >
+            {({ processing, errors }) => (
+                <>
+                    <div className="grid gap-6">
+                        <div className="grid gap-2">
+                            <Label htmlFor="user">User</Label>
+                            <UserSelect users={users} default_user={teacher?.user} /> 
                             <InputError
                                 message={errors.name}
                                 className="mt-2"
@@ -277,5 +279,23 @@ export function UserForm({ type, user }: { type: "create" | "edit", user?: User 
                 </>
             )}
         </Form>
+    );
+}
+
+export function UserSelect({ users, default_user }: { users: User[], default_user?: User }){
+    return (
+        <Combobox items={users} name="user_id" defaultValue={default_user?.id}>
+            <ComboboxInput placeholder="Select a user" />
+            <ComboboxContent>
+            <ComboboxEmpty>No items found.</ComboboxEmpty>
+            <ComboboxList>
+                {(item) => (
+                <ComboboxItem key={item.id} value={item.id}>
+                    {item.id}.{item.name}
+                </ComboboxItem>
+                )}
+            </ComboboxList>
+            </ComboboxContent>
+        </Combobox>
     );
 }
