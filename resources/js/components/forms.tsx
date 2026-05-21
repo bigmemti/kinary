@@ -9,8 +9,12 @@ import wallet_links from "@/routes/admin/wallet";
 import teacher_links from "@/routes/admin/teacher";
 import { Plan, Student, Teacher, User, Wallet } from "@/types";
 import { Form } from "@inertiajs/react";
-import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "./ui/select";
 import { Combobox, ComboboxContent, ComboboxEmpty, ComboboxInput, ComboboxItem, ComboboxList } from "./ui/combobox";
+import { Textarea } from "./ui/textarea";
+import { useState } from "react";
+import slugify from 'slugify';
+import { Pen, X } from "lucide-react";
 
 export function WalletOrderForm({ wallet }: { wallet: Wallet}){
     return(
@@ -60,6 +64,141 @@ export function WalletOrderForm({ wallet }: { wallet: Wallet}){
                     </div>
                 </>
             )}
+        </Form>
+    );
+}
+
+export function TeacherCourseForm({ teacher }: { teacher: Teacher}){
+    const [slugTouched, setSlugTouched] = useState(false);
+    const [slug, setSlug] = useState("");
+ 
+    return(
+        <Form
+            {...teacher_links.course.store.form(teacher, { mergeQuery: { slug: slug } })}
+            disableWhileProcessing
+            onError={(errors) => (errors.slug == 'The slug has already been taken.') && setSlugTouched(true)}
+            className="flex flex-col mt-4 gap-4"
+        >
+            {({ processing, errors }) => (
+                        <>
+                            <div className="grid gap-2">
+                                <Label htmlFor="title">Title</Label>
+
+                                <Input
+                                    id="title"
+                                    type="text"
+                                    name="title"
+                                    tabIndex={1}
+                                    autoFocus
+                                    onChange={e => (!slugTouched) && setSlug(slugify(e.target.value, { lower: true }))}
+                                    placeholder="Title"
+                                />
+
+                                <InputError message={errors.title} />
+                            </div>
+
+                            <div className="grid gap-2">
+                                <Label htmlFor="slug">Slug</Label>
+
+                                <div className='flex'>
+                                    <Input
+                                        id="slug"
+                                        type="text"
+                                        name="slug"
+                                        value={slug}
+                                        tabIndex={2}
+                                        placeholder="Slug"
+                                        disabled={!slugTouched}
+                                        onChange={e => setSlug(slugify(e.target.value))}
+                                    />
+
+                                    <Button 
+                                        variant={'ghost'} 
+                                        type='button' 
+                                        onClick={(e) =>  setSlugTouched(v => !v)}
+                                    >
+                                        {slugTouched 
+                                            ? <X /> 
+                                            : <Pen />
+                                        }
+                                    </Button>
+                                </div>
+
+                                <InputError message={errors.slug} />
+                            </div>
+
+                            <div className="grid gap-2">
+                                <Label htmlFor="thumbnail">Thumbnail</Label>
+
+                                <Input
+                                    id="thumbnail"
+                                    type="text"
+                                    tabIndex={3}
+                                    name="thumbnail"
+                                    placeholder="Thumbnail"
+                                />
+
+                                <InputError message={errors.thumbnail} />
+                            </div>
+
+                            <div className="grid gap-2">
+                                <Label htmlFor="intro_video_url">Intro Video Url</Label>
+
+                                <Input
+                                    id="intro_video_url"
+                                    type="text"
+                                    name="intro_video_url"
+                                    tabIndex={4}
+                                    placeholder="Intro Video Url"
+                                />
+
+                                <InputError message={errors.intro_video_url} />
+                            </div>
+
+                            <div className="grid gap-2">
+                                <Label htmlFor="status">Status</Label>
+
+                                <Select name="status" tabIndex={5}>
+                                    <SelectTrigger className="w-full">
+                                        <SelectValue placeholder="Status" />
+                                    </SelectTrigger>
+
+                                    <SelectContent>
+                                        <SelectGroup>
+                                            <SelectLabel>Status</SelectLabel>
+                                            <SelectItem value="published">published</SelectItem>
+                                            <SelectItem value="draft">draft</SelectItem>
+                                        </SelectGroup>
+                                    </SelectContent>
+                                </Select>
+
+                                <InputError message={errors.status} />
+                            </div>
+
+                            <div className="grid gap-2">
+                                <Label htmlFor="description">Description</Label>
+
+                                <Textarea
+                                    id="description"
+                                    name="description"
+                                    tabIndex={6}
+                                    placeholder="Description"
+                                />
+
+                                <InputError message={errors.description} />
+                            </div>
+
+                            <div className="mt-2 text-end">
+                                <Button
+                                    type="submit"
+                                    tabIndex={7}
+                                >
+                                    {processing && <Spinner />}
+                                    Submit
+                                </Button>
+                            </div>
+                        </>
+                    )}
         </Form>
     );
 }

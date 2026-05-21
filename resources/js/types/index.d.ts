@@ -114,6 +114,7 @@ export interface Course{
     updated_at: DateTime;
     deleted_at: DateTime;
     plans?: Plan[];
+    plans_count?: number;
 }
 
 export interface Plan{

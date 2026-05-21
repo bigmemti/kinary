@@ -13,7 +13,9 @@ class TeacherCourseController extends Controller
      */
     public function index(Teacher $teacher)
     {
-        //
+        return inertia('admin/teacher/course/index', [
+            'teacher' => $teacher->load(['courses' => fn($query) => $query->withCount('plans'), 'user']),
+        ]);
     }
 
     /**
@@ -21,7 +23,9 @@ class TeacherCourseController extends Controller
      */
     public function create(Teacher $teacher)
     {
-        //
+        return inertia('admin/teacher/course/create', [
+            'teacher' => $teacher->load(['user']),
+        ]);
     }
 
     /**
@@ -29,6 +33,8 @@ class TeacherCourseController extends Controller
      */
     public function store(StoreTeacherCourseRequest $request, Teacher $teacher)
     {
-        //
+        $teacher->courses()->create($request->validated());
+
+        return to_route('admin.teacher.course.index', ['teacher' => $teacher]);
     }
 }
