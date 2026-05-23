@@ -18,6 +18,7 @@ class Course extends Model
      * @var list<string>
      */    
     protected $fillable = [
+        'teacher_id',
         'title',
         'slug',
         'description',
@@ -51,6 +52,10 @@ class Course extends Model
 
     public function plans(){
         return $this->hasMany(Plan::class);
+    }
+
+    public function sections(){
+        return $this->hasMany(Section::class);
     }
 
     public function teacher(){

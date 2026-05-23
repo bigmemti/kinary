@@ -7,7 +7,8 @@ import user_links from "@/routes/admin/user";
 import student_links from "@/routes/admin/student";
 import wallet_links from "@/routes/admin/wallet";
 import teacher_links from "@/routes/admin/teacher";
-import { Plan, Student, Teacher, User, Wallet } from "@/types";
+import course_links from "@/routes/admin/course";
+import { Course, Plan, Student, Teacher, User, Wallet } from "@/types";
 import { Form } from "@inertiajs/react";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "./ui/select";
 import { Combobox, ComboboxContent, ComboboxEmpty, ComboboxInput, ComboboxItem, ComboboxList } from "./ui/combobox";
@@ -64,6 +65,166 @@ export function WalletOrderForm({ wallet }: { wallet: Wallet}){
                     </div>
                 </>
             )}
+        </Form>
+    );
+}
+
+export function CourseForm({ type, teachers, course }: { type: "create" | "edit", teachers: Teacher[], course?: Course }){
+    const [slugTouched, setSlugTouched] = useState(type === 'edit');
+    const [slug, setSlug] = useState(course?.slug ?? "");
+    const form = (type === 'create')? course_links.store.form({ mergeQuery: { slug: slug } }): course_links.update.form(course?? 0, { mergeQuery: { slug: slug } });
+    
+    return(
+        <Form
+            {...form}
+            disableWhileProcessing
+            onError={(errors) => (errors.slug == 'The slug has already been taken.') && setSlugTouched(true)}
+            className="flex flex-col mt-4 gap-4"
+        >
+            {({ processing, errors }) => (
+                        <>
+                            <div className="grid gap-2">
+                                <Label htmlFor="teacher">Teacher</Label>
+                                <Combobox items={teachers} name="teacher_id" defaultValue={course?.teacher_id}>
+                                    <ComboboxInput placeholder="Select a teacher" />
+                                    <ComboboxContent>
+                                        <ComboboxEmpty>No items found.</ComboboxEmpty>
+                                        <ComboboxList>
+                                            {(item) => (
+                                            <ComboboxItem key={item.id} value={item.id}>
+                                                {item.id}.{item.user?.name}
+                                            </ComboboxItem>
+                                            )}
+                                        </ComboboxList>
+                                    </ComboboxContent>
+                                </Combobox>
+                                <InputError
+                                    message={errors.teacher_id}
+                                    className="mt-2"
+                                />
+                            </div>
+                            <div className="grid gap-2">
+                                <Label htmlFor="title">Title</Label>
+
+                                <Input
+                                    id="title"
+                                    type="text"
+                                    name="title"
+                                    tabIndex={1}
+                                    autoFocus
+                                    defaultValue={course?.title}
+                                    onChange={e => (!slugTouched) && setSlug(slugify(e.target.value, { lower: true }))}
+                                    placeholder="Title"
+                                />
+
+                                <InputError message={errors.title} />
+                            </div>
+
+                            <div className="grid gap-2">
+                                <Label htmlFor="slug">Slug</Label>
+
+                                <div className='flex'>
+                                    <Input
+                                        id="slug"
+                                        type="text"
+                                        name="slug"
+                                        value={slug}
+                                        tabIndex={2}
+                                        placeholder="Slug"
+                                        disabled={!slugTouched}
+                                        onChange={e => setSlug(slugify(e.target.value))}
+                                    />
+
+                                    <Button 
+                                        variant={'ghost'} 
+                                        type='button' 
+                                        onClick={(e) =>  setSlugTouched(v => !v)}
+                                    >
+                                        {slugTouched 
+                                            ? <X /> 
+                                            : <Pen />
+                                        }
+                                    </Button>
+                                </div>
+
+                                <InputError message={errors.slug} />
+                            </div>
+
+                            <div className="grid gap-2">
+                                <Label htmlFor="thumbnail">Thumbnail</Label>
+
+                                <Input
+                                    id="thumbnail"
+                                    type="text"
+                                    tabIndex={3}
+                                    name="thumbnail"
+                                    defaultValue={course?.thumbnail}
+                                    placeholder="Thumbnail"
+                                />
+
+                                <InputError message={errors.thumbnail} />
+                            </div>
+
+                            <div className="grid gap-2">
+                                <Label htmlFor="intro_video_url">Intro Video Url</Label>
+
+                                <Input
+                                    id="intro_video_url"
+                                    type="text"
+                                    name="intro_video_url"
+                                    tabIndex={4}
+                                    defaultValue={course?.intro_video_url}
+                                    placeholder="Intro Video Url"
+                                />
+
+                                <InputError message={errors.intro_video_url} />
+                            </div>
+
+                            <div className="grid gap-2">
+                                <Label htmlFor="status">Status</Label>
+
+                                <Select name="status" tabIndex={5} defaultValue={course?.status}>
+                                    <SelectTrigger className="w-full">
+                                        <SelectValue placeholder="Status" />
+                                    </SelectTrigger>
+
+                                    <SelectContent>
+                                        <SelectGroup>
+                                            <SelectLabel>Status</SelectLabel>
+                                            <SelectItem value="published">published</SelectItem>
+                                            <SelectItem value="draft">draft</SelectItem>
+                                        </SelectGroup>
+                                    </SelectContent>
+                                </Select>
+
+                                <InputError message={errors.status} />
+                            </div>
+
+                            <div className="grid gap-2">
+                                <Label htmlFor="description">Description</Label>
+
+                                <Textarea
+                                    id="description"
+                                    name="description"
+                                    tabIndex={6}
+                                    defaultValue={course?.description}
+                                    placeholder="Description"
+                                />
+
+                                <InputError message={errors.description} />
+                            </div>
+
+                            <div className="mt-2 text-end">
+                                <Button
+                                    type="submit"
+                                    tabIndex={7}
+                                >
+                                    {processing && <Spinner />}
+                                    Submit
+                                </Button>
+                            </div>
+                        </>
+                    )}
         </Form>
     );
 }

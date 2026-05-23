@@ -28,11 +28,6 @@ const mainNavItems: NavItem[] = [
         icon: LayoutGrid,
     },
     {
-        title: 'Course',
-        href: course(),
-        icon: Book,
-    },
-    {
         title: 'Studying',
         href: studying(),
         icon: Book,
@@ -59,6 +54,11 @@ const adminNavItems: NavItem[] = [
         title: 'Wallets',
         href: wallets(),
         icon: Wallet,
+    },
+    {
+        title: 'Course',
+        href: course(),
+        icon: Book,
     },
 ];
 

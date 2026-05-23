@@ -110,11 +110,13 @@ export interface Course{
     thumbnail: string;
     intro_video_url: string;
     status: 'published' | 'draft';
+    plans?: Plan[];
+    plans_count?: number;
+    sections?: Section[];
+    sections_count?: number;
     created_at: DateTime;
     updated_at: DateTime;
     deleted_at: DateTime;
-    plans?: Plan[];
-    plans_count?: number;
 }
 
 export interface Plan{
@@ -123,6 +125,15 @@ export interface Plan{
     course?: Course;
     name: string;
     price: number;
+    created_at: DateTime;
+    updated_at: DateTime;
+}
+
+export interface Section{
+    id: number;
+    course_id: number;
+    course?: Course;
+    name: string;
     created_at: DateTime;
     updated_at: DateTime;
 }

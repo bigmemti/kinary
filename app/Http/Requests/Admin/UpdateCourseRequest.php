@@ -23,6 +23,7 @@ class UpdateCourseRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'teacher_id' => 'required|integer|exists:teachers,id',
             'title' => 'required|string|max:255',
             'slug' => 'required|string|max:255|unique:courses,slug,'. request()->course->id,
             'description' => 'nullable|string|max:4096',
