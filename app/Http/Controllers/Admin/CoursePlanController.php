@@ -13,7 +13,9 @@ class CoursePlanController extends Controller
      */
     public function index(Course $course)
     {
-        //
+        return inertia('admin/course/plan/index', [
+            'course' => $course->load(['plans' => fn($query) => $query->withCount(['orders', 'students'])]),
+        ]);
     }
 
     /**
@@ -21,7 +23,9 @@ class CoursePlanController extends Controller
      */
     public function create(Course $course)
     {
-        //
+        return inertia('admin/course/plan/create', [
+            'course' => $course->load(['plans']),
+        ]);
     }
 
     /**

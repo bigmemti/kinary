@@ -125,6 +125,8 @@ export interface Plan{
     course?: Course;
     name: string;
     price: number;
+    orders_count?: number;
+    students_count?: number;
     created_at: DateTime;
     updated_at: DateTime;
 }

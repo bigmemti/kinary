@@ -28,6 +28,10 @@ class Plan extends Model
         return $this->belongsToMany(Student::class, Enrollment::class);
     }
 
+    public function orders(){
+        return $this->belongsToMany(Order::class);
+    }
+
     public function buy(string $authority){
         return Transaction::create([
             'user_id' => auth()->user()->id,

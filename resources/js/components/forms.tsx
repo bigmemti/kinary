@@ -9,7 +9,7 @@ import wallet_links from "@/routes/admin/wallet";
 import teacher_links from "@/routes/admin/teacher";
 import course_links from "@/routes/admin/course";
 import { Course, Plan, Student, Teacher, User, Wallet } from "@/types";
-import { Form } from "@inertiajs/react";
+import { Form, router } from "@inertiajs/react";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "./ui/select";
 import { Combobox, ComboboxContent, ComboboxEmpty, ComboboxInput, ComboboxItem, ComboboxList } from "./ui/combobox";
 import { Textarea } from "./ui/textarea";
@@ -214,6 +214,60 @@ export function CourseForm({ type, teachers, course }: { type: "create" | "edit"
                                 <InputError message={errors.description} />
                             </div>
 
+                            <div className="mt-2 text-end">
+                                <Button
+                                    type="submit"
+                                    tabIndex={7}
+                                >
+                                    {processing && <Spinner />}
+                                    Submit
+                                </Button>
+                            </div>
+                        </>
+                    )}
+        </Form>
+    );
+}
+
+export function CoursePlanForm({ course }: { course: Course}){ 
+    return(
+        <Form
+            {...course_links.plan.store.form(course)}
+            disableWhileProcessing
+            onSuccess={() => router.visit(course_links.plan.index(course).url) }
+            className="flex flex-col mt-4 gap-4"
+        >
+            {({ processing, errors }) => (
+                        <>
+                            <div className="grid gap-2">
+                                <Label htmlFor="name">Name</Label>
+
+                                <Input
+                                    id="name"
+                                    type="text"
+                                    tabIndex={3}
+                                    name="name"
+                                    placeholder="Name"
+                                />
+
+                                <InputError message={errors.name} />
+                            </div>
+
+                            <div className="grid gap-2">
+                                <Label htmlFor="price">Price</Label>
+
+                                <Input
+                                    id="price"
+                                    type="number"
+                                    step={1000}
+                                    name="price"
+                                    tabIndex={4}
+                                    placeholder="Price"
+                                />
+
+                                <InputError message={errors.price} />
+                            </div>
+                        
                             <div className="mt-2 text-end">
                                 <Button
                                     type="submit"
@@ -599,3 +653,4 @@ export function UserSelect({ users, default_user }: { users: User[], default_use
         </Combobox>
     );
 }
+
