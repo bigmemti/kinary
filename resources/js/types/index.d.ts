@@ -136,6 +136,7 @@ export interface Section{
     course_id: number;
     course?: Course;
     name: string;
+    lessons_count?: number;
     created_at: DateTime;
     updated_at: DateTime;
 }

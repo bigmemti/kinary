@@ -24,7 +24,7 @@ class CoursePlanController extends Controller
     public function create(Course $course)
     {
         return inertia('admin/course/plan/create', [
-            'course' => $course->load(['plans']),
+            'course' => $course,
         ]);
     }
 

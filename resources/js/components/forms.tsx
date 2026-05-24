@@ -229,6 +229,45 @@ export function CourseForm({ type, teachers, course }: { type: "create" | "edit"
     );
 }
 
+export function CourseSectionForm({ course }: { course: Course}){ 
+    return(
+        <Form
+            {...course_links.section.store.form(course)}
+            disableWhileProcessing
+            onSuccess={() => router.visit(course_links.section.index(course).url) }
+            className="flex flex-col mt-4 gap-4"
+        >
+            {({ processing, errors }) => (
+                        <>
+                            <div className="grid gap-2">
+                                <Label htmlFor="name">Name</Label>
+
+                                <Input
+                                    id="name"
+                                    type="text"
+                                    tabIndex={3}
+                                    name="name"
+                                    placeholder="Name"
+                                />
+
+                                <InputError message={errors.name} />
+                            </div>
+                        
+                            <div className="mt-2 text-end">
+                                <Button
+                                    type="submit"
+                                    tabIndex={7}
+                                >
+                                    {processing && <Spinner />}
+                                    Submit
+                                </Button>
+                            </div>
+                        </>
+                    )}
+        </Form>
+    );
+}
+
 export function CoursePlanForm({ course }: { course: Course}){ 
     return(
         <Form
