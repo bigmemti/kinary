@@ -16,9 +16,14 @@ class Lesson extends Model
      */
     protected $fillable = [
         'section_id',
+        'name',
     ];
 
     public function section(){
         return $this->belongsTo(Section::class);
+    }
+
+    public function contents(){
+        return $this->hasMany(Content::class);
     }
 }

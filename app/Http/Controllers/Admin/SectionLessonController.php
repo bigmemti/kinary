@@ -13,7 +13,9 @@ class SectionLessonController extends Controller
      */
     public function index(Section $section)
     {
-        //
+        return inertia('admin/section/lesson/index', [
+            'section' => $section->load(['lessons' => fn($query) => $query->withCount('contents')]),
+        ]);
     }
 
     /**
@@ -21,7 +23,9 @@ class SectionLessonController extends Controller
      */
     public function create(Section $section)
     {
-        //
+        return inertia('admin/section/lesson/create', [
+            'section' => $section,
+        ]);
     }
 
     /**
@@ -29,6 +33,6 @@ class SectionLessonController extends Controller
      */
     public function store(StoreSectionLessonRequest $request, Section $section)
     {
-        //
+        $section->lessons()->create($request->validated());
     }
 }

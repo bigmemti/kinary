@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreSectionRequest;
 use App\Http\Requests\Admin\UpdateSectionRequest;
+use App\Models\Course;
 use App\Models\Section;
+
 class SectionController extends Controller
 {
     /**
@@ -13,7 +15,9 @@ class SectionController extends Controller
      */
     public function index()
     {
-        //
+        return inertia('admin/section/index', [
+            'sections' => Section::with(['course.teacher.user'])->withCount(['lessons'])->get(),
+        ]);
     }
 
     /**
@@ -21,7 +25,9 @@ class SectionController extends Controller
      */
     public function create()
     {
-        //
+        return inertia('admin/section/create', [
+            'courses' => Course::with('teacher.user')->get(),
+        ]);
     }
 
     /**
@@ -29,7 +35,7 @@ class SectionController extends Controller
      */
     public function store(StoreSectionRequest $request)
     {
-        //
+        Section::create($request->validated());
     }
 
     /**
@@ -37,7 +43,9 @@ class SectionController extends Controller
      */
     public function show(Section $section)
     {
-        //
+        return inertia('admin/section/show', [
+            'section' => $section->load(['course.teacher.user', 'lessons' => fn($query) => $query->take(5)->withCount(['contents'])])->loadCount(['lessons']),
+        ]);
     }
 
     /**
@@ -45,7 +53,10 @@ class SectionController extends Controller
      */
     public function edit(Section $section)
     {
-        //
+        return inertia('admin/section/edit', [
+            'course' => Course::with('teacher.user')->get(),
+            'section' => $section->load(['course.teacher.user']),
+        ]);
     }
 
     /**
@@ -53,7 +64,7 @@ class SectionController extends Controller
      */
     public function update(UpdateSectionRequest $request, Section $section)
     {
-        //
+        $section->update($request->validated());
     }
 
     /**
@@ -61,6 +72,6 @@ class SectionController extends Controller
      */
     public function destroy(Section $section)
     {
-        //
+        $section->delete();
     }
 }

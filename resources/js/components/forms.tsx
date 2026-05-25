@@ -9,7 +9,8 @@ import wallet_links from "@/routes/admin/wallet";
 import teacher_links from "@/routes/admin/teacher";
 import course_links from "@/routes/admin/course";
 import plan_links from "@/routes/admin/plan";
-import { Course, Plan, Student, Teacher, User, Wallet } from "@/types";
+import section_links from "@/routes/admin/section";
+import { Course, Plan, Section, Student, Teacher, User, Wallet } from "@/types";
 import { Form, router } from "@inertiajs/react";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "./ui/select";
 import { Combobox, ComboboxContent, ComboboxEmpty, ComboboxInput, ComboboxItem, ComboboxList } from "./ui/combobox";
@@ -230,6 +231,70 @@ export function CourseForm({ type, teachers, course }: { type: "create" | "edit"
     );
 }
 
+export function SectionForm({ type, courses, section }: { type: "create" | "edit", courses: Course[], section?: Section }){
+    const form = (type === 'create')? section_links.store.form(): section_links.update.form(section?? 0);
+    
+    return(
+        <Form
+            {...form}
+            disableWhileProcessing
+            onSuccess={() => router.visit(section_links.index().url)}
+            className="flex flex-col mt-4 gap-4"
+        >
+            {({ processing, errors }) => (
+                        <>
+                            <div className="grid gap-2">
+                                <Label htmlFor="course">Teacher</Label>
+                                <Combobox items={courses} name="course_id" defaultValue={section?.course_id}>
+                                    <ComboboxInput placeholder="Select a course" />
+                                    <ComboboxContent>
+                                        <ComboboxEmpty>No items found.</ComboboxEmpty>
+                                        <ComboboxList>
+                                            {(item) => (
+                                            <ComboboxItem key={item.id} value={item.id}>
+                                                {item.id}.{item.title} - {item.teacher?.user?.name}
+                                            </ComboboxItem>
+                                            )}
+                                        </ComboboxList>
+                                    </ComboboxContent>
+                                </Combobox>
+                                <InputError
+                                    message={errors.course_id}
+                                    className="mt-2"
+                                />
+                            </div>
+
+                            <div className="grid gap-2">
+                                <Label htmlFor="name">Name</Label>
+
+                                <Input
+                                    id="name"
+                                    type="text"
+                                    tabIndex={1}
+                                    autoFocus
+                                    name="name"
+                                    defaultValue={section?.name}
+                                    placeholder="Name"
+                                />
+
+                                <InputError message={errors.name} />
+                            </div>
+
+                            <div className="mt-2 text-end">
+                                <Button
+                                    type="submit"
+                                    tabIndex={3}
+                                >
+                                    {processing && <Spinner />}
+                                    Submit
+                                </Button>
+                            </div>
+                        </>
+                    )}
+        </Form>
+    );
+}
+
 export function PlanForm({ type, courses, plan }: { type: "create" | "edit", courses: Course[], plan?: Plan }){
     const form = (type === 'create')? plan_links.store.form(): plan_links.update.form(plan?? 0);
     
@@ -299,6 +364,45 @@ export function PlanForm({ type, courses, plan }: { type: "create" | "edit", cou
                                 <Button
                                     type="submit"
                                     tabIndex={3}
+                                >
+                                    {processing && <Spinner />}
+                                    Submit
+                                </Button>
+                            </div>
+                        </>
+                    )}
+        </Form>
+    );
+}
+
+export function SectionLessonForm({ section }: { section: Section}){ 
+    return(
+        <Form
+            {...section_links.lesson.store.form(section)}
+            disableWhileProcessing
+            onSuccess={() => router.visit(section_links.lesson.index(section).url) }
+            className="flex flex-col mt-4 gap-4"
+        >
+            {({ processing, errors }) => (
+                        <>
+                            <div className="grid gap-2">
+                                <Label htmlFor="name">Name</Label>
+
+                                <Input
+                                    id="name"
+                                    type="text"
+                                    tabIndex={3}
+                                    name="name"
+                                    placeholder="Name"
+                                />
+
+                                <InputError message={errors.name} />
+                            </div>
+                        
+                            <div className="mt-2 text-end">
+                                <Button
+                                    type="submit"
+                                    tabIndex={7}
                                 >
                                     {processing && <Spinner />}
                                     Submit
