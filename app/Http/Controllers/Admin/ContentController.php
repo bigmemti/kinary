@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreContentRequest;
 use App\Http\Requests\Admin\UpdateContentRequest;
 use App\Models\Content;
+use App\Models\Lesson;
 
 class ContentController extends Controller
 {
@@ -14,7 +15,9 @@ class ContentController extends Controller
      */
     public function index()
     {
-        //
+        return inertia('admin/content/index', [
+            'contents' => Content::with(['lesson.section.course.teacher.user'])->get(),
+        ]);
     }
 
     /**
@@ -22,7 +25,9 @@ class ContentController extends Controller
      */
     public function create()
     {
-        //
+        return inertia('admin/content/create', [
+            'lessons' => Lesson::with(['section.course.teacher.user'])->get(),
+        ]);
     }
 
     /**
@@ -30,15 +35,17 @@ class ContentController extends Controller
      */
     public function store(StoreContentRequest $request)
     {
-        //
+        Content::create($request->validated());
     }
 
     /**
      * Display the specified resource.
      */
     public function show(Content $content)
-    {
-        //
+    { 
+        return inertia('admin/content/show', [
+            'content' => $content->load(['lesson.section.course.teacher.user']),
+        ]);
     }
 
     /**
@@ -46,7 +53,10 @@ class ContentController extends Controller
      */
     public function edit(Content $content)
     {
-        //
+        return inertia('admin/content/edit', [
+            'lessons' => Lesson::with(['section.course.teacher.user'])->get(),
+            'content' => $content,
+        ]);
     }
 
     /**
@@ -54,7 +64,7 @@ class ContentController extends Controller
      */
     public function update(UpdateContentRequest $request, Content $content)
     {
-        //
+        $content->update($request->validated());
     }
 
     /**
@@ -62,6 +72,6 @@ class ContentController extends Controller
      */
     public function destroy(Content $content)
     {
-        //
+        $content->delete();
     }
 }

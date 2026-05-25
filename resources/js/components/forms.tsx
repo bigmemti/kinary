@@ -11,7 +11,8 @@ import course_links from "@/routes/admin/course";
 import plan_links from "@/routes/admin/plan";
 import section_links from "@/routes/admin/section";
 import lesson_links from "@/routes/admin/lesson";
-import { Course, Lesson, Plan, Section, Student, Teacher, User, Wallet } from "@/types";
+import content_links from "@/routes/admin/content";
+import { Content, Course, Lesson, Plan, Section, Student, Teacher, User, Wallet } from "@/types";
 import { Form, router } from "@inertiajs/react";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "./ui/select";
 import { Combobox, ComboboxContent, ComboboxEmpty, ComboboxInput, ComboboxItem, ComboboxList } from "./ui/combobox";
@@ -221,6 +222,68 @@ export function CourseForm({ type, teachers, course }: { type: "create" | "edit"
                                 <Button
                                     type="submit"
                                     tabIndex={7}
+                                >
+                                    {processing && <Spinner />}
+                                    Submit
+                                </Button>
+                            </div>
+                        </>
+                    )}
+        </Form>
+    );
+}
+
+export function ContentForm({ type, lessons, content }: { type: "create" | "edit", lessons: Lesson[], content?: Content }){
+    const form = (type === 'create')? content_links.store.form(): content_links.update.form(content?? 0);
+    
+    return(
+        <Form
+            {...form}
+            disableWhileProcessing
+            onSuccess={() => router.visit(content_links.index().url)}
+            className="flex flex-col mt-4 gap-4"
+        >
+            {({ processing, errors }) => (
+                        <>
+                            <div className="grid gap-2">
+                                <Label htmlFor="lesson">Lesson</Label>
+                                <Combobox items={lessons} name="lesson_id" defaultValue={content?.lesson_id}>
+                                    <ComboboxInput placeholder="Select a lesson" />
+                                    <ComboboxContent>
+                                        <ComboboxEmpty>No items found.</ComboboxEmpty>
+                                        <ComboboxList>
+                                            {(item) => (
+                                            <ComboboxItem key={item.id} value={item.id}>
+                                                {item.id}.{item.name} - {item.section?.name} - {item.section?.course?.title} - {item.section?.course?.teacher?.user?.name}
+                                            </ComboboxItem>
+                                            )}
+                                        </ComboboxList>
+                                    </ComboboxContent>
+                                </Combobox>
+                                <InputError
+                                    message={errors.lesson_id}
+                                    className="mt-2"
+                                />
+                            </div>
+
+                            <div className="grid gap-2">
+                                <Label htmlFor="name">Body</Label>
+
+                                <Textarea
+                                    id="body"
+                                    name="body"
+                                    tabIndex={1}
+                                    defaultValue={content?.body}
+                                    placeholder="Body"
+                                />
+
+                                <InputError message={errors.body} />
+                            </div>
+
+                            <div className="mt-2 text-end">
+                                <Button
+                                    type="submit"
+                                    tabIndex={3}
                                 >
                                     {processing && <Spinner />}
                                     Submit

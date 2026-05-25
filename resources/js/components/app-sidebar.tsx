@@ -10,7 +10,6 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { dashboard, studying } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
 import { 
@@ -19,12 +18,14 @@ import {
     GraduationCap, 
     Layers, 
     LayoutGrid, 
+    ReceiptText, 
     School, 
     TableRowsSplit, 
     User, 
     Wallet 
 } from 'lucide-react';
 import AppLogo from './app-logo';
+import { dashboard, studying } from '@/routes';
 import { index as courses } from '@/routes/admin/course';
 import { index as users} from '@/routes/admin/user';
 import { index as students} from '@/routes/admin/student';
@@ -33,6 +34,7 @@ import { index as teachers} from '@/routes/admin/teacher';
 import { index as plans} from '@/routes/admin/plan';
 import { index as sections} from '@/routes/admin/section';
 import { index as lessons} from '@/routes/admin/lesson';
+import { index as contents} from '@/routes/admin/content';
 
 const mainNavItems: NavItem[] = [
     {
@@ -87,6 +89,11 @@ const adminNavItems: NavItem[] = [
         title: 'Lessons',
         href: lessons(),
         icon: BookOpen,
+    },
+    {
+        title: 'Contents',
+        href: contents(),
+        icon: ReceiptText,
     },
 ];
 

@@ -11,7 +11,7 @@ class StoreContentRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,8 @@ class StoreContentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'lesson_id' => 'required|integer|exists:lessons,id',
+            'body' => 'required|string|min:4|max:4096',
         ];
     }
 }
