@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StorePlanRequest;
 use App\Http\Requests\Admin\UpdatePlanRequest;
+use App\Models\Course;
 use App\Models\Plan;
 
 class PlanController extends Controller
@@ -14,7 +15,9 @@ class PlanController extends Controller
      */
     public function index()
     {
-        //
+        return inertia('admin/plan/index', [
+            'plans' => Plan::with(['course.teacher.user'])->withCount(['orders', 'students'])->get(),
+        ]);
     }
 
     /**
@@ -22,7 +25,9 @@ class PlanController extends Controller
      */
     public function create()
     {
-        //
+        return inertia('admin/plan/create', [
+            'courses' => Course::with(['teacher.user'])->get(),
+        ]);
     }
 
     /**
@@ -30,7 +35,7 @@ class PlanController extends Controller
      */
     public function store(StorePlanRequest $request)
     {
-        //
+        Plan::create($request->validated());
     }
 
     /**
@@ -38,7 +43,13 @@ class PlanController extends Controller
      */
     public function show(Plan $plan)
     {
-        //
+        return inertia('admin/plan/show', [
+            'plan' => $plan->load([
+                'course.teacher.user', 
+                'orders' => fn($query) => $query->take(5)->with(['wallet.user'])->withCount(['transactions'])->withSum('plans as amount', 'price'), 
+                'students' => fn($query) => $query->take(5)->with(['user']),
+            ])->loadCount(['orders', 'students']),
+        ]);
     }
 
     /**
@@ -46,7 +57,10 @@ class PlanController extends Controller
      */
     public function edit(Plan $plan)
     {
-        //
+        return inertia('admin/plan/edit', [
+            'courses' => Course::with(['teacher.user'])->get(),
+            'plan' => $plan->load(['course.teacher.user']),
+        ]);
     }
 
     /**
@@ -54,7 +68,7 @@ class PlanController extends Controller
      */
     public function update(UpdatePlanRequest $request, Plan $plan)
     {
-        //
+        $plan->update($request->validated());
     }
 
     /**
@@ -62,6 +76,6 @@ class PlanController extends Controller
      */
     public function destroy(Plan $plan)
     {
-        //
+        $plan->delete();
     }
 }

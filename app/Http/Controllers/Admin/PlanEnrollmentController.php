@@ -12,6 +12,10 @@ class PlanEnrollmentController extends Controller
      */
     public function index(Plan $plan)
     {
-        //
+        return inertia('admin/plan/enrollment/index', [
+            'plan' => $plan->load([
+                'students.user',
+            ]),
+        ]);
     }
 }

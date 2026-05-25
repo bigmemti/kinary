@@ -13,13 +13,14 @@ import {
 import { dashboard, studying } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { Book, GraduationCap, LayoutGrid, School, User, Wallet } from 'lucide-react';
+import { Book, GraduationCap, Layers, LayoutGrid, School, User, Wallet } from 'lucide-react';
 import AppLogo from './app-logo';
-import { index as course } from '@/routes/admin/course';
+import { index as courses } from '@/routes/admin/course';
 import { index as users} from '@/routes/admin/user';
 import { index as students} from '@/routes/admin/student';
 import { index as wallets} from '@/routes/admin/wallet';
 import { index as teachers} from '@/routes/admin/teacher';
+import { index as plans} from '@/routes/admin/plan';
 
 const mainNavItems: NavItem[] = [
     {
@@ -56,9 +57,14 @@ const adminNavItems: NavItem[] = [
         icon: Wallet,
     },
     {
-        title: 'Course',
-        href: course(),
+        title: 'Courses',
+        href: courses(),
         icon: Book,
+    },
+    {
+        title: 'Plan',
+        href: plans(),
+        icon: Layers,
     },
 ];
 

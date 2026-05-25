@@ -25,7 +25,11 @@ class Plan extends Model
     }
 
     public function students(){
-        return $this->belongsToMany(Student::class, Enrollment::class);
+        return $this->belongsToMany(Student::class, Enrollment::class)->withPivot(['id'])->withTimestamps();
+    }
+
+    public function enrollments(){
+        return $this->hasMany(Enrollment::class);
     }
 
     public function orders(){

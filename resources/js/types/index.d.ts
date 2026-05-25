@@ -75,7 +75,8 @@ export interface Student{
     user_id: number;
     user?: User;
     enrollments_count?: number;
-    enrollments?: Enrollment[];  
+    enrollments?: Enrollment[];
+    pivot?: any;  
     created_at: DateTime;
     updated_at: DateTime;
 }
@@ -125,7 +126,9 @@ export interface Plan{
     course?: Course;
     name: string;
     price: number;
+    orders?: Order[];
     orders_count?: number;
+    students?: Student[];
     students_count?: number;
     created_at: DateTime;
     updated_at: DateTime;

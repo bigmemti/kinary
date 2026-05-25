@@ -12,6 +12,10 @@ class PlanOrderController extends Controller
      */
     public function index(Plan $plan)
     {
-        //
+        return inertia('admin/plan/order/index', [
+            'plan' => $plan->load([
+                'orders' => fn($query) => $query->with(['wallet.user'])->withCount(['transactions', 'plans'])->withSum('plans as amount', 'price'), 
+            ]),
+        ]);
     }
 }

@@ -8,6 +8,7 @@ import student_links from "@/routes/admin/student";
 import wallet_links from "@/routes/admin/wallet";
 import teacher_links from "@/routes/admin/teacher";
 import course_links from "@/routes/admin/course";
+import plan_links from "@/routes/admin/plan";
 import { Course, Plan, Student, Teacher, User, Wallet } from "@/types";
 import { Form, router } from "@inertiajs/react";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "./ui/select";
@@ -218,6 +219,86 @@ export function CourseForm({ type, teachers, course }: { type: "create" | "edit"
                                 <Button
                                     type="submit"
                                     tabIndex={7}
+                                >
+                                    {processing && <Spinner />}
+                                    Submit
+                                </Button>
+                            </div>
+                        </>
+                    )}
+        </Form>
+    );
+}
+
+export function PlanForm({ type, courses, plan }: { type: "create" | "edit", courses: Course[], plan?: Plan }){
+    const form = (type === 'create')? plan_links.store.form(): plan_links.update.form(plan?? 0);
+    
+    return(
+        <Form
+            {...form}
+            disableWhileProcessing
+            onSuccess={() => router.visit(plan_links.index().url)}
+            className="flex flex-col mt-4 gap-4"
+        >
+            {({ processing, errors }) => (
+                        <>
+                            <div className="grid gap-2">
+                                <Label htmlFor="course">Teacher</Label>
+                                <Combobox items={courses} name="course_id" defaultValue={plan?.course_id}>
+                                    <ComboboxInput placeholder="Select a course" />
+                                    <ComboboxContent>
+                                        <ComboboxEmpty>No items found.</ComboboxEmpty>
+                                        <ComboboxList>
+                                            {(item) => (
+                                            <ComboboxItem key={item.id} value={item.id}>
+                                                {item.id}.{item.title} - {item.teacher?.user?.name}
+                                            </ComboboxItem>
+                                            )}
+                                        </ComboboxList>
+                                    </ComboboxContent>
+                                </Combobox>
+                                <InputError
+                                    message={errors.course_id}
+                                    className="mt-2"
+                                />
+                            </div>
+
+                            <div className="grid gap-2">
+                                <Label htmlFor="name">Name</Label>
+
+                                <Input
+                                    id="name"
+                                    type="text"
+                                    tabIndex={1}
+                                    autoFocus
+                                    name="name"
+                                    defaultValue={plan?.name}
+                                    placeholder="Name"
+                                />
+
+                                <InputError message={errors.name} />
+                            </div>
+
+                            <div className="grid gap-2">
+                                <Label htmlFor="price">Price</Label>
+
+                                <Input
+                                    id="price"
+                                    type="number"
+                                    step={1000}
+                                    name="price"
+                                    tabIndex={2}
+                                    defaultValue={plan?.price}
+                                    placeholder="Price"
+                                />
+
+                                <InputError message={errors.price} />
+                            </div>
+
+                            <div className="mt-2 text-end">
+                                <Button
+                                    type="submit"
+                                    tabIndex={3}
                                 >
                                     {processing && <Spinner />}
                                     Submit
