@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreLessonRequest;
 use App\Http\Requests\Admin\UpdateLessonRequest;
 use App\Models\Lesson;
+use App\Models\Section;
 
 class LessonController extends Controller
 {
@@ -14,7 +15,9 @@ class LessonController extends Controller
      */
     public function index()
     {
-        //
+        return inertia('admin/lesson/index', [
+            'lessons' => Lesson::withCount(['contents'])->with(['section.course.teacher.user'])->get(),
+        ]);
     }
 
     /**
@@ -22,7 +25,9 @@ class LessonController extends Controller
      */
     public function create()
     {
-        //
+        return inertia('admin/lesson/create', [
+            'sections' => Section::with(['course.teacher.user'])->get(),
+        ]);
     }
 
     /**
@@ -30,7 +35,7 @@ class LessonController extends Controller
      */
     public function store(StoreLessonRequest $request)
     {
-        //
+        Lesson::create($request->validated());
     }
 
     /**
@@ -38,7 +43,9 @@ class LessonController extends Controller
      */
     public function show(Lesson $lesson)
     {
-        //
+        return inertia('admin/lesson/show', [
+            'lesson' => $lesson->load(['section.course.teacher.user', 'contents'])->loadCount(['contents']),
+        ]);
     }
 
     /**
@@ -46,7 +53,10 @@ class LessonController extends Controller
      */
     public function edit(Lesson $lesson)
     {
-        //
+        return inertia('admin/lesson/edit', [
+            'sections' => Section::with(['course.teacher.user'])->get(),
+            'lesson' => $lesson,
+        ]);
     }
 
     /**
@@ -54,7 +64,7 @@ class LessonController extends Controller
      */
     public function update(UpdateLessonRequest $request, Lesson $lesson)
     {
-        //
+        $lesson->update($request->validated());
     }
 
     /**
@@ -62,6 +72,6 @@ class LessonController extends Controller
      */
     public function destroy(Lesson $lesson)
     {
-        //
+        $lesson->delete();
     }
 }

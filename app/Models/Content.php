@@ -16,6 +16,7 @@ class Content extends Model
      */
     protected $fillable = [
         'lesson_id',
+        'body',
     ];
 
     public function lesson(){

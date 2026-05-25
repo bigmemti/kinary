@@ -10,7 +10,8 @@ import teacher_links from "@/routes/admin/teacher";
 import course_links from "@/routes/admin/course";
 import plan_links from "@/routes/admin/plan";
 import section_links from "@/routes/admin/section";
-import { Course, Plan, Section, Student, Teacher, User, Wallet } from "@/types";
+import lesson_links from "@/routes/admin/lesson";
+import { Course, Lesson, Plan, Section, Student, Teacher, User, Wallet } from "@/types";
 import { Form, router } from "@inertiajs/react";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "./ui/select";
 import { Combobox, ComboboxContent, ComboboxEmpty, ComboboxInput, ComboboxItem, ComboboxList } from "./ui/combobox";
@@ -231,6 +232,70 @@ export function CourseForm({ type, teachers, course }: { type: "create" | "edit"
     );
 }
 
+export function LessonForm({ type, sections, lesson }: { type: "create" | "edit", sections: Section[], lesson?: Lesson }){
+    const form = (type === 'create')? lesson_links.store.form(): lesson_links.update.form(lesson?? 0);
+    
+    return(
+        <Form
+            {...form}
+            disableWhileProcessing
+            onSuccess={() => router.visit(lesson_links.index().url)}
+            className="flex flex-col mt-4 gap-4"
+        >
+            {({ processing, errors }) => (
+                        <>
+                            <div className="grid gap-2">
+                                <Label htmlFor="section">Teacher</Label>
+                                <Combobox items={sections} name="section_id" defaultValue={lesson?.section_id}>
+                                    <ComboboxInput placeholder="Select a section" />
+                                    <ComboboxContent>
+                                        <ComboboxEmpty>No items found.</ComboboxEmpty>
+                                        <ComboboxList>
+                                            {(item) => (
+                                            <ComboboxItem key={item.id} value={item.id}>
+                                                {item.id}.{item.name} - {item.course?.title} - {item.course?.teacher?.user?.name}
+                                            </ComboboxItem>
+                                            )}
+                                        </ComboboxList>
+                                    </ComboboxContent>
+                                </Combobox>
+                                <InputError
+                                    message={errors.section_id}
+                                    className="mt-2"
+                                />
+                            </div>
+
+                            <div className="grid gap-2">
+                                <Label htmlFor="name">Name</Label>
+
+                                <Input
+                                    id="name"
+                                    type="text"
+                                    tabIndex={1}
+                                    autoFocus
+                                    name="name"
+                                    defaultValue={lesson?.name}
+                                    placeholder="Name"
+                                />
+
+                                <InputError message={errors.name} />
+                            </div>
+
+                            <div className="mt-2 text-end">
+                                <Button
+                                    type="submit"
+                                    tabIndex={3}
+                                >
+                                    {processing && <Spinner />}
+                                    Submit
+                                </Button>
+                            </div>
+                        </>
+                    )}
+        </Form>
+    );
+}
+
 export function SectionForm({ type, courses, section }: { type: "create" | "edit", courses: Course[], section?: Section }){
     const form = (type === 'create')? section_links.store.form(): section_links.update.form(section?? 0);
     
@@ -403,6 +468,44 @@ export function SectionLessonForm({ section }: { section: Section}){
                                 <Button
                                     type="submit"
                                     tabIndex={7}
+                                >
+                                    {processing && <Spinner />}
+                                    Submit
+                                </Button>
+                            </div>
+                        </>
+                    )}
+        </Form>
+    );
+}
+
+export function LessonContentForm({ lesson }: { lesson: Lesson}){ 
+    return(
+        <Form
+            {...lesson_links.content.store.form(lesson)}
+            disableWhileProcessing
+            onSuccess={() => router.visit(lesson_links.content.index(lesson).url) }
+            className="flex flex-col mt-4 gap-4"
+        >
+            {({ processing, errors }) => (
+                        <>
+                            <div className="grid gap-2">
+                                <Label htmlFor="name">Body</Label>
+
+                                <Textarea
+                                    id="body"
+                                    name="body"
+                                    tabIndex={1}
+                                    placeholder="Body"
+                                />
+
+                                <InputError message={errors.body} />
+                            </div>
+                        
+                            <div className="mt-2 text-end">
+                                <Button
+                                    type="submit"
+                                    tabIndex={2}
                                 >
                                     {processing && <Spinner />}
                                     Submit

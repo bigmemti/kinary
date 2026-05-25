@@ -15,6 +15,7 @@ import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
 import { 
     Book, 
+    BookOpen, 
     GraduationCap, 
     Layers, 
     LayoutGrid, 
@@ -31,6 +32,7 @@ import { index as wallets} from '@/routes/admin/wallet';
 import { index as teachers} from '@/routes/admin/teacher';
 import { index as plans} from '@/routes/admin/plan';
 import { index as sections} from '@/routes/admin/section';
+import { index as lessons} from '@/routes/admin/lesson';
 
 const mainNavItems: NavItem[] = [
     {
@@ -80,6 +82,11 @@ const adminNavItems: NavItem[] = [
         title: 'Sections',
         href: sections(),
         icon: TableRowsSplit,
+    },
+    {
+        title: 'Lessons',
+        href: lessons(),
+        icon: BookOpen,
     },
 ];
 

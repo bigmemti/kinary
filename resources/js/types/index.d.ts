@@ -147,11 +147,20 @@ export interface Section{
 
 export interface Lesson{
     id: number;
-    course_id: number;
+    section_id: number;
     section?: Section;
     name: string;
     contents?: Content[];
     contents_count?: number;
+    created_at: DateTime;
+    updated_at: DateTime;
+}
+
+export interface Content{
+    id: number;
+    lesson_id: number;
+    lesson?: Lesson;
+    body: string;
     created_at: DateTime;
     updated_at: DateTime;
 }

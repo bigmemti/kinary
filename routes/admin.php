@@ -1,6 +1,5 @@
 <?php
 
-
 use App\Http\Controllers\Admin\ContentController;
 use App\Http\Controllers\Admin\CourseController;
 use App\Http\Controllers\Admin\CoursePlanController;
@@ -26,9 +25,7 @@ use App\Http\Controllers\Admin\WalletController;
 use App\Http\Controllers\Admin\WalletOrderController;
 use Illuminate\Support\Facades\Route;
 
-
 Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(function () {
-    
     Route::resource('user', UserController::class);
 
     Route::resource('student', StudentController::class);

@@ -13,7 +13,9 @@ class LessonContentController extends Controller
      */
     public function index(Lesson $lesson)
     {
-        //
+        return inertia('admin/lesson/content/index', [
+            'lesson' => $lesson->load(['contents']),
+        ]);
     }
 
     /**
@@ -21,7 +23,9 @@ class LessonContentController extends Controller
      */
     public function create(Lesson $lesson)
     {
-        //
+        return inertia('admin/lesson/content/create', [
+            'lesson' => $lesson
+        ]);
     }
 
     /**
@@ -29,6 +33,6 @@ class LessonContentController extends Controller
      */
     public function store(StoreLessonContentRequest $request, Lesson $lesson)
     {
-        //
+        $lesson->contents()->create($request->validated());
     }
 }
