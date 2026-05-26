@@ -12,7 +12,8 @@ import plan_links from "@/routes/admin/plan";
 import section_links from "@/routes/admin/section";
 import lesson_links from "@/routes/admin/lesson";
 import content_links from "@/routes/admin/content";
-import { Content, Course, Lesson, Plan, Section, Student, Teacher, User, Wallet } from "@/types";
+import enrollment_links from "@/routes/admin/enrollment";
+import { Content, Course, Enrollment, Lesson, Plan, Section, Student, Teacher, User, Wallet } from "@/types";
 import { Form, router } from "@inertiajs/react";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "./ui/select";
 import { Combobox, ComboboxContent, ComboboxEmpty, ComboboxInput, ComboboxItem, ComboboxList } from "./ui/combobox";
@@ -821,6 +822,77 @@ export function StudentEnrollmentForm({ student, plans }: { student: Student, pl
                         <div className="grid gap-2">
                             <Label htmlFor="plan_id">Plan</Label>
                             <Combobox items={plans} name="plan_id">
+                                <ComboboxInput placeholder="Select a plan" />
+                                <ComboboxContent>
+                                <ComboboxEmpty>No items found.</ComboboxEmpty>
+                                <ComboboxList>
+                                    {(item) => (
+                                    <ComboboxItem key={item.id} value={item.id}>
+                                        {item.id}.{item.course?.title} - {item.name} - {item.course?.teacher?.user?.name}
+                                    </ComboboxItem>
+                                    )}
+                                </ComboboxList>
+                                </ComboboxContent>
+                            </Combobox>
+                            <InputError
+                                message={errors.plan_id}
+                                className="mt-2"
+                            />
+                        </div>
+
+                        <div className="mt-2 text-end">
+                            <Button
+                                type="submit"
+                                tabIndex={2}
+                            >
+                                {processing && <Spinner />}
+                                Submit
+                            </Button>
+                        </div>
+                    </div>
+                </>
+            )}
+        </Form>
+    );
+}
+
+export function EnrollmentForm({ type, students, plans, enrollment }: { type: "create" | "edit", students: Student[], plans: Plan[], enrollment?: Enrollment }){
+    const form = (type === 'create')? enrollment_links.store.form(): enrollment_links.update.form(enrollment?? 0);
+    
+    return(
+        <Form
+            {...form}
+            disableWhileProcessing
+            onSuccess={() => router.visit(enrollment_links.index().url)}
+            className="flex flex-col mt-4"
+        >
+            {({ processing, errors }) => (
+                <>
+                    <div className="grid gap-6">
+                        <div className="grid gap-2">
+                            <Label htmlFor="student_id">Student</Label>
+                            <Combobox items={students} name="student_id" defaultValue={enrollment?.student_id}>
+                                <ComboboxInput placeholder="Select a student" />
+                                <ComboboxContent>
+                                <ComboboxEmpty>No items found.</ComboboxEmpty>
+                                <ComboboxList>
+                                    {(item) => (
+                                    <ComboboxItem key={item.id} value={item.id}>
+                                        {item.id}.{item.user?.name}
+                                    </ComboboxItem>
+                                    )}
+                                </ComboboxList>
+                                </ComboboxContent>
+                            </Combobox>
+                            <InputError
+                                message={errors.student_id}
+                                className="mt-2"
+                            />
+                        </div>
+                        
+                        <div className="grid gap-2">
+                            <Label htmlFor="plan_id">Plan</Label>
+                            <Combobox items={plans} name="plan_id" defaultValue={enrollment?.plan_id}>
                                 <ComboboxInput placeholder="Select a plan" />
                                 <ComboboxContent>
                                 <ComboboxEmpty>No items found.</ComboboxEmpty>

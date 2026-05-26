@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreEnrollmentRequest;
 use App\Http\Requests\Admin\UpdateEnrollmentRequest;
 use App\Models\Enrollment;
+use App\Models\Plan;
+use App\Models\Student;
 
 class EnrollmentController extends Controller
 {
@@ -14,7 +16,9 @@ class EnrollmentController extends Controller
      */
     public function index()
     {
-        //
+        return inertia('admin/enrollment/index', [
+            'enrollments' => Enrollment::with(['plan.course.teacher.user', 'student.user'])->latest()->get(),
+        ]);
     }
 
     /**
@@ -22,7 +26,10 @@ class EnrollmentController extends Controller
      */
     public function create()
     {
-        //
+        return inertia('admin/enrollment/create', [
+            'plans' => Plan::with(['course.teacher.user'])->get(),
+            'students' => Student::with(['user'])->get(),
+        ]);
     }
 
     /**
@@ -30,7 +37,7 @@ class EnrollmentController extends Controller
      */
     public function store(StoreEnrollmentRequest $request)
     {
-        //
+        Enrollment::create($request->validated());
     }
 
     /**
@@ -38,7 +45,9 @@ class EnrollmentController extends Controller
      */
     public function show(Enrollment $enrollment)
     {
-        //
+        return inertia('admin/enrollment/show', [
+            'enrollment' => $enrollment->load(['plan.course.teacher.user', 'student.user']),
+        ]);
     }
 
     /**
@@ -46,7 +55,11 @@ class EnrollmentController extends Controller
      */
     public function edit(Enrollment $enrollment)
     {
-        //
+        return inertia('admin/enrollment/edit', [
+            'plans' => Plan::with(['course.teacher.user'])->get(),
+            'students' => Student::with(['user'])->get(),
+            'enrollment' => $enrollment,
+        ]);
     }
 
     /**
@@ -54,7 +67,7 @@ class EnrollmentController extends Controller
      */
     public function update(UpdateEnrollmentRequest $request, Enrollment $enrollment)
     {
-        //
+        $enrollment->update($request->validated());
     }
 
     /**
@@ -62,6 +75,6 @@ class EnrollmentController extends Controller
      */
     public function destroy(Enrollment $enrollment)
     {
-        //
+        $enrollment->delete();
     }
 }

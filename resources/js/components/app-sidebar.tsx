@@ -18,6 +18,7 @@ import {
     GraduationCap, 
     Layers, 
     LayoutGrid, 
+    LinkIcon, 
     ReceiptText, 
     School, 
     TableRowsSplit, 
@@ -35,6 +36,7 @@ import { index as plans} from '@/routes/admin/plan';
 import { index as sections} from '@/routes/admin/section';
 import { index as lessons} from '@/routes/admin/lesson';
 import { index as contents} from '@/routes/admin/content';
+import { index as enrollments} from '@/routes/admin/enrollment';
 
 const mainNavItems: NavItem[] = [
     {
@@ -94,6 +96,11 @@ const adminNavItems: NavItem[] = [
         title: 'Contents',
         href: contents(),
         icon: ReceiptText,
+    },
+    {
+        title: 'Enrollments',
+        href: enrollments(),
+        icon: LinkIcon,
     },
 ];
 
