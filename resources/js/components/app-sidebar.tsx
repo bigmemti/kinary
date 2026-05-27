@@ -13,6 +13,7 @@ import {
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
 import { 
+    ArrowDownUp,
     Book, 
     BookOpen, 
     GraduationCap, 
@@ -113,7 +114,7 @@ const adminNavItems: NavItem[] = [
     {
         title: 'Transactions',
         href: transactions(),
-        icon: ShoppingCart,
+        icon: ArrowDownUp,
     },
 ];
 
