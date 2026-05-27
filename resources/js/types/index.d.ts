@@ -164,3 +164,16 @@ export interface Content{
     created_at: DateTime;
     updated_at: DateTime;
 }
+
+export interface Transaction{
+    id: number;
+    order_id: number;
+    order?: Order;
+    amount: number;
+    gateway: string;
+    authority: string;
+    status: string;
+    paid_at: DateTime;
+    created_at: DateTime;
+    updated_at: DateTime;
+}

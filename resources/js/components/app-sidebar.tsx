@@ -21,6 +21,7 @@ import {
     LinkIcon, 
     ReceiptText, 
     School, 
+    ShoppingCart, 
     TableRowsSplit, 
     User, 
     Wallet 
@@ -37,6 +38,8 @@ import { index as sections} from '@/routes/admin/section';
 import { index as lessons} from '@/routes/admin/lesson';
 import { index as contents} from '@/routes/admin/content';
 import { index as enrollments} from '@/routes/admin/enrollment';
+import { index as orders} from '@/routes/admin/order';
+import { index as transactions} from '@/routes/admin/transaction';
 
 const mainNavItems: NavItem[] = [
     {
@@ -101,6 +104,16 @@ const adminNavItems: NavItem[] = [
         title: 'Enrollments',
         href: enrollments(),
         icon: LinkIcon,
+    },
+    {
+        title: 'Orders',
+        href: orders(),
+        icon: ShoppingCart,
+    },
+    {
+        title: 'Transactions',
+        href: transactions(),
+        icon: ShoppingCart,
     },
 ];
 

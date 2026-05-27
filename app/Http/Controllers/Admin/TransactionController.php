@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreTransactionRequest;
 use App\Http\Requests\Admin\UpdateTransactionRequest;
+use App\Models\Order;
 use App\Models\Transaction;
 
 class TransactionController extends Controller
@@ -14,7 +15,9 @@ class TransactionController extends Controller
      */
     public function index()
     {
-        //
+        return inertia('admin/transaction/index', [
+            'transactions' => Transaction::with(['order' => fn($query) => $query->with(['wallet.user'])->withSum('plans as amount', 'price')])->get(),
+        ]);
     }
 
     /**
@@ -22,7 +25,9 @@ class TransactionController extends Controller
      */
     public function create()
     {
-        //
+        return inertia('admin/transaction/create', [
+            'orders' => Order::withSum('plans as amount', 'price')->with('wallet.user')->get(),
+        ]);
     }
 
     /**
@@ -30,7 +35,7 @@ class TransactionController extends Controller
      */
     public function store(StoreTransactionRequest $request)
     {
-        //
+        Transaction::create([...$request->validated(), 'authority' => 'jlaskdjf']);
     }
 
     /**
@@ -38,7 +43,9 @@ class TransactionController extends Controller
      */
     public function show(Transaction $transaction)
     {
-        //
+        return inertia('admin/transaction/show', [
+            'transaction' => $transaction->load(['order' => fn($query) => $query->with(['wallet.user'])->withSum('plans as amount', 'price')])
+        ]);
     }
 
     /**
@@ -46,7 +53,10 @@ class TransactionController extends Controller
      */
     public function edit(Transaction $transaction)
     {
-        //
+        return inertia('admin/transaction/edit', [
+            'orders' => Order::withSum('plans as amount', 'price')->with('wallet.user')->get(),
+            'transaction' => $transaction,
+        ]);
     }
 
     /**
@@ -54,7 +64,7 @@ class TransactionController extends Controller
      */
     public function update(UpdateTransactionRequest $request, Transaction $transaction)
     {
-        //
+        $transaction->update($request->validated());
     }
 
     /**
@@ -62,6 +72,6 @@ class TransactionController extends Controller
      */
     public function destroy(Transaction $transaction)
     {
-        //
+        $transaction->delete();
     }
 }

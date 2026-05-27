@@ -11,7 +11,7 @@ class StoreOrderRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,10 @@ class StoreOrderRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'wallet_id' => 'required|integer|exists:wallets,id',
+            'plans' => 'nullable|array',
+            'plans.*' => 'required|integer|exists:plans,id',
+            'status' => 'string|required',
         ];
     }
 }

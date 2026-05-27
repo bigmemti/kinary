@@ -13,7 +13,9 @@ class OrderTransactionController extends Controller
      */
     public function index(Order $order)
     {
-        //
+        return inertia('admin/order/transaction/index', [
+            'order' => $order->load(['transactions']),
+        ]);
     }
 
     /**
@@ -21,7 +23,9 @@ class OrderTransactionController extends Controller
      */
     public function create(Order $order)
     {
-        //
+        return inertia('admin/order/transaction/create', [
+            'order' => $order->loadSum('plans as amount', 'price'),
+        ]);
     }
 
     /**
@@ -29,6 +33,6 @@ class OrderTransactionController extends Controller
      */
     public function store(StoreOrderTransactionRequest $request, Order $order)
     {
-        //
+        $order->transactions()->create([...$request->validated(), 'authority' => 'jlaskdjf']);
     }
 }

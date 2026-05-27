@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Admin;
 
+use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreTransactionRequest extends FormRequest
@@ -11,7 +12,16 @@ class StoreTransactionRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
+    }
+
+    protected function prepareForValidation()
+    {
+        if ($this->has('paid_at') && $this->paid_at) {
+            $formattedDate = Carbon::parse($this->paid_at)->toDateTimeString();
+                
+            $this->merge(['paid_at' => $formattedDate]);
+        }
     }
 
     /**
@@ -22,7 +32,11 @@ class StoreTransactionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'order_id' => 'integer|required|exists:orders,id',
+            'amount' => 'required|integer',
+            'gateway' => 'string|required|in:zarinpal',
+            'status' => 'string|required|in:paid,pending,failed',
+            'paid_at' => 'required|date',
         ];
     }
 }

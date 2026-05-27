@@ -12,6 +12,8 @@ class OrderPlanController extends Controller
      */
     public function index(Order $order)
     {
-        //
+        return inertia('admin/order/plan/index', [
+            'order' => $order->load(['plans' => fn($query) => $query->with(['course.teacher.user'])->withCount(['orders', 'students'])]),
+        ]);
     }
 }

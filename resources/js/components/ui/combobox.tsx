@@ -218,7 +218,7 @@ function ComboboxChips({
   return (
     <ComboboxPrimitive.Chips
       data-slot="combobox-chips"
-      className={cn("cn-combobox-chips", className)}
+      className={cn("cn-combobox-chips border rounded-xl flex items-center px-2 py-1", className)}
       {...props}
     />
   )
@@ -236,12 +236,14 @@ function ComboboxChip({
     <ComboboxPrimitive.Chip
       data-slot="combobox-chip"
       className={cn(
-        "cn-combobox-chip has-disabled:pointer-events-none has-disabled:cursor-not-allowed has-disabled:opacity-50",
+        "cn-combobox-chip has-disabled:pointer-events-none has-disabled:cursor-not-allowed has-disabled:opacity-50 border rounded-full px-2 flex items-center  justify-center mx-1",
         className
       )}
       {...props}
     >
-      {children}
+      <span className="mx-2">
+        {children}
+      </span>
       {showRemove && (
         <ComboboxPrimitive.ChipRemove
           render={<Button variant="ghost" size="icon" />}

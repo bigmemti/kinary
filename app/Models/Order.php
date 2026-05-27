@@ -15,6 +15,7 @@ class Order extends Model
      * @var list<string>
      */
     protected $fillable = [
+        'wallet_id',
         'status',
     ];
     

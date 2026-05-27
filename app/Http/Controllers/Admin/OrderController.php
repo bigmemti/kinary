@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreOrderRequest;
 use App\Http\Requests\Admin\UpdateOrderRequest;
 use App\Models\Order;
+use App\Models\Plan;
+use App\Models\Wallet;
 
 class OrderController extends Controller
 {
@@ -14,7 +16,9 @@ class OrderController extends Controller
      */
     public function index()
     {
-        //
+        return inertia('admin/order/index', [
+            'orders' => Order::with(['wallet.user'])->withCount(['plans', 'transactions'])->withSum('plans as amount', 'price')->latest()->get(),
+        ]);
     }
 
     /**
@@ -22,7 +26,10 @@ class OrderController extends Controller
      */
     public function create()
     {
-        //
+        return inertia('admin/order/create', [
+            'wallets' => Wallet::with(['user'])->get(),
+            'plans' => Plan::with(['course.teacher.user'])->get(), 
+        ]);
     }
 
     /**
@@ -30,7 +37,10 @@ class OrderController extends Controller
      */
     public function store(StoreOrderRequest $request)
     {
-        //
+        $order = Order::create($request->validated());
+
+        if($request->has('plans'))
+            $order->plans()->sync($request->plans);
     }
 
     /**
@@ -38,7 +48,9 @@ class OrderController extends Controller
      */
     public function show(Order $order)
     {
-        //
+        return inertia('admin/order/show', [
+            'order' => $order->load(['wallet.user', 'plans.course.teacher.user', 'transactions'])->loadCount(['plans', 'transactions'])->loadSum('plans as amount', 'price'),
+        ]);
     }
 
     /**
@@ -46,7 +58,12 @@ class OrderController extends Controller
      */
     public function edit(Order $order)
     {
-        //
+        return inertia('admin/order/edit', [
+            'wallets' => Wallet::with(['user'])->get(),
+            'plans' => Plan::with(['course.teacher.user'])->get(), 
+            'order' => $order->load(['plans' => fn($query) => $query->pluck('id')]),
+        ]);
+
     }
 
     /**
@@ -54,7 +71,8 @@ class OrderController extends Controller
      */
     public function update(UpdateOrderRequest $request, Order $order)
     {
-        //
+        $order->update($request->validated());
+        $order->plans()->syncWithPivotValues($request->plans, [ 'updated_at' => now() ]);
     }
 
     /**
@@ -62,6 +80,7 @@ class OrderController extends Controller
      */
     public function destroy(Order $order)
     {
-        //
+        $order->plans()->detach();
+        $order->delete();
     }
 }
