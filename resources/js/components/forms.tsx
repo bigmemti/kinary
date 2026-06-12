@@ -5,7 +5,7 @@ import { Button } from "./ui/button";
 import { Pen, X } from "lucide-react";
 import InputError from "./input-error";
 import { Spinner } from "./ui/spinner";
-import React, { useState } from "react";
+import React, { PropsWithChildren, useState } from "react";
 import { Textarea } from "./ui/textarea";
 import plan_links from "@/routes/admin/plan";
 import order_links from "@/routes/admin/order";
@@ -1413,3 +1413,25 @@ export function UserSelect({ users, default_user }: { users: User[], default_use
     );
 }
 
+export function FormContainer({ children }: PropsWithChildren) {
+    return <div className="grid gap-6">{children}</div>;
+}
+
+
+export function FieldContainer({ children }: PropsWithChildren) {
+    return <div className="grid gap-2">{children}</div> ;
+}
+
+export function SubmitButton({ tabindex, processing }: { tabindex?: number, processing: boolean }) {
+    return(
+        <div className="mt-2 text-end">
+            <Button
+                type="submit"
+                tabIndex={tabindex}
+            >
+                {processing && <Spinner />}
+                Submit
+            </Button>
+        </div>
+    );
+}

@@ -177,3 +177,5 @@ export interface Transaction{
     created_at: DateTime;
     updated_at: DateTime;
 }
+
+type WithType<P = unknown> = P & { type: "create" | "edit" };

@@ -1,14 +1,12 @@
-import { User } from "@/types";
-import { PropsWithChildren } from "react";
+import { User, WithType } from "@/types";
 import user_links from "@/routes/admin/user";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Form, router } from "@inertiajs/react";
-import { Button } from "@/components/ui/button";
-import { Spinner } from "@/components/ui/spinner";
 import InputError from "@/components/input-error";
+import { FieldContainer, FormContainer, SubmitButton } from "@/components/forms";
 
-export default function UserForm({ type, user, visitOnSuccess = user_links.index().url }: { type: "create" | "edit", user?: User, visitOnSuccess?: string }){
+export default function UserForm({ type, user, visitOnSuccess = user_links.index().url }: WithType<{ user?: User, visitOnSuccess?: string }>){
     const form = (type === 'create')? user_links.store.form(): user_links.update.form(user?? 0);
 
     return(
@@ -29,15 +27,7 @@ export default function UserForm({ type, user, visitOnSuccess = user_links.index
     );
 }
 
-type FieldProps<P = unknown> = P & { required?: boolean, autoFocus?: boolean, tabIndex?: number, defaultValue?: string | number | readonly string[] | undefined, message: string | undefined };
-
-function FormContainer({ children }: PropsWithChildren) {
-    return <div className="grid gap-6">{children}</div>;
-}
-
-function FieldContainer({ children }: PropsWithChildren) {
-    return <div className="grid gap-2">{children}</div> ;
-}
+type FieldProps<P = unknown> = P & { required?: boolean, id?: string, placeholder?: string, autoFocus?: boolean, tabIndex?: number, defaultValue?: string | number | readonly string[] | undefined, message: string | undefined };
 
 function NameField({ required, autoFocus, tabIndex, defaultValue, message }: FieldProps){
     return(
@@ -76,19 +66,5 @@ function EmailField({ required, tabIndex, defaultValue, message }: FieldProps){
             />
             <InputError message={message} />
         </FieldContainer>
-    );
-}
-
-function SubmitButton({ tabindex, processing }: { tabindex?: number, processing: boolean }) {
-    return(
-        <div className="mt-2 text-end">
-            <Button
-                type="submit"
-                tabIndex={tabindex}
-            >
-                {processing && <Spinner />}
-                Submit
-            </Button>
-        </div>
     );
 }

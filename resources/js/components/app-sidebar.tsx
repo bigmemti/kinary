@@ -41,12 +41,18 @@ import { index as contents} from '@/routes/admin/content';
 import { index as enrollments} from '@/routes/admin/enrollment';
 import { index as orders} from '@/routes/admin/order';
 import { index as transactions} from '@/routes/admin/transaction';
+import { index as teaching_courses } from '@/routes/teacher/course';
 
 const mainNavItems: NavItem[] = [
     {
         title: 'Dashboard',
         href: dashboard(),
         icon: LayoutGrid,
+    },
+    {
+        title: 'Teaching Courses',
+        href: teaching_courses(),
+        icon: Book,
     },
     {
         title: 'Studying',
@@ -136,8 +142,8 @@ export function AppSidebar() {
             </SidebarHeader>
 
             <SidebarContent>
-                <NavMain label='Admin' items={adminNavItems} />
                 <NavMain items={mainNavItems} />
+                <NavMain label='Admin' items={adminNavItems} />
             </SidebarContent>
 
             <SidebarFooter>
