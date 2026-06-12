@@ -6,8 +6,8 @@ import ButtonLink from "@/components/button-link";
 import FormButton from "@/components/form-button";
 import { Eye, Layers, Pen, TableRowsSplit, Trash } from "lucide-react";
 import ResponsiveDataList from "@/components/responsive-data-list";
-import { index as plans } from "@/routes/admin/course/plan";
-import { index as sections } from "@/routes/admin/course/section";
+import { index as plans } from "@/routes/teacher/course/plan";
+import { index as sections } from "@/routes/teacher/course/section";
 import { create, destroy, edit, index, show } from "@/routes/teacher/course";
 import { ActionsHeader, CreateHeaderButton, DashboardContainer, DashboardHeader } from "@/components/dashboard";
 
