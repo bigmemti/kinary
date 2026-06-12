@@ -1,43 +1,25 @@
-import { DashboardContainer, DashboardHeader } from "@/components/dashboard";
-import { UserForm } from "@/components/forms";
-import AppLayout from "@/layouts/app-layout";
-import { dashboard } from "@/routes";
+import UserForm from "./form";
 import { edit, index, show } from "@/routes/admin/user";
-import { BreadcrumbItem, User } from "@/types";
-import { Head } from "@inertiajs/react";
+import { User } from "@/types";
+import EditLayout from "@/layouts/crud/edit";
+import { breadcrumbBuilder } from "@/util/breadcrumb";
 
 export default function Edit({ user }: { user: User}) {
-    const breadcrumbs: BreadcrumbItem[] = [
-        {
-            title: 'Dashboard',
-            href: dashboard().url
-        },
-        {
-            title: 'User',
-            href: index().url
-        },
-        {
-            title: user.name,
-            href: show(user).url
-        },
-        {
-            title: 'Edit',
-            href: edit(user).url
-        },
-    ];
-
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Edit User" />
-            <DashboardContainer>
-                <DashboardHeader header={`Edit ${user.name} info`} />
-                <EditUserForm user={user} />
-            </DashboardContainer>
-        </AppLayout>
+        <EditLayout
+            title="Edit User"
+            header={`Edit ${user.name} info`}
+            breadcrumbs={
+                breadcrumbBuilder()
+                .dashboard()
+                .push('User', index.url())
+                .push(user.name, show.url(user))
+                .push('Edit', edit.url(user))
+                .build()
+            }
+        >
+        <UserForm type="edit" user={user} />
+        </EditLayout>
     );
-}
-
-function EditUserForm({ user }: { user: User}) {
-    return <UserForm type="edit" user={user} />
 }
 

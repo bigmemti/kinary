@@ -1,7 +1,9 @@
 import { PropsWithChildren, ReactNode } from "react";
 import ButtonLink from "./button-link";
-import { Plus } from "lucide-react";
+import { Eye, LucideIcon, Pen, Plus, Trash } from "lucide-react";
 import { cn } from "@/lib/utils";
+import FormButton from "./form-button";
+import { RouteFormDefinition } from "@/wayfinder";
 
 export function DashboardContainer({ children }: PropsWithChildren){
     return(
@@ -30,9 +32,9 @@ export function DashboardHeader({ children, header, containerClassName }: PropsW
     );
 }
 
-export function ActionButtonContainer({ children }: PropsWithChildren) {
+export function ActionButtonContainer({ children, className }: PropsWithChildren<{ className?: string }>) {
     return(
-        <div className="space-x-3">
+        <div className={cn("space-x-3", className)}>
             {children}
         </div>
     );
@@ -53,4 +55,34 @@ export function DataContainer({ children }: PropsWithChildren) {
             {children}
         </div>
     )
+}
+
+export function ActionButton({ icon: Icon, link }: { icon: LucideIcon, link: string }){
+    return (
+        <ButtonLink href={link}>
+            <Icon />
+        </ButtonLink>
+    );
+}
+
+export function DeleteButton({ form }: { form: RouteFormDefinition<'post'> }){
+    return (
+        <FormButton className="inline" form={form} options={{ preserveScroll: true }}>
+            <Trash />
+        </FormButton>
+    );
+}
+
+export function EssentialActions({ isDeletable, deleteForm, editLink, showLink }: { isDeletable: boolean, deleteForm: RouteFormDefinition<'post'>, editLink: string, showLink: string }){
+    return(
+        <>
+            {isDeletable && <DeleteButton form={deleteForm} />}
+            <ActionButton icon={Pen} link={editLink} />
+            <ActionButton icon={Eye} link={showLink} />
+        </>
+    );
+}
+
+export function ActionsHeader() {
+    return (<div className="text-end inline xl:block">Actions</div>);
 }

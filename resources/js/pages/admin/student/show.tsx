@@ -3,12 +3,11 @@ import { Head } from "@inertiajs/react";
 import AppLayout from "@/layouts/app-layout";
 import ButtonLink from "@/components/button-link";
 import { destroy, edit, index, show } from "@/routes/admin/student";
-import { show as student } from "@/routes/admin/student";
 import { BreadcrumbItem, Enrollment, Student } from "@/types";
 import ResponsiveDataList from "@/components/responsive-data-list";
 import { index as enrollments } from "@/routes/admin/student/enrollment";
 import { ActionButtonContainer, DashboardContainer, DashboardHeader, DataContainer, InfoBlock } from "@/components/dashboard";
-import { File, Pen, Trash } from "lucide-react";
+import { Pen, Trash } from "lucide-react";
 import FormButton from "@/components/form-button";
 
 export default function Show({ student }: { student: Student}) {

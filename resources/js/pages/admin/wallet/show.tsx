@@ -3,7 +3,6 @@ import { Head } from "@inertiajs/react";
 import AppLayout from "@/layouts/app-layout";
 import ButtonLink from "@/components/button-link";
 import { destroy, edit, index, show } from "@/routes/admin/wallet";
-import { show as wallet } from "@/routes/admin/wallet";
 import { BreadcrumbItem, Order, Wallet } from "@/types";
 import ResponsiveDataList from "@/components/responsive-data-list";
 import { index as orders } from "@/routes/admin/wallet/order";

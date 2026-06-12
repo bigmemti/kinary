@@ -1,7 +1,7 @@
 import { dashboard } from "@/routes";
 import { Head } from "@inertiajs/react";
 import AppLayout from "@/layouts/app-layout";
-import { BreadcrumbItem, Plan, Student, User } from "@/types";
+import { BreadcrumbItem, Plan, Student } from "@/types";
 import { create, index as enrollments } from "@/routes/admin/student/enrollment";
 import { index, show as student_show } from "@/routes/admin/student";
 import { DashboardContainer, DashboardHeader } from "@/components/dashboard";

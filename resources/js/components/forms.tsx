@@ -7,7 +7,6 @@ import InputError from "./input-error";
 import { Spinner } from "./ui/spinner";
 import React, { useState } from "react";
 import { Textarea } from "./ui/textarea";
-import user_links from "@/routes/admin/user";
 import plan_links from "@/routes/admin/plan";
 import order_links from "@/routes/admin/order";
 import { Form, router } from "@inertiajs/react";
@@ -960,7 +959,7 @@ export function CourseForm({ type, teachers, course }: { type: "create" | "edit"
                                     <Button 
                                         variant={'ghost'} 
                                         type='button' 
-                                        onClick={(e) =>  setSlugTouched(v => !v)}
+                                        onClick={() =>  setSlugTouched(v => !v)}
                                     >
                                         {slugTouched 
                                             ? <X /> 
@@ -1098,7 +1097,7 @@ export function TeacherCourseForm({ teacher }: { teacher: Teacher}){
                                     <Button 
                                         variant={'ghost'} 
                                         type='button' 
-                                        onClick={(e) =>  setSlugTouched(v => !v)}
+                                        onClick={() =>  setSlugTouched(v => !v)}
                                     >
                                         {slugTouched 
                                             ? <X /> 
@@ -1384,66 +1383,6 @@ export function StudentForm({ type, student, users }: { type: "create" | "edit",
                             <Button
                                 type="submit"
                                 tabIndex={2}
-                            >
-                                {processing && <Spinner />}
-                                Submit
-                            </Button>
-                        </div>
-                    </div>
-                </>
-            )}
-        </Form>
-    );
-}
-
-export function UserForm({ type, user }: { type: "create" | "edit", user?: User }){
-    const form = (type === 'create')? user_links.store.form(): user_links.update.form(user?? 0);
-
-    return(
-        <Form
-            {...form}
-            disableWhileProcessing
-            className="flex flex-col mt-4"
-        >
-            {({ processing, errors }) => (
-                <>
-                    <div className="grid gap-6">
-                        <div className="grid gap-2">
-                            <Label htmlFor="name">Name</Label>
-                            <Input
-                                id="name"
-                                type="text"
-                                required
-                                autoFocus
-                                tabIndex={1}
-                                name="name"
-                                defaultValue={user?.name}
-                                placeholder="Full name"
-                            />
-                            <InputError
-                                message={errors.name}
-                                className="mt-2"
-                            />
-                        </div>
-
-                        <div className="grid gap-2">
-                            <Label htmlFor="email">Email address</Label>
-                            <Input
-                                id="email"
-                                type="email"
-                                required
-                                tabIndex={2}
-                                name="email"
-                                defaultValue={user?.email}
-                                placeholder="email@example.com"
-                            />
-                            <InputError message={errors.email} />
-                        </div>
-
-                        <div className="mt-2 text-end">
-                            <Button
-                                type="submit"
-                                tabIndex={3}
                             >
                                 {processing && <Spinner />}
                                 Submit

@@ -3,7 +3,6 @@ import { Head } from "@inertiajs/react";
 import AppLayout from "@/layouts/app-layout";
 import ButtonLink from "@/components/button-link";
 import { destroy, edit, index, show } from "@/routes/admin/lesson";
-import { show as lesson } from "@/routes/admin/lesson";
 import { BreadcrumbItem, Content, Lesson } from "@/types";
 import ResponsiveDataList from "@/components/responsive-data-list";
 import { index as contents } from "@/routes/admin/lesson/content";

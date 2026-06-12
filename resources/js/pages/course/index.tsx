@@ -179,7 +179,7 @@ function CourseCreateDialog(){
                                     <Button 
                                         variant={'ghost'} 
                                         type='button' 
-                                        onClick={(e) =>  setSlugTouched(v => !v)}
+                                        onClick={() =>  setSlugTouched(v => !v)}
                                     >
                                         {slugTouched 
                                             ? <X /> 
