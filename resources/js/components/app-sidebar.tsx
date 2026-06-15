@@ -1,34 +1,12 @@
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
-import {
-    Sidebar,
-    SidebarContent,
-    SidebarFooter,
-    SidebarHeader,
-    SidebarMenu,
-    SidebarMenuButton,
-    SidebarMenuItem,
-} from '@/components/ui/sidebar';
+import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { 
-    ArrowDownUp,
-    Book, 
-    BookOpen, 
-    GraduationCap, 
-    Layers, 
-    LayoutGrid, 
-    LinkIcon, 
-    ReceiptText, 
-    School, 
-    ShoppingCart, 
-    TableRowsSplit, 
-    User, 
-    Wallet 
-} from 'lucide-react';
+import {  ArrowDownUp, Book,  BookOpen,  GraduationCap,  Layers,  LayoutGrid,  LinkIcon,  ReceiptText,  School,  ShoppingCart,  TableRowsSplit,  User, Wallet } from 'lucide-react';
 import AppLogo from './app-logo';
-import { dashboard, studying } from '@/routes';
+import { dashboard } from '@/routes';
 import { index as courses } from '@/routes/admin/course';
 import { index as users} from '@/routes/admin/user';
 import { index as students} from '@/routes/admin/student';
@@ -52,11 +30,6 @@ const mainNavItems: NavItem[] = [
     {
         title: 'Teaching Courses',
         href: teaching_courses(),
-        icon: Book,
-    },
-    {
-        title: 'Studying',
-        href: studying(),
         icon: Book,
     },
 ];
