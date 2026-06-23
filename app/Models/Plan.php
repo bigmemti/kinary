@@ -35,14 +35,4 @@ class Plan extends Model
     public function orders(){
         return $this->belongsToMany(Order::class);
     }
-
-    public function buy(string $authority){
-        return Transaction::create([
-            'user_id' => auth()->user()->id,
-            'plan_id' => $this->id,
-            'amount' => $this->price,
-            'gateway' => 'zarinpal',
-            'authority' => $authority,
-        ]);
-    }
 }
