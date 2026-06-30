@@ -7,6 +7,7 @@ use Inertia\Inertia;
 Route::middleware(['auth', 'verified'])->group(function () {
     //payment
     Route::get('buy/plan/{plan}', [PaymentController::class, 'buy'])->name('plan.buy');
+    Route::get('checkout', [PaymentController::class, 'checkout'])->name('checkout');
     Route::get('pay/callback', [PaymentController::class, 'callback'])->name('callback');
 
     //dashboard

@@ -65,4 +65,24 @@ class User extends Authenticatable
     public function teacher(){
         return $this->hasOne(Teacher::class);
     }
+
+    public function updateOrders() {
+        $this->wallet->orders()->where('status', 'pending')->where('updated_at', '<', now()->subHours(24))->update(['status' => 'expired']);
+    }
+
+    public function hasActiveCart(){
+        $this->updateOrders();
+        return $this->wallet->orders()->where('status', 'pending')->count() > 0;
+    }
+
+    public function activeCart(){
+        $this->updateOrders();
+        return $this->wallet->orders()->where('status', 'pending')->first();
+    }
+
+    public function cartItemsCount(){
+        if($this->hasActiveCart())
+            return $this->activeCart()->plans()->count();
+        return 0;
+    }
 }

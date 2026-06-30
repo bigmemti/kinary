@@ -5,32 +5,41 @@ namespace App\Http\Controllers\Student;
 use App\Enums\TransactionStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Plan;
-use App\Models\Transaction;
 use App\Services\PaymentService;
+use Illuminate\Support\Facades\Auth;
 
 class PaymentController extends Controller
 {
-    public function buy(Plan $plan, PaymentService $service){
-        $authority = $service->request(['amount' => $plan->price, 'description' => 'test']);
+    public function buy(Plan $plan){
+        $order = (Auth::user()->hasActiveCart())? Auth::user()->activeCart(): Auth::user()->wallet->orders()->create();
 
-        $plan->buy($authority);
+        $order->plans()->syncWithoutDetaching([$plan->id]);
+
+        return redirect()->back();
+    }
+
+    public function checkout(PaymentService $service){
+        $authority = $service->request(['amount' => Auth::user()->activeCart()->plans()->sum('price'), 'description' => 'test']);
+        Auth::user()->activeCart()->transactions()->create(['authority' => $authority, 'amount' => Auth::user()->activeCart()->plans()->sum('price'), 'gateway' => 'zarinpal']);
 
         return redirect()->away($service->getPage($authority));
     }
 
     public function callback(PaymentService $service){
         $authority = request('Authority');
-        $transaction = Transaction::where('authority', $authority)->where('status', 'pending')->first();
+        $transaction = Auth::user()->activeCart()->transactions()->where('authority', $authority)->where('status', 'pending')->first();
         if (!$transaction) 
             return to_route('home')->withErrors(['payment' => 'Invalid transaction']);
         
 
         $success = $service->verify($transaction->amount, $authority);
+        $plans = Auth::user()->activeCart()->plans;
 
         $transaction->update($success? ['status' => TransactionStatus::Paid, 'paid_at' => now()]: ['status' => TransactionStatus::Failed]);
+        Auth::user()->activeCart()->update($success? ['status' => 'paid']: ['status' => 'pending']);
         if ($success)
-            $transaction->user->plans()->syncWithoutDetaching([$transaction->plan_id]);
+            Auth::user()->student->plans()->syncWithoutDetaching($plans->pluck('id'));
 
-        return to_route($success? 'studying': 'home');
+        return to_route($success? 'dashboard': 'home');
     }
 }
