@@ -20,12 +20,18 @@ import { index as enrollments} from '@/routes/admin/enrollment';
 import { index as orders} from '@/routes/admin/order';
 import { index as transactions} from '@/routes/admin/transaction';
 import { index as teaching_courses } from '@/routes/teacher/course';
+import { index as studying_courses } from '@/routes/student/enrollment';
 
 const mainNavItems: NavItem[] = [
     {
         title: 'Dashboard',
         href: dashboard(),
         icon: LayoutGrid,
+    },
+    {
+        title: 'Studying Courses',
+        href: studying_courses(),
+        icon: Book,
     },
     {
         title: 'Teaching Courses',
