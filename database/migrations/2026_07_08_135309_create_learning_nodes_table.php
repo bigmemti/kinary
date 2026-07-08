@@ -20,6 +20,8 @@ return new class extends Migration
             $table->text('description');
             $table->smallInteger('order');
             $table->timestamps();
+            
+            $table->unique(['learning_path_id', 'space_id'], 'LPSI');
         });
     }
 

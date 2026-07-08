@@ -17,6 +17,8 @@ return new class extends Migration
             $table->foreignIdFor(Category::class)->constrained();
             $table->foreignIdFor(Space::class)->constrained();
             $table->timestamps();
+            
+            $table->unique(['category_id', 'space_id'], 'CSI');
         });
     }
 

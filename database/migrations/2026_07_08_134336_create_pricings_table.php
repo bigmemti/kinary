@@ -19,6 +19,8 @@ return new class extends Migration
             $table->foreignIdFor(Plan::class)->constrained();
             $table->integer('price')->unsigned();
             $table->timestamps();
+            
+            $table->unique(['lesson_id', 'plan_id'], 'LPI');
         });
     }
 

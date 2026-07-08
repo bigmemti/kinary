@@ -15,11 +15,13 @@ return new class extends Migration
     {
         Schema::create('progress', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(Enrollment::class)->constrained();
             $table->foreignIdFor(Content::class)->constrained();
+            $table->foreignIdFor(Enrollment::class)->constrained();
             $table->enum('status', ['unread', 'read', 'cloned'])->default('unread');
             $table->timestamp('read_at')->nullable();
             $table->timestamps();
+            
+            $table->unique(['content_id', 'enrollment_id'], 'CEI');
         });
     }
 
