@@ -18,6 +18,8 @@ return new class extends Migration
             $table->foreignIdFor(Plan::class)->constrained();
             $table->foreignIdFor(Content::class)->constrained();
             $table->timestamps();
+
+            $table->unique(['plan_id', 'content_id'], 'CPI');
         });
     }
 
