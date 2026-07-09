@@ -17,7 +17,7 @@ return new class extends Migration
         Schema::table('transactions', function (Blueprint $table) {
             $table->dropConstrainedForeignIdFor(Order::class);
             $table->foreignIdFor(Wallet::class)->after('id')->constrained();
-            $table->foreignIdFor(Ledger::class)->after('wallet_id')->constrained();
+            $table->foreignIdFor(Ledger::class)->after('wallet_id')->nullable()->constrained();
 
         });
     }
