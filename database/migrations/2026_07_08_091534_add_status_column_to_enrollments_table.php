@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('enrollments', function (Blueprint $table) {
-            $table->enum('status', ['active', 'inactive'])->after('student_id')->default('active');
+            $table->boolean('is_active')->after('student_id')->default(true);
         });
     }
 

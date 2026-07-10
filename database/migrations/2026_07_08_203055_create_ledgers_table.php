@@ -16,7 +16,7 @@ return new class extends Migration
             $table->id();            
             $table->foreignIdFor(Wallet::class)->constrained();
             $table->integer('amount')->unsigned();
-            $table->enum('type', ['refund']);
+            $table->enum('type', ['deposit', 'withdraw', 'payment', 'refund', 'bonus']);
             $table->timestamps();
         });
     }

@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->foreignIdFor(Course::class)->constrained();
             $table->foreignIdFor(Teacher::class)->constrained();
-            $table->enum('role', ['owner', 'mate', 'editor']);
+            $table->enum('role', ['owner', 'instructor', 'assistant', 'reviewer', 'editor']);
             $table->timestamps();
 
             $table->unique(['course_id', 'teacher_id'], 'CTI');

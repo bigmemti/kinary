@@ -18,7 +18,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->string('thumbnail')->nullable();
             $table->string('intro_video_url')->nullable();
-            $table->enum('status', ['draft', 'published'])->default('published');
+            $table->boolean('is_published')->default(true);
             $table->timestamps();
             $table->softDeletes();
         });

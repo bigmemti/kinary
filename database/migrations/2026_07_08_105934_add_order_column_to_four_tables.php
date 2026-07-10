@@ -24,7 +24,7 @@ return new class extends Migration
         });
 
         Schema::table('contents', function (Blueprint $table) {
-            $table->smallInteger('order')->after('name');
+            $table->smallInteger('order')->after('body');
         });
     }
 

@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->morphs('discussionable');
             $table->string('name');
-            $table->enum('status', ['public', 'private'])->default('public');
+            $table->boolean('is_public')->default(true);
             $table->timestamps();
         });
     }
