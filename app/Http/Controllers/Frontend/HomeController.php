@@ -10,7 +10,7 @@ class HomeController extends Controller
     public function index()
     {
         return view('welcome', [
-            'courses' => Course::where('status', 'published')->latest()->get(),
+            'courses' => Course::where('is_published', true)->latest()->get(),
         ]);
     }
 }
