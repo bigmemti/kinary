@@ -44,13 +44,13 @@ class UserController extends Controller
     {
         return inertia('admin/user/show', [
             'user' => $user->load([
-                'wallet' => fn($query) => $query->withCount('orders'),
-                'wallet.orders' => fn($query) => $query->withSum('plans as amount', 'price'), 
-                'student' => fn($query) => $query->withCount('enrollments'), 
-                'student.enrollments.plan.course.teacher.user', 
-                'teacher' => fn($query) => $query->withCount('courses'),
-                'teacher.courses', 
-            ])
+                'wallet' => fn ($query) => $query->withCount('orders'),
+                'wallet.orders' => fn ($query) => $query->withSum('plans as amount', 'price'),
+                'student' => fn ($query) => $query->withCount('enrollments'),
+                'student.enrollments.plan.course.teacher.user',
+                'teacher' => fn ($query) => $query->withCount('courses'),
+                'teacher.courses',
+            ]),
         ]);
     }
 
@@ -60,7 +60,7 @@ class UserController extends Controller
     public function edit(User $user)
     {
         return inertia('admin/user/edit', [
-            'user' => $user
+            'user' => $user,
         ]);
     }
 
@@ -80,7 +80,7 @@ class UserController extends Controller
     public function destroy(User $user)
     {
         $user->delete();
-        
+
         return to_route('admin.user.index');
     }
 }

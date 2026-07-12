@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Admin;
 
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateWalletRequest extends FormRequest
@@ -17,12 +18,12 @@ class UpdateWalletRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
         return [
-            'user_id' => 'integer|required|exists:users,id|unique:wallets,user_id,'. request('wallet')->id,
+            'user_id' => 'integer|required|exists:users,id|unique:wallets,user_id,'.request('wallet')->id,
         ];
     }
 }

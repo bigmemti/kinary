@@ -38,7 +38,6 @@ class CourseController extends Controller
     {
         Course::create($request->validated());
 
-        return;
     }
 
     /**
@@ -69,7 +68,6 @@ class CourseController extends Controller
     {
         $course->update($request->validated());
 
-        return;
     }
 
     /**
@@ -79,6 +77,5 @@ class CourseController extends Controller
     {
         $course->delete();
 
-        return;
     }
 }

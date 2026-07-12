@@ -14,7 +14,7 @@ class SectionLessonController extends Controller
     public function index(Section $section)
     {
         return inertia('admin/section/lesson/index', [
-            'section' => $section->load(['lessons' => fn($query) => $query->withCount('contents')]),
+            'section' => $section->load(['lessons' => fn ($query) => $query->withCount('contents')]),
         ]);
     }
 

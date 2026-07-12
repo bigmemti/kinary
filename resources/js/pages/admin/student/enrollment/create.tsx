@@ -1,34 +1,43 @@
-import { dashboard } from "@/routes";
-import { Head } from "@inertiajs/react";
-import AppLayout from "@/layouts/app-layout";
-import { BreadcrumbItem, Plan, Student } from "@/types";
-import { create, index as enrollments } from "@/routes/admin/student/enrollment";
-import { index, show as student_show } from "@/routes/admin/student";
-import { DashboardContainer, DashboardHeader } from "@/components/dashboard";
-import { StudentEnrollmentForm } from "@/components/forms";
+import { DashboardContainer, DashboardHeader } from '@/components/dashboard';
+import { StudentEnrollmentForm } from '@/components/forms';
+import AppLayout from '@/layouts/app-layout';
+import { dashboard } from '@/routes';
+import { index, show as student_show } from '@/routes/admin/student';
+import {
+    create,
+    index as enrollments,
+} from '@/routes/admin/student/enrollment';
+import { BreadcrumbItem, Plan, Student } from '@/types';
+import { Head } from '@inertiajs/react';
 
-export default function Create({ student, plans }: { student: Student, plans: Plan[] }) {
+export default function Create({
+    student,
+    plans,
+}: {
+    student: Student;
+    plans: Plan[];
+}) {
     const breadcrumbs: BreadcrumbItem[] = [
         {
             title: 'Dashboard',
-            href: dashboard().url
+            href: dashboard().url,
         },
         {
             title: 'Student',
-            href: index().url
+            href: index().url,
         },
         {
-            title: student.user?.name ||  student.id.toString(),
-            href: student_show(student).url
+            title: student.user?.name || student.id.toString(),
+            href: student_show(student).url,
         },
         {
             title: 'Enrollments',
-            href: enrollments(student).url
+            href: enrollments(student).url,
         },
         {
             title: 'Create',
-            href: create(student).url
-        }
+            href: create(student).url,
+        },
     ];
 
     return (

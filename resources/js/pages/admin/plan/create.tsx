@@ -1,25 +1,24 @@
-import { dashboard } from "@/routes";
-import { Head } from "@inertiajs/react";
-import AppLayout from "@/layouts/app-layout";
-import { BreadcrumbItem, Course } from "@/types";
-import { PlanForm } from "@/components/forms";
-import { create, index } from "@/routes/admin/plan";
-import { DashboardContainer, DashboardHeader } from "@/components/dashboard";
-
+import { DashboardContainer, DashboardHeader } from '@/components/dashboard';
+import { PlanForm } from '@/components/forms';
+import AppLayout from '@/layouts/app-layout';
+import { dashboard } from '@/routes';
+import { create, index } from '@/routes/admin/plan';
+import { BreadcrumbItem, Course } from '@/types';
+import { Head } from '@inertiajs/react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Dashboard',
-        href: dashboard().url
+        href: dashboard().url,
     },
     {
         title: 'Plan',
-        href: index().url
+        href: index().url,
     },
     {
         title: 'Create',
-        href: create().url
-    }
+        href: create().url,
+    },
 ];
 
 export default function Create({ courses }: { courses: Course[] }) {
@@ -35,5 +34,5 @@ export default function Create({ courses }: { courses: Course[] }) {
 }
 
 function CreatePlanForm({ courses }: { courses: Course[] }) {
-    return <PlanForm type="create" courses={courses} />
+    return <PlanForm type="create" courses={courses} />;
 }

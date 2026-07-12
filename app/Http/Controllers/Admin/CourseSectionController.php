@@ -14,7 +14,7 @@ class CourseSectionController extends Controller
     public function index(Course $course)
     {
         return inertia('admin/course/section/index', [
-            'course' => $course->load(['sections' => fn($query) => $query->withCount(['lessons'])]),
+            'course' => $course->load(['sections' => fn ($query) => $query->withCount(['lessons'])]),
         ]);
     }
 

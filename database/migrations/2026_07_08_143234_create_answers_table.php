@@ -21,7 +21,6 @@ return new class extends Migration
             $table->foreignIdFor(Question::class)->constrained();
             $table->timestamps();
 
-            
             $table->unique(['attempt_id', 'question_id'], 'AQI');
         });
     }

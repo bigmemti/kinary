@@ -13,15 +13,18 @@ class Student extends Model
         'user_id',
     ];
 
-    public function user(){
+    public function user()
+    {
         return $this->belongsTo(User::class);
     }
 
-    public function plans(){
-        return $this->belongsToMany(Plan::class, Enrollment::class)->withTimestamps();;
+    public function plans()
+    {
+        return $this->belongsToMany(Plan::class, Enrollment::class)->withTimestamps();
     }
 
-    public function enrollments(){
+    public function enrollments()
+    {
         return $this->hasMany(Enrollment::class);
     }
 }

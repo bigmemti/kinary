@@ -4,11 +4,12 @@ namespace App\Models;
 
 use App\Enums\TransactionGateway;
 use App\Enums\TransactionStatus;
+use Database\Factories\TransactionFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Transaction extends Model
 {
-    /** @use HasFactory<\Database\Factories\TransactionFactory> */
+    /** @use HasFactory<TransactionFactory> */
     use HasFactory;
 
     /**
@@ -16,7 +17,7 @@ class Transaction extends Model
      *
      * @var list<string>
      */
-    protected $fillable=[
+    protected $fillable = [
         'order_id',
         'amount',
         'gateway',
@@ -24,7 +25,7 @@ class Transaction extends Model
         'status',
         'paid_at',
     ];
- 
+
     /**
      * Get the attributes that should be cast.
      *
@@ -38,7 +39,8 @@ class Transaction extends Model
         ];
     }
 
-    public function order(){
+    public function order()
+    {
         return $this->belongsTo(Order::class);
     }
 }

@@ -42,7 +42,7 @@ class ContentController extends Controller
      * Display the specified resource.
      */
     public function show(Content $content)
-    { 
+    {
         return inertia('admin/content/show', [
             'content' => $content->load(['lesson.section.course.teacher.user']),
         ]);

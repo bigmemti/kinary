@@ -1,28 +1,34 @@
-import { dashboard } from "@/routes";
-import { Head } from "@inertiajs/react";
-import AppLayout from "@/layouts/app-layout";
-import { CourseForm } from "@/components/forms";
-import { BreadcrumbItem, Course, Teacher } from "@/types";
-import { edit, index, show } from "@/routes/admin/course";
-import { DashboardContainer, DashboardHeader } from "@/components/dashboard";
+import { DashboardContainer, DashboardHeader } from '@/components/dashboard';
+import { CourseForm } from '@/components/forms';
+import AppLayout from '@/layouts/app-layout';
+import { dashboard } from '@/routes';
+import { edit, index, show } from '@/routes/admin/course';
+import { BreadcrumbItem, Course, Teacher } from '@/types';
+import { Head } from '@inertiajs/react';
 
-export default function Edit({ course, teachers }: { course: Course, teachers: Teacher[] }) {
+export default function Edit({
+    course,
+    teachers,
+}: {
+    course: Course;
+    teachers: Teacher[];
+}) {
     const breadcrumbs: BreadcrumbItem[] = [
         {
             title: 'Dashboard',
-            href: dashboard().url
+            href: dashboard().url,
         },
         {
             title: 'Course',
-            href: index().url
+            href: index().url,
         },
         {
             title: course.title,
-            href: show(course).url
+            href: show(course).url,
         },
         {
             title: 'Edit',
-            href: edit(course).url
+            href: edit(course).url,
         },
     ];
 
@@ -37,7 +43,12 @@ export default function Edit({ course, teachers }: { course: Course, teachers: T
     );
 }
 
-function EditCourseForm({ course, teachers }: { course: Course, teachers: Teacher[] }) {
-    return <CourseForm type="edit" teachers={teachers} course={course} />
+function EditCourseForm({
+    course,
+    teachers,
+}: {
+    course: Course;
+    teachers: Teacher[];
+}) {
+    return <CourseForm type="edit" teachers={teachers} course={course} />;
 }
-

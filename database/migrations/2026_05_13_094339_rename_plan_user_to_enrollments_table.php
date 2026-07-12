@@ -14,8 +14,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('plan_user', function (Blueprint $table) {
-            $table->dropForeign('plan_user_user_id_foreign'); 
-            $table->dropForeign('plan_user_plan_id_foreign'); 
+            $table->dropForeign('plan_user_user_id_foreign');
+            $table->dropForeign('plan_user_plan_id_foreign');
             $table->dropIndex('plan_user_user_id_foreign');
             $table->dropUnique('PUI');
 
@@ -26,7 +26,7 @@ return new class extends Migration
 
         Schema::table('enrollments', function (Blueprint $table) {
             $table->id()->first();
-            
+
             $table->foreignIdFor(Student::class)->after('plan_id')->constrained();
 
             $table->foreign('plan_id')->references('id')->on('plans');
@@ -41,8 +41,8 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('enrollments', function (Blueprint $table) {
-            $table->dropForeign('enrollments_student_id_foreign'); 
-            $table->dropForeign('enrollments_plan_id_foreign'); 
+            $table->dropForeign('enrollments_student_id_foreign');
+            $table->dropForeign('enrollments_plan_id_foreign');
             $table->dropIndex('enrollments_student_id_foreign');
             $table->dropUnique('PSI');
 

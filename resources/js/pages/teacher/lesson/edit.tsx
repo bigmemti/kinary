@@ -1,29 +1,35 @@
-import { dashboard } from "@/routes";
-import { Head } from "@inertiajs/react";
-import AppLayout from "@/layouts/app-layout";
-import { LessonForm } from "@/components/forms";
-import { BreadcrumbItem, Lesson, Section } from "@/types";
-import { edit, show } from "@/routes/teacher/lesson";
-import { DashboardContainer, DashboardHeader } from "@/components/dashboard";
-import { index } from "@/routes/teacher/section/lesson";
+import { DashboardContainer, DashboardHeader } from '@/components/dashboard';
+import { LessonForm } from '@/components/forms';
+import AppLayout from '@/layouts/app-layout';
+import { dashboard } from '@/routes';
+import { edit, show } from '@/routes/teacher/lesson';
+import { index } from '@/routes/teacher/section/lesson';
+import { BreadcrumbItem, Lesson, Section } from '@/types';
+import { Head } from '@inertiajs/react';
 
-export default function Edit({ lesson, sections }: { lesson: Lesson, sections: Section[] }) {
+export default function Edit({
+    lesson,
+    sections,
+}: {
+    lesson: Lesson;
+    sections: Section[];
+}) {
     const breadcrumbs: BreadcrumbItem[] = [
         {
             title: 'Dashboard',
-            href: dashboard().url
+            href: dashboard().url,
         },
         {
             title: 'Lesson',
-            href: index(lesson).url
+            href: index(lesson).url,
         },
         {
             title: lesson.name,
-            href: show(lesson).url
+            href: show(lesson).url,
         },
         {
             title: 'Edit',
-            href: edit(lesson).url
+            href: edit(lesson).url,
         },
     ];
 
@@ -38,7 +44,12 @@ export default function Edit({ lesson, sections }: { lesson: Lesson, sections: S
     );
 }
 
-function EditLessonForm({ lesson, sections }: { lesson: Lesson, sections: Section[] }) {
-    return <LessonForm type="edit" sections={sections} lesson={lesson} />
+function EditLessonForm({
+    lesson,
+    sections,
+}: {
+    lesson: Lesson;
+    sections: Section[];
+}) {
+    return <LessonForm type="edit" sections={sections} lesson={lesson} />;
 }
-

@@ -2,11 +2,12 @@
 
 namespace App\Models;
 
+use Database\Factories\OrderFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Order extends Model
 {
-    /** @use HasFactory<\Database\Factories\OrderFactory> */
+    /** @use HasFactory<OrderFactory> */
     use HasFactory;
 
     /**
@@ -18,16 +19,19 @@ class Order extends Model
         'wallet_id',
         'status',
     ];
-    
-    public function plans(){
+
+    public function plans()
+    {
         return $this->belongsToMany(Plan::class)->withTimestamps();
     }
-    
-    public function transactions(){
+
+    public function transactions()
+    {
         return $this->hasMany(Transaction::class);
     }
-    
-    public function wallet(){
+
+    public function wallet()
+    {
         return $this->belongsTo(Wallet::class);
     }
 }

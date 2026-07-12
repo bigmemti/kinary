@@ -16,7 +16,7 @@ return new class extends Migration
             $table->renameColumn('body', 'description');
         });
     }
-    
+
     /**
      * Reverse the migrations.
      */

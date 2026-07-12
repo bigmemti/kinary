@@ -57,7 +57,7 @@ class TeacherController extends Controller
     {
         return inertia('admin/teacher/edit', [
             'teacher' => $teacher->load(['user']),
-            'users' => [ ...User::doesntHave('teacher')->get(), $teacher->user],
+            'users' => [...User::doesntHave('teacher')->get(), $teacher->user],
         ]);
     }
 
@@ -77,7 +77,7 @@ class TeacherController extends Controller
     public function destroy(Teacher $teacher)
     {
         $teacher->delete();
-        
+
         return to_route('admin.teacher.index');
     }
 }

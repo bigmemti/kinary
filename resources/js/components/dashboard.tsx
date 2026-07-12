@@ -1,63 +1,85 @@
-import { PropsWithChildren, ReactNode } from "react";
-import ButtonLink from "./button-link";
-import { Eye, LucideIcon, Pen, Plus, Trash } from "lucide-react";
-import { cn } from "@/lib/utils";
-import FormButton from "./form-button";
-import { RouteFormDefinition } from "@/wayfinder";
+import { cn } from '@/lib/utils';
+import { RouteFormDefinition } from '@/wayfinder';
+import { Eye, LucideIcon, Pen, Plus, Trash } from 'lucide-react';
+import { PropsWithChildren, ReactNode } from 'react';
+import ButtonLink from './button-link';
+import FormButton from './form-button';
 
-export function DashboardContainer({ children }: PropsWithChildren){
-    return(
+export function DashboardContainer({ children }: PropsWithChildren) {
+    return (
         <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
             {children}
         </div>
     );
 }
 
-export function CreateHeaderButton({ href, model }: { href: string, model: string }) {
+export function CreateHeaderButton({
+    href,
+    model,
+}: {
+    href: string;
+    model: string;
+}) {
     return (
-        <ButtonLink className='self-end' href={href}>
+        <ButtonLink className="self-end" href={href}>
             Create new {model} <Plus />
         </ButtonLink>
     );
 }
 
-export function DashboardHeader({ children, header, containerClassName }: PropsWithChildren<{ header: string, containerClassName?: string }>){
-    return(
-        <div className={cn("w-full flex justify-between items-center shadow-lg shadow-accent p-3 border border-accent rounded-xl", containerClassName)}>
-            <h1 className="font-bold text-2xl"> 
-                {header}
-            </h1>
+export function DashboardHeader({
+    children,
+    header,
+    containerClassName,
+}: PropsWithChildren<{ header: string; containerClassName?: string }>) {
+    return (
+        <div
+            className={cn(
+                'flex w-full items-center justify-between rounded-xl border border-accent p-3 shadow-lg shadow-accent',
+                containerClassName,
+            )}
+        >
+            <h1 className="text-2xl font-bold">{header}</h1>
             {children}
         </div>
     );
 }
 
-export function ActionButtonContainer({ children, className }: PropsWithChildren<{ className?: string }>) {
-    return(
-        <div className={cn("space-x-3", className)}>
-            {children}
-        </div>
-    );
+export function ActionButtonContainer({
+    children,
+    className,
+}: PropsWithChildren<{ className?: string }>) {
+    return <div className={cn('space-x-3', className)}>{children}</div>;
 }
 
-
-export function InfoBlock({ label, value, operator = ':' }: { label: string, value: string | number | ReactNode, operator?: ':' | '?' }) {
+export function InfoBlock({
+    label,
+    value,
+    operator = ':',
+}: {
+    label: string;
+    value: string | number | ReactNode;
+    operator?: ':' | '?';
+}) {
     return (
         <div>
-            {label}{operator} {value}
+            {label}
+            {operator} {value}
         </div>
     );
 }
 
 export function DataContainer({ children }: PropsWithChildren) {
-    return (
-        <div className="space-y-4">
-            {children}
-        </div>
-    )
+    return <div className="space-y-4">{children}</div>;
 }
 
-export function ActionButton({ icon: Icon, link }: { icon: LucideIcon, link: string }){
+export function ActionButton({
+    icon: Icon,
+    link,
+}: {
+    icon: LucideIcon;
+    link: string;
+}) {
     return (
         <ButtonLink href={link}>
             <Icon />
@@ -65,16 +87,30 @@ export function ActionButton({ icon: Icon, link }: { icon: LucideIcon, link: str
     );
 }
 
-export function DeleteButton({ form }: { form: RouteFormDefinition<'post'> }){
+export function DeleteButton({ form }: { form: RouteFormDefinition<'post'> }) {
     return (
-        <FormButton className="inline" form={form} options={{ preserveScroll: true }}>
+        <FormButton
+            className="inline"
+            form={form}
+            options={{ preserveScroll: true }}
+        >
             <Trash />
         </FormButton>
     );
 }
 
-export function EssentialActions({ isDeletable, deleteForm, editLink, showLink }: { isDeletable: boolean, deleteForm: RouteFormDefinition<'post'>, editLink: string, showLink: string }){
-    return(
+export function EssentialActions({
+    isDeletable,
+    deleteForm,
+    editLink,
+    showLink,
+}: {
+    isDeletable: boolean;
+    deleteForm: RouteFormDefinition<'post'>;
+    editLink: string;
+    showLink: string;
+}) {
+    return (
         <>
             {isDeletable && <DeleteButton form={deleteForm} />}
             <ActionButton icon={Pen} link={editLink} />
@@ -84,5 +120,5 @@ export function EssentialActions({ isDeletable, deleteForm, editLink, showLink }
 }
 
 export function ActionsHeader() {
-    return (<div className="text-end inline xl:block">Actions</div>);
+    return <div className="inline text-end xl:block">Actions</div>;
 }

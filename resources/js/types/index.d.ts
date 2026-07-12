@@ -45,7 +45,7 @@ export interface User {
     [key: string]: unknown; // This allows for additional properties...
 }
 
-export interface Wallet{
+export interface Wallet {
     id: number;
     user_id: number;
     user?: User;
@@ -56,7 +56,7 @@ export interface Wallet{
     updated_at: DateTime;
 }
 
-export interface Order{
+export interface Order {
     id: number;
     wallet_id: number;
     wallet?: Wallet;
@@ -70,18 +70,18 @@ export interface Order{
     updated_at: DateTime;
 }
 
-export interface Student{
+export interface Student {
     id: number;
     user_id: number;
     user?: User;
     enrollments_count?: number;
     enrollments?: Enrollment[];
-    pivot?: any;  
+    pivot?: any;
     created_at: DateTime;
     updated_at: DateTime;
 }
 
-export interface Enrollment{
+export interface Enrollment {
     id: number;
     student_id: number;
     student?: Student;
@@ -91,7 +91,7 @@ export interface Enrollment{
     updated_at: DateTime;
 }
 
-export interface Teacher{
+export interface Teacher {
     id: number;
     user_id: number;
     user?: User;
@@ -101,10 +101,10 @@ export interface Teacher{
     updated_at: DateTime;
 }
 
-export interface Course{
+export interface Course {
     id: number;
     teacher_id: number;
-    teacher?: Teacher
+    teacher?: Teacher;
     title: string;
     slug: string;
     description: string;
@@ -120,7 +120,7 @@ export interface Course{
     deleted_at: DateTime;
 }
 
-export interface Plan{
+export interface Plan {
     id: number;
     course_id: number;
     course?: Course;
@@ -134,7 +134,7 @@ export interface Plan{
     updated_at: DateTime;
 }
 
-export interface Section{
+export interface Section {
     id: number;
     course_id: number;
     course?: Course;
@@ -145,7 +145,7 @@ export interface Section{
     updated_at: DateTime;
 }
 
-export interface Lesson{
+export interface Lesson {
     id: number;
     section_id: number;
     section?: Section;
@@ -156,7 +156,7 @@ export interface Lesson{
     updated_at: DateTime;
 }
 
-export interface Content{
+export interface Content {
     id: number;
     lesson_id: number;
     lesson?: Lesson;
@@ -165,7 +165,7 @@ export interface Content{
     updated_at: DateTime;
 }
 
-export interface Transaction{
+export interface Transaction {
     id: number;
     order_id: number;
     order?: Order;
@@ -178,4 +178,4 @@ export interface Transaction{
     updated_at: DateTime;
 }
 
-type WithType<P = unknown> = P & { type: "create" | "edit" };
+type WithType<P = unknown> = P & { type: 'create' | 'edit' };

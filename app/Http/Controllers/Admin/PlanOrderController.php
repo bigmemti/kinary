@@ -14,7 +14,7 @@ class PlanOrderController extends Controller
     {
         return inertia('admin/plan/order/index', [
             'plan' => $plan->load([
-                'orders' => fn($query) => $query->with(['wallet.user'])->withCount(['transactions', 'plans'])->withSum('plans as amount', 'price'), 
+                'orders' => fn ($query) => $query->with(['wallet.user'])->withCount(['transactions', 'plans'])->withSum('plans as amount', 'price'),
             ]),
         ]);
     }

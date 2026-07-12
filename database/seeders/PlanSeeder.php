@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Models\Plan;
 use App\Models\Course;
+use App\Models\Plan;
 use Illuminate\Database\Seeder;
 
 class PlanSeeder extends Seeder
@@ -13,6 +13,6 @@ class PlanSeeder extends Seeder
      */
     public function run(): void
     {
-        Course::all()->each(fn($course) => Plan::factory(rand(1, 3))->for($course)->create());
+        Course::all()->each(fn ($course) => Plan::factory(rand(1, 3))->for($course)->create());
     }
 }

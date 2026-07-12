@@ -1,34 +1,34 @@
-import { dashboard } from "@/routes";
-import { Head } from "@inertiajs/react";
-import AppLayout from "@/layouts/app-layout";
-import { BreadcrumbItem, Wallet } from "@/types";
-import { create, index as orders } from "@/routes/admin/wallet/order";
-import { index, show as wallet_show } from "@/routes/admin/wallet";
-import { DashboardContainer, DashboardHeader } from "@/components/dashboard";
-import { WalletOrderForm } from "@/components/forms";
+import { DashboardContainer, DashboardHeader } from '@/components/dashboard';
+import { WalletOrderForm } from '@/components/forms';
+import AppLayout from '@/layouts/app-layout';
+import { dashboard } from '@/routes';
+import { index, show as wallet_show } from '@/routes/admin/wallet';
+import { create, index as orders } from '@/routes/admin/wallet/order';
+import { BreadcrumbItem, Wallet } from '@/types';
+import { Head } from '@inertiajs/react';
 
-export default function Create({ wallet }: { wallet: Wallet}) {
+export default function Create({ wallet }: { wallet: Wallet }) {
     const breadcrumbs: BreadcrumbItem[] = [
         {
             title: 'Dashboard',
-            href: dashboard().url
+            href: dashboard().url,
         },
         {
             title: 'Wallet',
-            href: index().url
+            href: index().url,
         },
         {
-            title: wallet.user?.name ||  wallet.id.toString(),
-            href: wallet_show(wallet).url
+            title: wallet.user?.name || wallet.id.toString(),
+            href: wallet_show(wallet).url,
         },
         {
             title: 'Orders',
-            href: orders(wallet).url
+            href: orders(wallet).url,
         },
         {
             title: 'Create',
-            href: create(wallet).url
-        }
+            href: create(wallet).url,
+        },
     ];
 
     return (

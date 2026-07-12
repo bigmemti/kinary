@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use Database\Factories\LessonFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Access extends Model
 {
-    /** @use HasFactory<\Database\Factories\LessonFactory> */
+    /** @use HasFactory<LessonFactory> */
     use HasFactory;
 
     /**
@@ -20,15 +21,18 @@ class Access extends Model
         'content_id',
     ];
 
-    public function plan(){
+    public function plan()
+    {
         return $this->belongsTo(Plan::class);
     }
 
-    public function content(){
+    public function content()
+    {
         return $this->belongsTo(Content::class);
     }
 
-    public function requirements(){
+    public function requirements()
+    {
         return $this->hasMany(Requirement::class);
     }
 }

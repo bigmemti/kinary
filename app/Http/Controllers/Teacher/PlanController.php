@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Teacher;
 
 use App\Http\Controllers\Controller;
-use App\Models\Plan;
 use App\Http\Requests\Teacher\StorePlanRequest;
 use App\Http\Requests\Teacher\UpdatePlanRequest;
 use App\Models\Course;
+use App\Models\Plan;
 
 class PlanController extends Controller
 {
@@ -16,7 +16,7 @@ class PlanController extends Controller
     public function index(Course $course)
     {
         return inertia('teacher/course/plan/index', [
-            'course' => $course->load(['plans' => fn($query) => $query->withCount(['students', 'orders'])]),
+            'course' => $course->load(['plans' => fn ($query) => $query->withCount(['students', 'orders'])]),
         ]);
     }
 
@@ -26,7 +26,7 @@ class PlanController extends Controller
     public function create(Course $course)
     {
         return inertia('teacher/course/plan/create', [
-            'course' => $course
+            'course' => $course,
         ]);
     }
 

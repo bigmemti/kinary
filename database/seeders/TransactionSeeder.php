@@ -13,34 +13,34 @@ class TransactionSeeder extends Seeder
      */
     public function run(): void
     {
-        //failed
+        // failed
         Order::getInRandomOrder(rand(5, 10))
             ->each(
-                fn($order) => Transaction::factory(rand(1, 3), [
-                                    'amount' => $order->plans()->sum('price'), 
-                                    'status' => 'failed',
-                                ])->for($order)->create()
+                fn ($order) => Transaction::factory(rand(1, 3), [
+                    'amount' => $order->plans()->sum('price'),
+                    'status' => 'failed',
+                ])->for($order)->create()
             );
-        
-        //paid
+
+        // paid
         Order::where('status', 'paid')
             ->get()
             ->each(
-                fn($order) => Transaction::factory(state:[
-                                            'amount' => $order->plans()->sum('price'), 
-                                            'status' => 'paid',
-                                        ])->for($order)->create()
-                                
+                fn ($order) => Transaction::factory(state: [
+                    'amount' => $order->plans()->sum('price'),
+                    'status' => 'paid',
+                ])->for($order)->create()
+
             );
-        
-        //pending
+
+        // pending
         Order::whereNot('status', 'paid')
             ->inRandomOrder()
             ->take(rand(5, 8))
             ->get()
             ->each(
-                fn($order) => Transaction::factory(state:[
-                    'amount' => $order->plans()->sum('price')
+                fn ($order) => Transaction::factory(state: [
+                    'amount' => $order->plans()->sum('price'),
                 ])->for($order)->create()
             );
     }

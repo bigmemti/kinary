@@ -16,7 +16,7 @@ class OrderPlanSeeder extends Seeder
         Order::where('status', 'pending')
             ->get()
             ->each(
-                function($order){
+                function ($order) {
                     $plans = Plan::getInRandomOrder(rand(3, 5));
 
                     $order->plans()->syncWithPivotValues($plans->pluck('id'), ['updated_at' => now()]);

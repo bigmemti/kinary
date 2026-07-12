@@ -1,34 +1,34 @@
-import { dashboard } from "@/routes";
-import { Head } from "@inertiajs/react";
-import AppLayout from "@/layouts/app-layout";
-import { BreadcrumbItem, Course } from "@/types";
-import { create, index as sections } from "@/routes/admin/course/section";
-import { index, show as course_show } from "@/routes/admin/course";
-import { DashboardContainer, DashboardHeader } from "@/components/dashboard";
-import { CourseSectionForm } from "@/components/forms";
+import { DashboardContainer, DashboardHeader } from '@/components/dashboard';
+import { CourseSectionForm } from '@/components/forms';
+import AppLayout from '@/layouts/app-layout';
+import { dashboard } from '@/routes';
+import { show as course_show, index } from '@/routes/admin/course';
+import { create, index as sections } from '@/routes/admin/course/section';
+import { BreadcrumbItem, Course } from '@/types';
+import { Head } from '@inertiajs/react';
 
-export default function Create({ course}: { course: Course }) {
+export default function Create({ course }: { course: Course }) {
     const breadcrumbs: BreadcrumbItem[] = [
         {
             title: 'Dashboard',
-            href: dashboard().url
+            href: dashboard().url,
         },
         {
             title: 'Course',
-            href: index().url
+            href: index().url,
         },
         {
             title: course.title,
-            href: course_show(course).url
+            href: course_show(course).url,
         },
         {
             title: 'Sections',
-            href: sections(course).url
+            href: sections(course).url,
         },
         {
             title: 'Create',
-            href: create(course).url
-        }
+            href: create(course).url,
+        },
     ];
 
     return (

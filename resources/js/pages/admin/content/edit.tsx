@@ -1,28 +1,34 @@
-import { DashboardContainer, DashboardHeader } from "@/components/dashboard";
-import { ContentForm } from "@/components/forms";
-import AppLayout from "@/layouts/app-layout";
-import { dashboard } from "@/routes";
-import { edit, index, show } from "@/routes/admin/content";
-import { BreadcrumbItem, Content, Lesson } from "@/types";
-import { Head } from "@inertiajs/react";
+import { DashboardContainer, DashboardHeader } from '@/components/dashboard';
+import { ContentForm } from '@/components/forms';
+import AppLayout from '@/layouts/app-layout';
+import { dashboard } from '@/routes';
+import { edit, index, show } from '@/routes/admin/content';
+import { BreadcrumbItem, Content, Lesson } from '@/types';
+import { Head } from '@inertiajs/react';
 
-export default function Edit({ content, lessons }: { content: Content, lessons: Lesson[] }) {
+export default function Edit({
+    content,
+    lessons,
+}: {
+    content: Content;
+    lessons: Lesson[];
+}) {
     const breadcrumbs: BreadcrumbItem[] = [
         {
             title: 'Dashboard',
-            href: dashboard().url
+            href: dashboard().url,
         },
         {
             title: 'Content',
-            href: index().url
+            href: index().url,
         },
         {
             title: content.id.toString(),
-            href: show(content).url
+            href: show(content).url,
         },
         {
             title: 'Edit',
-            href: edit(content).url
+            href: edit(content).url,
         },
     ];
 
@@ -37,7 +43,12 @@ export default function Edit({ content, lessons }: { content: Content, lessons: 
     );
 }
 
-function EditContentForm({ content, lessons }: { content: Content, lessons: Lesson[] }) {
-    return <ContentForm type="edit" content={content} lessons={lessons} />
+function EditContentForm({
+    content,
+    lessons,
+}: {
+    content: Content;
+    lessons: Lesson[];
+}) {
+    return <ContentForm type="edit" content={content} lessons={lessons} />;
 }
-

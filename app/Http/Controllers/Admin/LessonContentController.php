@@ -24,7 +24,7 @@ class LessonContentController extends Controller
     public function create(Lesson $lesson)
     {
         return inertia('admin/lesson/content/create', [
-            'lesson' => $lesson
+            'lesson' => $lesson,
         ]);
     }
 

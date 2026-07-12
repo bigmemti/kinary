@@ -1,26 +1,48 @@
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
-import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
+import {
+    Sidebar,
+    SidebarContent,
+    SidebarFooter,
+    SidebarHeader,
+    SidebarMenu,
+    SidebarMenuButton,
+    SidebarMenuItem,
+} from '@/components/ui/sidebar';
+import { dashboard } from '@/routes';
+import { index as contents } from '@/routes/admin/content';
+import { index as courses } from '@/routes/admin/course';
+import { index as enrollments } from '@/routes/admin/enrollment';
+import { index as lessons } from '@/routes/admin/lesson';
+import { index as orders } from '@/routes/admin/order';
+import { index as plans } from '@/routes/admin/plan';
+import { index as sections } from '@/routes/admin/section';
+import { index as students } from '@/routes/admin/student';
+import { index as teachers } from '@/routes/admin/teacher';
+import { index as transactions } from '@/routes/admin/transaction';
+import { index as users } from '@/routes/admin/user';
+import { index as wallets } from '@/routes/admin/wallet';
+import { index as studying_courses } from '@/routes/student/enrollment';
+import { index as teaching_courses } from '@/routes/teacher/course';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import {  ArrowDownUp, Book,  BookOpen,  GraduationCap,  Layers,  LayoutGrid,  LinkIcon,  ReceiptText,  School,  ShoppingCart,  TableRowsSplit,  User, Wallet } from 'lucide-react';
+import {
+    ArrowDownUp,
+    Book,
+    BookOpen,
+    GraduationCap,
+    Layers,
+    LayoutGrid,
+    LinkIcon,
+    ReceiptText,
+    School,
+    ShoppingCart,
+    TableRowsSplit,
+    User,
+    Wallet,
+} from 'lucide-react';
 import AppLogo from './app-logo';
-import { dashboard } from '@/routes';
-import { index as courses } from '@/routes/admin/course';
-import { index as users} from '@/routes/admin/user';
-import { index as students} from '@/routes/admin/student';
-import { index as wallets} from '@/routes/admin/wallet';
-import { index as teachers} from '@/routes/admin/teacher';
-import { index as plans} from '@/routes/admin/plan';
-import { index as sections} from '@/routes/admin/section';
-import { index as lessons} from '@/routes/admin/lesson';
-import { index as contents} from '@/routes/admin/content';
-import { index as enrollments} from '@/routes/admin/enrollment';
-import { index as orders} from '@/routes/admin/order';
-import { index as transactions} from '@/routes/admin/transaction';
-import { index as teaching_courses } from '@/routes/teacher/course';
-import { index as studying_courses } from '@/routes/student/enrollment';
 
 const mainNavItems: NavItem[] = [
     {
@@ -122,7 +144,7 @@ export function AppSidebar() {
 
             <SidebarContent>
                 <NavMain items={mainNavItems} />
-                <NavMain label='Admin' items={adminNavItems} />
+                <NavMain label="Admin" items={adminNavItems} />
             </SidebarContent>
 
             <SidebarFooter>

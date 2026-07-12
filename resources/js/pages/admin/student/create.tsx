@@ -1,25 +1,24 @@
-import { dashboard } from "@/routes";
-import { Head } from "@inertiajs/react";
-import AppLayout from "@/layouts/app-layout";
-import { BreadcrumbItem, User } from "@/types";
-import { StudentForm } from "@/components/forms";
-import { create, index } from "@/routes/admin/student";
-import { DashboardContainer, DashboardHeader } from "@/components/dashboard";
-
+import { DashboardContainer, DashboardHeader } from '@/components/dashboard';
+import { StudentForm } from '@/components/forms';
+import AppLayout from '@/layouts/app-layout';
+import { dashboard } from '@/routes';
+import { create, index } from '@/routes/admin/student';
+import { BreadcrumbItem, User } from '@/types';
+import { Head } from '@inertiajs/react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Dashboard',
-        href: dashboard().url
+        href: dashboard().url,
     },
     {
         title: 'Student',
-        href: index().url
+        href: index().url,
     },
     {
         title: 'Create',
-        href: create().url
-    }
+        href: create().url,
+    },
 ];
 
 export default function Create({ users }: { users: User[] }) {
@@ -35,5 +34,5 @@ export default function Create({ users }: { users: User[] }) {
 }
 
 function CreateStudentForm({ users }: { users: User[] }) {
-    return <StudentForm type="create" users={users} />
+    return <StudentForm type="create" users={users} />;
 }

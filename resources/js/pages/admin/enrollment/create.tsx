@@ -1,28 +1,33 @@
-import { DashboardContainer, DashboardHeader } from "@/components/dashboard";
-import { EnrollmentForm } from "@/components/forms";
-import AppLayout from "@/layouts/app-layout";
-import { dashboard } from "@/routes";
-import { create, index } from "@/routes/admin/enrollment";
-import { BreadcrumbItem, Plan, Student } from "@/types";
-import { Head } from "@inertiajs/react";
-
+import { DashboardContainer, DashboardHeader } from '@/components/dashboard';
+import { EnrollmentForm } from '@/components/forms';
+import AppLayout from '@/layouts/app-layout';
+import { dashboard } from '@/routes';
+import { create, index } from '@/routes/admin/enrollment';
+import { BreadcrumbItem, Plan, Student } from '@/types';
+import { Head } from '@inertiajs/react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Dashboard',
-        href: dashboard().url
+        href: dashboard().url,
     },
     {
         title: 'Enrollment',
-        href: index().url
+        href: index().url,
     },
     {
         title: 'Create',
-        href: create().url
-    }
+        href: create().url,
+    },
 ];
 
-export default function Create({ students, plans }: { students: Student[], plans: Plan[] }) {
+export default function Create({
+    students,
+    plans,
+}: {
+    students: Student[];
+    plans: Plan[];
+}) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Create Enrollment" />
@@ -34,6 +39,12 @@ export default function Create({ students, plans }: { students: Student[], plans
     );
 }
 
-function CreateEnrollmentForm({ students, plans }: { students: Student[],plans: Plan[] }) {
-    return <EnrollmentForm type="create" plans={plans} students={students} />
+function CreateEnrollmentForm({
+    students,
+    plans,
+}: {
+    students: Student[];
+    plans: Plan[];
+}) {
+    return <EnrollmentForm type="create" plans={plans} students={students} />;
 }

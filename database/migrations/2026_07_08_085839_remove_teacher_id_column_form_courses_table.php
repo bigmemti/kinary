@@ -12,7 +12,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('courses', function (Blueprint $table){
+        Schema::table('courses', function (Blueprint $table) {
             $table->dropConstrainedForeignId('teacher_id');
         });
     }
@@ -22,7 +22,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('courses', function (Blueprint $table){
+        Schema::table('courses', function (Blueprint $table) {
             $table->foreignIdFor(Teacher::class)->after('id')->constrained();
         });
     }

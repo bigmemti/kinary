@@ -21,7 +21,6 @@ return new class extends Migration
             $table->foreignIdFor(Student::class)->constrained();
             $table->timestamps();
 
-            
             $table->unique(['space_id', 'student_id'], 'SSI');
         });
     }

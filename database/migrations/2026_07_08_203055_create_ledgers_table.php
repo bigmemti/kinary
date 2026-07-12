@@ -13,7 +13,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('ledgers', function (Blueprint $table) {
-            $table->id();            
+            $table->id();
             $table->foreignIdFor(Wallet::class)->constrained();
             $table->integer('amount')->unsigned();
             $table->enum('type', ['deposit', 'withdraw', 'payment', 'refund', 'bonus']);

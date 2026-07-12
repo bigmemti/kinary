@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Admin;
 
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 
@@ -18,14 +19,14 @@ class UpdateCourseRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
         return [
             'teacher_id' => 'required|integer|exists:teachers,id',
             'title' => 'required|string|max:255',
-            'slug' => 'required|string|max:255|unique:courses,slug,'. request()->course->id,
+            'slug' => 'required|string|max:255|unique:courses,slug,'.request()->course->id,
             'description' => 'nullable|string|max:4096',
             'thumbnail' => 'nullable|string|max:255',
             'intro_video_url' => 'nullable|string|max:255',

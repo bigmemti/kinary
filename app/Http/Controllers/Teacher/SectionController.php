@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Teacher;
 
 use App\Http\Controllers\Controller;
-use App\Models\Section;
 use App\Http\Requests\Teacher\StoreSectionRequest;
 use App\Http\Requests\Teacher\UpdateSectionRequest;
 use App\Models\Course;
+use App\Models\Section;
 
 class SectionController extends Controller
 {
@@ -16,7 +16,7 @@ class SectionController extends Controller
     public function index(Course $course)
     {
         return inertia('teacher/course/section/index', [
-            'course' => $course->load(['sections' => fn($query) => $query->withCount(['lessons'])]),
+            'course' => $course->load(['sections' => fn ($query) => $query->withCount(['lessons'])]),
         ]);
     }
 
@@ -26,7 +26,7 @@ class SectionController extends Controller
     public function create(Course $course)
     {
         return inertia('teacher/course/section/create', [
-            'course' => $course
+            'course' => $course,
         ]);
     }
 

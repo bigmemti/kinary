@@ -1,25 +1,24 @@
-import { DashboardContainer, DashboardHeader } from "@/components/dashboard";
-import { ContentForm } from "@/components/forms";
-import AppLayout from "@/layouts/app-layout";
-import { dashboard } from "@/routes";
-import { create, index } from "@/routes/admin/content";
-import { BreadcrumbItem, Lesson } from "@/types";
-import { Head } from "@inertiajs/react";
-
+import { DashboardContainer, DashboardHeader } from '@/components/dashboard';
+import { ContentForm } from '@/components/forms';
+import AppLayout from '@/layouts/app-layout';
+import { dashboard } from '@/routes';
+import { create, index } from '@/routes/admin/content';
+import { BreadcrumbItem, Lesson } from '@/types';
+import { Head } from '@inertiajs/react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Dashboard',
-        href: dashboard().url
+        href: dashboard().url,
     },
     {
         title: 'Content',
-        href: index().url
+        href: index().url,
     },
     {
         title: 'Create',
-        href: create().url
-    }
+        href: create().url,
+    },
 ];
 
 export default function Create({ lessons }: { lessons: Lesson[] }) {
@@ -35,5 +34,5 @@ export default function Create({ lessons }: { lessons: Lesson[] }) {
 }
 
 function CreateContentForm({ lessons }: { lessons: Lesson[] }) {
-    return <ContentForm type="create" lessons={lessons} />
+    return <ContentForm type="create" lessons={lessons} />;
 }

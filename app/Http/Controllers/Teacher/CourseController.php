@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Teacher;
 
 use App\Http\Controllers\Controller;
-use App\Models\Course;
 use App\Http\Requests\Teacher\StoreCourseRequest;
 use App\Http\Requests\Teacher\UpdateCourseRequest;
+use App\Models\Course;
 
 class CourseController extends Controller
 {

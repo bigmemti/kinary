@@ -14,7 +14,7 @@ class WalletOrderController extends Controller
     public function index(Wallet $wallet)
     {
         return inertia('admin/wallet/order/index', [
-            'wallet' => $wallet->load(['user',  'orders' => fn($query) => $query->withCount(['plans', 'transactions'])->withSum('plans as amount', 'price')]),
+            'wallet' => $wallet->load(['user',  'orders' => fn ($query) => $query->withCount(['plans', 'transactions'])->withSum('plans as amount', 'price')]),
         ]);
     }
 

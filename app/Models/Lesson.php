@@ -2,11 +2,12 @@
 
 namespace App\Models;
 
+use Database\Factories\LessonFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Lesson extends Model
 {
-    /** @use HasFactory<\Database\Factories\LessonFactory> */
+    /** @use HasFactory<LessonFactory> */
     use HasFactory;
 
     /**
@@ -19,11 +20,13 @@ class Lesson extends Model
         'name',
     ];
 
-    public function section(){
+    public function section()
+    {
         return $this->belongsTo(Section::class);
     }
 
-    public function contents(){
+    public function contents()
+    {
         return $this->hasMany(Content::class);
     }
 }

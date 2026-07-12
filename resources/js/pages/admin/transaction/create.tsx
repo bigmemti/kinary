@@ -1,25 +1,24 @@
-import { DashboardContainer, DashboardHeader } from "@/components/dashboard";
-import { TransactionForm } from "@/components/forms";
-import AppLayout from "@/layouts/app-layout";
-import { dashboard } from "@/routes";
-import { create, index } from "@/routes/admin/transaction";
-import { BreadcrumbItem, Order } from "@/types";
-import { Head } from "@inertiajs/react";
-
+import { DashboardContainer, DashboardHeader } from '@/components/dashboard';
+import { TransactionForm } from '@/components/forms';
+import AppLayout from '@/layouts/app-layout';
+import { dashboard } from '@/routes';
+import { create, index } from '@/routes/admin/transaction';
+import { BreadcrumbItem, Order } from '@/types';
+import { Head } from '@inertiajs/react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Dashboard',
-        href: dashboard().url
+        href: dashboard().url,
     },
     {
         title: 'Transaction',
-        href: index().url
+        href: index().url,
     },
     {
         title: 'Create',
-        href: create().url
-    }
+        href: create().url,
+    },
 ];
 
 export default function Create({ orders }: { orders: Order[] }) {
@@ -35,5 +34,5 @@ export default function Create({ orders }: { orders: Order[] }) {
 }
 
 function CreateTransactionForm({ orders }: { orders: Order[] }) {
-    return <TransactionForm type="create" orders={orders} />
+    return <TransactionForm type="create" orders={orders} />;
 }

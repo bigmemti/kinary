@@ -1,28 +1,34 @@
-import { dashboard } from "@/routes";
-import { Head } from "@inertiajs/react";
-import AppLayout from "@/layouts/app-layout";
-import { PlanForm } from "@/components/forms";
-import { BreadcrumbItem, Plan, Course } from "@/types";
-import { edit, index, show } from "@/routes/admin/plan";
-import { DashboardContainer, DashboardHeader } from "@/components/dashboard";
+import { DashboardContainer, DashboardHeader } from '@/components/dashboard';
+import { PlanForm } from '@/components/forms';
+import AppLayout from '@/layouts/app-layout';
+import { dashboard } from '@/routes';
+import { edit, index, show } from '@/routes/admin/plan';
+import { BreadcrumbItem, Course, Plan } from '@/types';
+import { Head } from '@inertiajs/react';
 
-export default function Edit({ plan, courses }: { plan: Plan, courses: Course[] }) {
+export default function Edit({
+    plan,
+    courses,
+}: {
+    plan: Plan;
+    courses: Course[];
+}) {
     const breadcrumbs: BreadcrumbItem[] = [
         {
             title: 'Dashboard',
-            href: dashboard().url
+            href: dashboard().url,
         },
         {
             title: 'Plan',
-            href: index().url
+            href: index().url,
         },
         {
             title: plan.name,
-            href: show(plan).url
+            href: show(plan).url,
         },
         {
             title: 'Edit',
-            href: edit(plan).url
+            href: edit(plan).url,
         },
     ];
 
@@ -37,7 +43,6 @@ export default function Edit({ plan, courses }: { plan: Plan, courses: Course[] 
     );
 }
 
-function EditPlanForm({ plan, courses }: { plan: Plan, courses: Course[] }) {
-    return <PlanForm type="edit" courses={courses} plan={plan} />
+function EditPlanForm({ plan, courses }: { plan: Plan; courses: Course[] }) {
+    return <PlanForm type="edit" courses={courses} plan={plan} />;
 }
-

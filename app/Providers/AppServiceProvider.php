@@ -24,7 +24,7 @@ class AppServiceProvider extends ServiceProvider
     {
         User::observe(UserObserver::class);
 
-        Route::macro('softDeletableResource', function($name, $controller, $options = []){
+        Route::macro('softDeletableResource', function ($name, $controller, $options = []) {
             Route::resource($name, $controller, $options);
             Route::post("$name/{{$name}}/restore", [$controller, 'restore']);
             Route::delete("$name/{{$name}}/fore-delete", [$controller, 'foreDelete']);

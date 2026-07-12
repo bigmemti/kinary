@@ -1,30 +1,34 @@
-import { dashboard } from "@/routes";
-import { Head } from "@inertiajs/react";
-import AppLayout from "@/layouts/app-layout";
-import { BreadcrumbItem, Student } from "@/types";
-import ButtonLink from "@/components/button-link";
-import FormButton from "@/components/form-button";
-import { Eye, File, Pen, Trash  } from "lucide-react";
-import ResponsiveDataList from "@/components/responsive-data-list";
-import { index as enrollments } from "@/routes/admin/student/enrollment";
-import { create, destroy, edit, index, show } from "@/routes/admin/student";
-import { CreateHeaderButton, DashboardContainer, DashboardHeader } from "@/components/dashboard";
+import ButtonLink from '@/components/button-link';
+import {
+    CreateHeaderButton,
+    DashboardContainer,
+    DashboardHeader,
+} from '@/components/dashboard';
+import FormButton from '@/components/form-button';
+import ResponsiveDataList from '@/components/responsive-data-list';
+import AppLayout from '@/layouts/app-layout';
+import { dashboard } from '@/routes';
+import { create, destroy, edit, index, show } from '@/routes/admin/student';
+import { index as enrollments } from '@/routes/admin/student/enrollment';
+import { BreadcrumbItem, Student } from '@/types';
+import { Head } from '@inertiajs/react';
+import { Eye, File, Pen, Trash } from 'lucide-react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Dashboard',
-        href: dashboard().url
+        href: dashboard().url,
     },
     {
         title: 'Student',
-        href: index().url
-    }
+        href: index().url,
+    },
 ];
 
-export default function Index({ students }: { students: Student[] }){
+export default function Index({ students }: { students: Student[] }) {
     return (
-        <AppLayout breadcrumbs={breadcrumbs} >
-            <Head title="Student List"/>
+        <AppLayout breadcrumbs={breadcrumbs}>
+            <Head title="Student List" />
             <DashboardContainer>
                 <DashboardHeader header="Student List">
                     <CreateHeaderButton href={create().url} model="student" />
@@ -35,35 +39,45 @@ export default function Index({ students }: { students: Student[] }){
     );
 }
 
-function ResponsiveStudentList({ students }: { students: Student[]}) {
+function ResponsiveStudentList({ students }: { students: Student[] }) {
     return (
         <ResponsiveDataList
             data={students}
             columns={[
-                { header: "ID", cell: (student) => student.id, },
-                { header: "User ID", cell: (student) => student.user?.id, },
-                { header: "User Name", cell: (student) => student.user?.name, },
-                { header: "Enrollment Count", cell: (student) => student.enrollments_count, },
-                { header: <div className="text-end inline xl:block">Actions</div>, cell: (student) => <StudentActions student={student} /> },
+                { header: 'ID', cell: (student) => student.id },
+                { header: 'User ID', cell: (student) => student.user?.id },
+                { header: 'User Name', cell: (student) => student.user?.name },
+                {
+                    header: 'Enrollment Count',
+                    cell: (student) => student.enrollments_count,
+                },
+                {
+                    header: (
+                        <div className="inline text-end xl:block">Actions</div>
+                    ),
+                    cell: (student) => <StudentActions student={student} />,
+                },
             ]}
         />
     );
 }
 
-function StudentActions({ student }: { student: Student}) {
+function StudentActions({ student }: { student: Student }) {
     return (
-        <div className="space-x-2 text-center xl:text-end mt-2 xl:mt-1">
-            {student.enrollments_count ?
-                (
-                    <ButtonLink href={enrollments(student).url}>
-                        <File />
-                    </ButtonLink>
-                ) : (
-                    <FormButton className="inline" form={destroy.form(student)} options={{ preserveScroll: true }}>
-                        <Trash />
-                    </FormButton>
-                )
-            }
+        <div className="mt-2 space-x-2 text-center xl:mt-1 xl:text-end">
+            {student.enrollments_count ? (
+                <ButtonLink href={enrollments(student).url}>
+                    <File />
+                </ButtonLink>
+            ) : (
+                <FormButton
+                    className="inline"
+                    form={destroy.form(student)}
+                    options={{ preserveScroll: true }}
+                >
+                    <Trash />
+                </FormButton>
+            )}
             <ButtonLink href={edit(student).url}>
                 <Pen />
             </ButtonLink>

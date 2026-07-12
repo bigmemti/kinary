@@ -2,11 +2,12 @@
 
 namespace App\Models;
 
+use Database\Factories\PlanFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Plan extends Model
 {
-    /** @use HasFactory<\Database\Factories\PlanFactory> */
+    /** @use HasFactory<PlanFactory> */
     use HasFactory;
 
     /**
@@ -20,19 +21,23 @@ class Plan extends Model
         'price',
     ];
 
-    public function course(){
+    public function course()
+    {
         return $this->belongsTo(Course::class);
     }
 
-    public function students(){
+    public function students()
+    {
         return $this->belongsToMany(Student::class, Enrollment::class)->withPivot(['id'])->withTimestamps();
     }
 
-    public function enrollments(){
+    public function enrollments()
+    {
         return $this->hasMany(Enrollment::class);
     }
 
-    public function orders(){
+    public function orders()
+    {
         return $this->belongsToMany(Order::class);
     }
 }

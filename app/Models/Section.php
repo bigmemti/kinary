@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
+use Database\Factories\SectionFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Section extends Model
 {
-    /** @use HasFactory<\Database\Factories\SectionFactory> */
+    /** @use HasFactory<SectionFactory> */
     use HasFactory;
-    
+
     /**
      * The attributes that are mass assignable.
      *
@@ -19,11 +20,13 @@ class Section extends Model
         'name',
     ];
 
-    public function course(){
+    public function course()
+    {
         return $this->belongsTo(Course::class);
     }
 
-    public function lessons(){
+    public function lessons()
+    {
         return $this->hasMany(Lesson::class);
     }
 }

@@ -1,24 +1,27 @@
-import { Pagination as BasePagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "./ui/pagination"
+import {
+    Pagination as BasePagination,
+    PaginationContent,
+    PaginationItem,
+    PaginationLink,
+    PaginationNext,
+    PaginationPrevious,
+} from './ui/pagination';
 
 export default function Pagination({ meta }: any) {
-
-    const pages = []
+    const pages = [];
 
     for (let i = 1; i <= meta.last_page; i++) {
-        pages.push(i)
+        pages.push(i);
     }
 
     return (
         <BasePagination>
             <PaginationContent>
-
                 <PaginationItem>
-                    <PaginationPrevious
-                        href={meta.prev_page_url}
-                    />
+                    <PaginationPrevious href={meta.prev_page_url} />
                 </PaginationItem>
 
-                {pages.map(page => (
+                {pages.map((page) => (
                     <PaginationItem key={page}>
                         <PaginationLink
                             isActive={page === meta.current_page}
@@ -30,12 +33,9 @@ export default function Pagination({ meta }: any) {
                 ))}
 
                 <PaginationItem>
-                    <PaginationNext
-                        href={meta.next_page_url}
-                    />
+                    <PaginationNext href={meta.next_page_url} />
                 </PaginationItem>
-
             </PaginationContent>
         </BasePagination>
-    )
+    );
 }

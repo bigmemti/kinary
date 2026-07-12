@@ -1,28 +1,28 @@
-import { dashboard } from "@/routes";
-import { Head } from "@inertiajs/react";
-import AppLayout from "@/layouts/app-layout";
-import CourseForm from "./form";
-import { BreadcrumbItem, Course } from "@/types";
-import { edit, index, show } from "@/routes/teacher/course";
-import { DashboardContainer, DashboardHeader } from "@/components/dashboard";
+import { DashboardContainer, DashboardHeader } from '@/components/dashboard';
+import AppLayout from '@/layouts/app-layout';
+import { dashboard } from '@/routes';
+import { edit, index, show } from '@/routes/teacher/course';
+import { BreadcrumbItem, Course } from '@/types';
+import { Head } from '@inertiajs/react';
+import CourseForm from './form';
 
 export default function Edit({ course }: { course: Course }) {
     const breadcrumbs: BreadcrumbItem[] = [
         {
             title: 'Dashboard',
-            href: dashboard().url
+            href: dashboard().url,
         },
         {
             title: 'Course',
-            href: index().url
+            href: index().url,
         },
         {
             title: course.title,
-            href: show(course).url
+            href: show(course).url,
         },
         {
             title: 'Edit',
-            href: edit(course).url
+            href: edit(course).url,
         },
     ];
 
@@ -38,6 +38,5 @@ export default function Edit({ course }: { course: Course }) {
 }
 
 function EditCourseForm({ course }: { course: Course }) {
-    return <CourseForm type="edit" course={course} />
+    return <CourseForm type="edit" course={course} />;
 }
-

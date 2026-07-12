@@ -20,7 +20,7 @@ return new class extends Migration
             $table->enum('status', ['unread', 'read', 'cloned'])->default('unread');
             $table->timestamp('read_at')->nullable();
             $table->timestamps();
-            
+
             $table->unique(['content_id', 'enrollment_id'], 'CEI');
         });
     }

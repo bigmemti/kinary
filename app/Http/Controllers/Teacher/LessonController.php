@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Teacher;
 
 use App\Http\Controllers\Controller;
-use App\Models\Lesson;
 use App\Http\Requests\Teacher\StoreLessonRequest;
 use App\Http\Requests\Teacher\UpdateLessonRequest;
+use App\Models\Lesson;
 use App\Models\Section;
 
 class LessonController extends Controller
@@ -16,7 +16,7 @@ class LessonController extends Controller
     public function index(Section $section)
     {
         return inertia('teacher/section/lesson/index', [
-            'section' => $section->load(['lessons' => fn($query) => $query->withCount(['contents'])]),
+            'section' => $section->load(['lessons' => fn ($query) => $query->withCount(['contents'])]),
         ]);
     }
 

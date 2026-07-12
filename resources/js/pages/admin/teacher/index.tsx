@@ -1,56 +1,64 @@
-import { Teacher } from "@/types";
-import { Book, User } from "lucide-react";
-import ResponsiveDataList from "@/components/responsive-data-list";
-import { index as courses } from "@/routes/admin/teacher/course";
-import { show as user } from "@/routes/admin/user";
-import { create, destroy, edit, index, show } from "@/routes/admin/teacher";
-import { ActionButton, ActionButtonContainer, ActionsHeader, EssentialActions } from "@/components/dashboard";
-import IndexLayout from "@/layouts/crud";
-import { breadcrumbBuilder } from "@/util/breadcrumb";
+import {
+    ActionButton,
+    ActionButtonContainer,
+    ActionsHeader,
+    EssentialActions,
+} from '@/components/dashboard';
+import ResponsiveDataList from '@/components/responsive-data-list';
+import IndexLayout from '@/layouts/crud';
+import { create, destroy, edit, index, show } from '@/routes/admin/teacher';
+import { index as courses } from '@/routes/admin/teacher/course';
+import { show as user } from '@/routes/admin/user';
+import { Teacher } from '@/types';
+import { breadcrumbBuilder } from '@/util/breadcrumb';
+import { Book, User } from 'lucide-react';
 
-
-export default function Index({ teachers }: { teachers: Teacher[] }){
+export default function Index({ teachers }: { teachers: Teacher[] }) {
     return (
-        <IndexLayout 
+        <IndexLayout
             title="Teacher List"
-            breadcrumbs={
-                breadcrumbBuilder()
+            breadcrumbs={breadcrumbBuilder()
                 .dashboard()
                 .push('Teacher', index().url)
-                .build()
-            } 
+                .build()}
             model="teacher"
-            createLink={create().url}    
+            createLink={create().url}
         >
-                <ResponsiveTeacherList teachers={teachers} />
+            <ResponsiveTeacherList teachers={teachers} />
         </IndexLayout>
     );
 }
 
-function ResponsiveTeacherList({ teachers }: { teachers: Teacher[]}) {
+function ResponsiveTeacherList({ teachers }: { teachers: Teacher[] }) {
     return (
         <ResponsiveDataList
             data={teachers}
             columns={[
-                { header: "ID", cell: (teacher) => teacher.id, },
-                { header: "User ID", cell: (teacher) => teacher.user?.id, },
-                { header: "User Name", cell: (teacher) => teacher.user?.name, },
-                { header: "Course Count", cell: (teacher) => teacher.courses_count, },
-                { header: <ActionsHeader />, cell: (teacher) => <TeacherActions teacher={teacher} /> },
+                { header: 'ID', cell: (teacher) => teacher.id },
+                { header: 'User ID', cell: (teacher) => teacher.user?.id },
+                { header: 'User Name', cell: (teacher) => teacher.user?.name },
+                {
+                    header: 'Course Count',
+                    cell: (teacher) => teacher.courses_count,
+                },
+                {
+                    header: <ActionsHeader />,
+                    cell: (teacher) => <TeacherActions teacher={teacher} />,
+                },
             ]}
         />
     );
 }
 
-function TeacherActions({ teacher }: { teacher: Teacher}) {
+function TeacherActions({ teacher }: { teacher: Teacher }) {
     return (
         <ActionButtonContainer className="xl:text-end">
-            <EssentialActions 
-                isDeletable={!teacher.courses_count} 
+            <EssentialActions
+                isDeletable={!teacher.courses_count}
                 deleteForm={destroy.form(teacher)}
                 editLink={edit(teacher).url}
                 showLink={show(teacher).url}
-            />  
+            />
             <ActionButton icon={User} link={user(teacher.user!).url} />
             <ActionButton icon={Book} link={courses(teacher).url} />
         </ActionButtonContainer>

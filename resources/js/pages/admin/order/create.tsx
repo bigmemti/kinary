@@ -1,28 +1,33 @@
-import { dashboard } from "@/routes";
-import { Head } from "@inertiajs/react";
-import AppLayout from "@/layouts/app-layout";
-import { BreadcrumbItem, Plan, Wallet } from "@/types";
-import { OrderForm } from "@/components/forms";
-import { create, index } from "@/routes/admin/order";
-import { DashboardContainer, DashboardHeader } from "@/components/dashboard";
-
+import { DashboardContainer, DashboardHeader } from '@/components/dashboard';
+import { OrderForm } from '@/components/forms';
+import AppLayout from '@/layouts/app-layout';
+import { dashboard } from '@/routes';
+import { create, index } from '@/routes/admin/order';
+import { BreadcrumbItem, Plan, Wallet } from '@/types';
+import { Head } from '@inertiajs/react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Dashboard',
-        href: dashboard().url
+        href: dashboard().url,
     },
     {
         title: 'Order',
-        href: index().url
+        href: index().url,
     },
     {
         title: 'Create',
-        href: create().url
-    }
+        href: create().url,
+    },
 ];
 
-export default function Create({ wallets, plans }: { wallets: Wallet[], plans: Plan[] }) {
+export default function Create({
+    wallets,
+    plans,
+}: {
+    wallets: Wallet[];
+    plans: Plan[];
+}) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Create Order" />
@@ -34,6 +39,12 @@ export default function Create({ wallets, plans }: { wallets: Wallet[], plans: P
     );
 }
 
-function CreateOrderForm({ wallets, plans }: { wallets: Wallet[], plans: Plan[] }) {
-    return <OrderForm type="create" wallets={wallets} plans={plans} />
+function CreateOrderForm({
+    wallets,
+    plans,
+}: {
+    wallets: Wallet[];
+    plans: Plan[];
+}) {
+    return <OrderForm type="create" wallets={wallets} plans={plans} />;
 }

@@ -48,11 +48,11 @@ class WalletController extends Controller
     {
         return inertia('admin/wallet/show', [
             'wallet' => $wallet->load([
-                'user', 
-                'orders' => fn($query) => $query
+                'user',
+                'orders' => fn ($query) => $query
                                                 // ->with(['plans.course.teacher.user', 'transactions'])
-                                                ->withCount(['plans', 'transactions'])
-                                                ->withSum('plans as amount', 'price')]
+                    ->withCount(['plans', 'transactions'])
+                    ->withSum('plans as amount', 'price')]
             )->loadCount('orders'),
         ]);
     }

@@ -1,28 +1,34 @@
-import { dashboard } from "@/routes";
-import { Head } from "@inertiajs/react";
-import AppLayout from "@/layouts/app-layout";
-import ButtonLink from "@/components/button-link";
-import { destroy, edit, index, show } from "@/routes/admin/section";
-import { BreadcrumbItem, Lesson, Section } from "@/types";
-import ResponsiveDataList from "@/components/responsive-data-list";
-import { index as lessons } from "@/routes/admin/section/lesson";
-import { ActionButtonContainer, DashboardContainer, DashboardHeader, DataContainer, InfoBlock } from "@/components/dashboard";
-import { Pen, Trash } from "lucide-react";
-import FormButton from "@/components/form-button";
+import ButtonLink from '@/components/button-link';
+import {
+    ActionButtonContainer,
+    DashboardContainer,
+    DashboardHeader,
+    DataContainer,
+    InfoBlock,
+} from '@/components/dashboard';
+import FormButton from '@/components/form-button';
+import ResponsiveDataList from '@/components/responsive-data-list';
+import AppLayout from '@/layouts/app-layout';
+import { dashboard } from '@/routes';
+import { destroy, edit, index, show } from '@/routes/admin/section';
+import { index as lessons } from '@/routes/admin/section/lesson';
+import { BreadcrumbItem, Lesson, Section } from '@/types';
+import { Head } from '@inertiajs/react';
+import { Pen, Trash } from 'lucide-react';
 
-export default function Show({ section }: { section: Section}) {
+export default function Show({ section }: { section: Section }) {
     const breadcrumbs: BreadcrumbItem[] = [
         {
             title: 'Dashboard',
-            href: dashboard().url
+            href: dashboard().url,
         },
         {
             title: 'Section',
-            href: index().url
+            href: index().url,
         },
         {
             title: section.name,
-            href: show(section).url
+            href: show(section).url,
         },
     ];
 
@@ -30,7 +36,7 @@ export default function Show({ section }: { section: Section}) {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Show Section" />
             <DashboardContainer>
-                <DashboardHeader header={`Show Section ${section.name} info`} >
+                <DashboardHeader header={`Show Section ${section.name} info`}>
                     <SectionActions section={section} />
                 </DashboardHeader>
                 <DataContainer>
@@ -49,69 +55,81 @@ function LessonsInfo({ section }: { section: Section }) {
                 <LessonActions section={section} />
             </DashboardHeader>
             <LessonsMeta section={section} />
-            {(!!section.lessons && section.lessons?.length > 0) && <ResponsiveLessonList lessons={section.lessons} />}
+            {!!section.lessons && section.lessons?.length > 0 && (
+                <ResponsiveLessonList lessons={section.lessons} />
+            )}
         </>
     );
 }
 
-function ResponsiveLessonList({ lessons }: { lessons: Lesson[]}) {
+function ResponsiveLessonList({ lessons }: { lessons: Lesson[] }) {
     return (
         <ResponsiveDataList
             data={lessons}
             columns={[
-                { header: "ID", cell: (lesson) => lesson.id, },
-                { header: "Lesson", cell: (lesson) => lesson.name, },
-                { header: "Content Count", cell: (lesson) => lesson.contents_count, },
-                { header: "Created At", cell: (lesson) => lesson.created_at, },
-                { header: "Updated At", cell: (lesson) => lesson.updated_at, },
+                { header: 'ID', cell: (lesson) => lesson.id },
+                { header: 'Lesson', cell: (lesson) => lesson.name },
+                {
+                    header: 'Content Count',
+                    cell: (lesson) => lesson.contents_count,
+                },
+                { header: 'Created At', cell: (lesson) => lesson.created_at },
+                { header: 'Updated At', cell: (lesson) => lesson.updated_at },
             ]}
         />
     );
 }
 
 function LessonsMeta({ section }: { section: Section }) {
-    return(
+    return (
         <>
             <InfoBlock label="Lessons Count" value={section.lessons_count} />
         </>
     );
 }
 
-function LessonActions({ section }: { section: Section }) { 
+function LessonActions({ section }: { section: Section }) {
     return (
         <ActionButtonContainer>
-            <ButtonLink href={lessons(section).url}>
-                Lessons
-            </ButtonLink>
+            <ButtonLink href={lessons(section).url}>Lessons</ButtonLink>
         </ActionButtonContainer>
     );
 }
 
 function SectionMeta({ section }: { section: Section }) {
-    return(
+    return (
         <>
             <InfoBlock label="ID" value={section.id} />
             <InfoBlock label="Name" value={section.name} />
             <InfoBlock label="Course ID" value={section.course?.id} />
             <InfoBlock label="Course Title" value={section.course?.title} />
-            <InfoBlock label="Teacher" value={section.course?.teacher?.user?.name} />
+            <InfoBlock
+                label="Teacher"
+                value={section.course?.teacher?.user?.name}
+            />
             <InfoBlock label="Teacher ID" value={section.course?.teacher?.id} />
-            <InfoBlock label="User ID" value={section.course?.teacher?.user?.id} />
+            <InfoBlock
+                label="User ID"
+                value={section.course?.teacher?.user?.id}
+            />
             <InfoBlock label="Created At" value={section.created_at} />
             <InfoBlock label="Updated At" value={section.updated_at} />
         </>
     );
 }
 
-function SectionActions({ section }: { section: Section}) {
+function SectionActions({ section }: { section: Section }) {
     return (
         <ActionButtonContainer>
             {!section.lessons_count && (
-                    <FormButton className="inline" form={destroy.form(section)} options={{ preserveScroll: true }}>
-                        <Trash />
-                    </FormButton>
-                )
-            }
+                <FormButton
+                    className="inline"
+                    form={destroy.form(section)}
+                    options={{ preserveScroll: true }}
+                >
+                    <Trash />
+                </FormButton>
+            )}
             <ButtonLink href={edit(section).url}>
                 <Pen />
             </ButtonLink>

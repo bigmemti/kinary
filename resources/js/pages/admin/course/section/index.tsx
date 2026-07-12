@@ -1,60 +1,76 @@
-import { dashboard } from "@/routes";
-import { Head } from "@inertiajs/react";
-import AppLayout from "@/layouts/app-layout";
-import { BreadcrumbItem, Section, Course } from "@/types";
-import ButtonLink from "@/components/button-link";
-import FormButton from "@/components/form-button";
-import { Eye, Layers, Pen, Trash  } from "lucide-react";
-import ResponsiveDataList from "@/components/responsive-data-list";
-import { create, index as sections } from "@/routes/admin/course/section";
-import { index, show as course_show } from "@/routes/admin/course";
-import { CreateHeaderButton, DashboardContainer, DashboardHeader } from "@/components/dashboard";
-import { destroy, edit, show } from "@/routes/admin/section";
-import { index as lessons } from "@/routes/admin/section/lesson";
+import ButtonLink from '@/components/button-link';
+import {
+    CreateHeaderButton,
+    DashboardContainer,
+    DashboardHeader,
+} from '@/components/dashboard';
+import FormButton from '@/components/form-button';
+import ResponsiveDataList from '@/components/responsive-data-list';
+import AppLayout from '@/layouts/app-layout';
+import { dashboard } from '@/routes';
+import { show as course_show, index } from '@/routes/admin/course';
+import { create, index as sections } from '@/routes/admin/course/section';
+import { destroy, edit, show } from '@/routes/admin/section';
+import { index as lessons } from '@/routes/admin/section/lesson';
+import { BreadcrumbItem, Course, Section } from '@/types';
+import { Head } from '@inertiajs/react';
+import { Eye, Layers, Pen, Trash } from 'lucide-react';
 
-export default function Index({ course }: { course: Course }){
+export default function Index({ course }: { course: Course }) {
     const breadcrumbs: BreadcrumbItem[] = [
         {
             title: 'Dashboard',
-            href: dashboard().url
+            href: dashboard().url,
         },
         {
             title: 'Course',
-            href: index().url
+            href: index().url,
         },
         {
             title: course.title,
-            href: course_show(course).url
+            href: course_show(course).url,
         },
         {
             title: 'Sections',
-            href: sections(course).url
+            href: sections(course).url,
         },
     ];
 
     return (
-        <AppLayout breadcrumbs={breadcrumbs} >
-            <Head title="Course List"/>
+        <AppLayout breadcrumbs={breadcrumbs}>
+            <Head title="Course List" />
             <DashboardContainer>
-                <DashboardHeader header={`Course ${course.title} Sections List`}>
-                    <CreateHeaderButton href={create(course).url} model="section" />
+                <DashboardHeader
+                    header={`Course ${course.title} Sections List`}
+                >
+                    <CreateHeaderButton
+                        href={create(course).url}
+                        model="section"
+                    />
                 </DashboardHeader>
-                {(!!course.sections && course.sections?.length > 0) && <ResponsiveSectionList sections={course.sections} />}
+                {!!course.sections && course.sections?.length > 0 && (
+                    <ResponsiveSectionList sections={course.sections} />
+                )}
             </DashboardContainer>
         </AppLayout>
     );
 }
 
-function ResponsiveSectionList({ sections }: { sections: Section[]}) {
+function ResponsiveSectionList({ sections }: { sections: Section[] }) {
     return (
         <ResponsiveDataList
             data={sections}
             columns={[
-                { header: "ID", cell: (section) => section.id, },
-                { header: "Section", cell: (section) => section.name, },
-                { header: "Created At", cell: (section) => section.created_at, },
-                { header: "Updated At", cell: (section) => section.updated_at, },
-                { header: <div className="text-end inline xl:block">Actions</div>, cell: (section) => <SectionActions section={section} /> },
+                { header: 'ID', cell: (section) => section.id },
+                { header: 'Section', cell: (section) => section.name },
+                { header: 'Created At', cell: (section) => section.created_at },
+                { header: 'Updated At', cell: (section) => section.updated_at },
+                {
+                    header: (
+                        <div className="inline text-end xl:block">Actions</div>
+                    ),
+                    cell: (section) => <SectionActions section={section} />,
+                },
             ]}
         />
     );
@@ -62,9 +78,13 @@ function ResponsiveSectionList({ sections }: { sections: Section[]}) {
 
 function SectionActions({ section }: { section: Section }) {
     return (
-        <div className="space-x-2 text-center xl:text-end mt-2 xl:mt-1">
+        <div className="mt-2 space-x-2 text-center xl:mt-1 xl:text-end">
             {!section.lessons_count && (
-                <FormButton className="inline" form={destroy.form(section)} options={{ preserveScroll: true }}>
+                <FormButton
+                    className="inline"
+                    form={destroy.form(section)}
+                    options={{ preserveScroll: true }}
+                >
                     <Trash />
                 </FormButton>
             )}

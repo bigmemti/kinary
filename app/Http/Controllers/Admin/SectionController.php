@@ -44,7 +44,7 @@ class SectionController extends Controller
     public function show(Section $section)
     {
         return inertia('admin/section/show', [
-            'section' => $section->load(['course.teacher.user', 'lessons' => fn($query) => $query->take(5)->withCount(['contents'])])->loadCount(['lessons']),
+            'section' => $section->load(['course.teacher.user', 'lessons' => fn ($query) => $query->take(5)->withCount(['contents'])])->loadCount(['lessons']),
         ]);
     }
 

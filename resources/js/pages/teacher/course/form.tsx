@@ -1,28 +1,51 @@
-import { Course, WithType } from "@/types";
-import course_links from "@/routes/teacher/course";
-import { useState } from "react";
-import { Form } from "@inertiajs/react";
-import { FieldContainer, FormContainer, SubmitButton } from "@/components/forms";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import InputError from "@/components/input-error";
+import {
+    FieldContainer,
+    FormContainer,
+    SubmitButton,
+} from '@/components/forms';
+import InputError from '@/components/input-error';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectLabel,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
+import course_links from '@/routes/teacher/course';
+import { Course, WithType } from '@/types';
+import { Form } from '@inertiajs/react';
+import { Pen, X } from 'lucide-react';
+import { useState } from 'react';
 import slugify from 'slugify';
-import { Button } from "@/components/ui/button";
-import { Pen, X } from "lucide-react";
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
 
-export default function CourseForm({ type, course }: WithType<{ course?: Course }>){
+export default function CourseForm({
+    type,
+    course,
+}: WithType<{ course?: Course }>) {
     const [slugTouched, setSlugTouched] = useState(type === 'edit');
-    const [slug, setSlug] = useState(course?.slug ?? "");
-    const form = (type === 'create')? course_links.store.form({ mergeQuery: { slug: slug } }): course_links.update.form(course?? 0, { mergeQuery: { slug: slug } });
-    
-    return(
+    const [slug, setSlug] = useState(course?.slug ?? '');
+    const form =
+        type === 'create'
+            ? course_links.store.form({ mergeQuery: { slug: slug } })
+            : course_links.update.form(course ?? 0, {
+                  mergeQuery: { slug: slug },
+              });
+
+    return (
         <Form
             {...form}
             disableWhileProcessing
-            onError={(errors) => (errors.slug == 'The slug has already been taken.') && setSlugTouched(true)}
-            className="flex flex-col mt-4 gap-4"
+            onError={(errors) =>
+                errors.slug == 'The slug has already been taken.' &&
+                setSlugTouched(true)
+            }
+            className="mt-4 flex flex-col gap-4"
         >
             {({ processing, errors }) => (
                 <FormContainer>
@@ -36,7 +59,12 @@ export default function CourseForm({ type, course }: WithType<{ course?: Course 
                             tabIndex={1}
                             autoFocus
                             defaultValue={course?.title}
-                            onChange={e => (!slugTouched) && setSlug(slugify(e.target.value, { lower: true }))}
+                            onChange={(e) =>
+                                !slugTouched &&
+                                setSlug(
+                                    slugify(e.target.value, { lower: true }),
+                                )
+                            }
                             placeholder="Title"
                         />
 
@@ -46,7 +74,7 @@ export default function CourseForm({ type, course }: WithType<{ course?: Course 
                     <FieldContainer>
                         <Label htmlFor="slug">Slug</Label>
 
-                        <div className='flex'>
+                        <div className="flex">
                             <Input
                                 id="slug"
                                 type="text"
@@ -55,18 +83,17 @@ export default function CourseForm({ type, course }: WithType<{ course?: Course 
                                 tabIndex={2}
                                 placeholder="Slug"
                                 disabled={!slugTouched}
-                                onChange={e => setSlug(slugify(e.target.value))}
+                                onChange={(e) =>
+                                    setSlug(slugify(e.target.value))
+                                }
                             />
 
-                            <Button 
-                                variant={'ghost'} 
-                                type='button' 
-                                onClick={() =>  setSlugTouched(v => !v)}
+                            <Button
+                                variant={'ghost'}
+                                type="button"
+                                onClick={() => setSlugTouched((v) => !v)}
                             >
-                                {slugTouched 
-                                    ? <X /> 
-                                    : <Pen />
-                                }
+                                {slugTouched ? <X /> : <Pen />}
                             </Button>
                         </div>
 
@@ -114,7 +141,9 @@ export default function CourseForm({ type, course }: WithType<{ course?: Course 
                             <SelectContent>
                                 <SelectGroup>
                                     <SelectLabel>Status</SelectLabel>
-                                    <SelectItem value="published">published</SelectItem>
+                                    <SelectItem value="published">
+                                        published
+                                    </SelectItem>
                                     <SelectItem value="draft">draft</SelectItem>
                                 </SelectGroup>
                             </SelectContent>

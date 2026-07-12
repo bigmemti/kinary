@@ -1,19 +1,25 @@
-import { DashboardContainer } from "@/components/dashboard";
-import InputError from "@/components/input-error";
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogFooter, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import AppLayout from "@/layouts/app-layout";
-import { dashboard } from "@/routes";
-import { index } from "@/routes/admin/course";
-import { store } from "@/routes/admin/course/plan";
-import { BreadcrumbItem, Course } from "@/types";
-import { Form, Head } from "@inertiajs/react";
-import { Plus } from "lucide-react";
-import { useState } from "react";
+import { DashboardContainer } from '@/components/dashboard';
+import InputError from '@/components/input-error';
+import { Button } from '@/components/ui/button';
+import {
+    Dialog,
+    DialogContent,
+    DialogFooter,
+    DialogTitle,
+    DialogTrigger,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import AppLayout from '@/layouts/app-layout';
+import { dashboard } from '@/routes';
+import { index } from '@/routes/admin/course';
+import { store } from '@/routes/admin/course/plan';
+import { BreadcrumbItem, Course } from '@/types';
+import { Form, Head } from '@inertiajs/react';
+import { Plus } from 'lucide-react';
+import { useState } from 'react';
 
-export default function Show({ course }: { course: Course}) {
+export default function Show({ course }: { course: Course }) {
     const breadcrumbs: BreadcrumbItem[] = [
         {
             title: 'Dashboard',
@@ -57,22 +63,19 @@ export default function Show({ course }: { course: Course}) {
     );
 }
 
-
-function PlanCreateDialog({ course }: { course: Course}){
+function PlanCreateDialog({ course }: { course: Course }) {
     const [open, setOpen] = useState(false);
 
-    return(
+    return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button className='self-end' onClick={() => setOpen(true)}>
+                <Button className="self-end" onClick={() => setOpen(true)}>
                     Create new plan <Plus />
                 </Button>
             </DialogTrigger>
 
             <DialogContent>
-                <DialogTitle>
-                    Create a new Course.
-                </DialogTitle>
+                <DialogTitle>Create a new Course.</DialogTitle>
 
                 <Form
                     {...store.form(course)}
@@ -86,10 +89,7 @@ function PlanCreateDialog({ course }: { course: Course}){
                     {({ processing, errors }) => (
                         <>
                             <div className="grid gap-2">
-                                <Label
-                                    htmlFor="name"
-                                    className="sr-only"
-                                >
+                                <Label htmlFor="name" className="sr-only">
                                     Name
                                 </Label>
 
@@ -104,10 +104,7 @@ function PlanCreateDialog({ course }: { course: Course}){
                             </div>
 
                             <div className="grid gap-2">
-                                <Label
-                                    htmlFor="price"
-                                    className="sr-only"
-                                >
+                                <Label htmlFor="price" className="sr-only">
                                     Price
                                 </Label>
 
@@ -123,10 +120,7 @@ function PlanCreateDialog({ course }: { course: Course}){
                             </div>
 
                             <DialogFooter className="gap-2">
-                                <Button
-                                    disabled={processing}
-                                    asChild
-                                >
+                                <Button disabled={processing} asChild>
                                     <button
                                         type="submit"
                                         data-test="submit-course-create-button"

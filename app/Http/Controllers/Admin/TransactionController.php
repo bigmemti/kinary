@@ -16,7 +16,7 @@ class TransactionController extends Controller
     public function index()
     {
         return inertia('admin/transaction/index', [
-            'transactions' => Transaction::with(['order' => fn($query) => $query->with(['wallet.user'])->withSum('plans as amount', 'price')])->get(),
+            'transactions' => Transaction::with(['order' => fn ($query) => $query->with(['wallet.user'])->withSum('plans as amount', 'price')])->get(),
         ]);
     }
 
@@ -44,7 +44,7 @@ class TransactionController extends Controller
     public function show(Transaction $transaction)
     {
         return inertia('admin/transaction/show', [
-            'transaction' => $transaction->load(['order' => fn($query) => $query->with(['wallet.user'])->withSum('plans as amount', 'price')])
+            'transaction' => $transaction->load(['order' => fn ($query) => $query->with(['wallet.user'])->withSum('plans as amount', 'price')]),
         ]);
     }
 

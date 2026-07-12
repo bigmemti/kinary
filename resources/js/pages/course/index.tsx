@@ -4,10 +4,24 @@ import FormButton from '@/components/form-button';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Dialog, DialogContent, DialogFooter, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import {
+    Dialog,
+    DialogContent,
+    DialogFooter,
+    DialogTitle,
+    DialogTrigger,
+} from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectLabel,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
 import { dashboard } from '@/routes';
@@ -16,8 +30,7 @@ import { Course, type BreadcrumbItem } from '@/types';
 import { Form, Head } from '@inertiajs/react';
 import { Eye, Pen, Plus, Trash, X } from 'lucide-react';
 import { PropsWithChildren, useState } from 'react';
-import slugify from 'slugify'
-
+import slugify from 'slugify';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -30,7 +43,7 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-export default function Index({ courses }: { courses: Course[]}) {
+export default function Index({ courses }: { courses: Course[] }) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Course List" />
@@ -42,89 +55,82 @@ export default function Index({ courses }: { courses: Course[]}) {
     );
 }
 
-function CourseCardsContainer({ courses }: { courses: Course[]}){
-    return(
-        <CardContainer> 
+function CourseCardsContainer({ courses }: { courses: Course[] }) {
+    return (
+        <CardContainer>
             <HeaderCard>
-                <div className='flex-1 flex gap-4'>
-                    <span className='flex-1'>Course</span>
+                <div className="flex flex-1 gap-4">
+                    <span className="flex-1">Course</span>
                     <span>Status</span>
                 </div>
                 <div>Actions</div>
             </HeaderCard>
-            {courses.map(course => ( 
-                <CourseCard key={course.id}> 
-                    <div className='flex-1 flex gap-4'>
-                        <span className='flex-1'>{course.title}</span>
+            {courses.map((course) => (
+                <CourseCard key={course.id}>
+                    <div className="flex flex-1 gap-4">
+                        <span className="flex-1">{course.title}</span>
                         <span>{course.status}</span>
                     </div>
-                    <div className='flex gap-2'>
+                    <div className="flex gap-2">
                         <CourseShowButton course={course} />
                         <CourseDeleteButton course={course} />
                     </div>
-                </CourseCard> 
+                </CourseCard>
             ))}
         </CardContainer>
     );
 }
 
 function CourseDeleteButton({ course }: { course: Course }) {
-    return(
-        <FormButton form={destroy.form(course)} options={{ preserveScroll: true }}>
+    return (
+        <FormButton
+            form={destroy.form(course)}
+            options={{ preserveScroll: true }}
+        >
             <Trash />
         </FormButton>
     );
 }
 
-function CourseShowButton({ course }: { course: Course}) {
-    return(
+function CourseShowButton({ course }: { course: Course }) {
+    return (
         <ButtonLink href={show(course).url}>
             <Eye />
         </ButtonLink>
     );
 }
 
-function CourseCard({ children }: PropsWithChildren){
-    return(
-        <Card className='px-4 flex-row'>
-            {children}
-        </Card>
-    );
+function CourseCard({ children }: PropsWithChildren) {
+    return <Card className="flex-row px-4">{children}</Card>;
 }
 
 function HeaderCard({ children }: PropsWithChildren) {
-    return(
-        <Card className='hidden lg:flex px-4 flex-row'>
-            {children}
-        </Card>
-    );
+    return <Card className="hidden flex-row px-4 lg:flex">{children}</Card>;
 }
 
-function CardContainer({ children }: PropsWithChildren){
-    return(
-        <div className='grid md:grid-cols-2 lg:grid-cols-1 gap-4'>
+function CardContainer({ children }: PropsWithChildren) {
+    return (
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-1">
             {children}
         </div>
     );
 }
 
-function CourseCreateDialog(){
+function CourseCreateDialog() {
     const [open, setOpen] = useState(false);
     const [slugTouched, setSlugTouched] = useState(false);
-    const [slug, setSlug] = useState("");
+    const [slug, setSlug] = useState('');
 
-    return(
+    return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button className='self-end' onClick={() => setOpen(true)}>
+                <Button className="self-end" onClick={() => setOpen(true)}>
                     Create new course <Plus />
                 </Button>
             </DialogTrigger>
 
             <DialogContent>
-                <DialogTitle>
-                    Create a new Course.
-                </DialogTitle>
+                <DialogTitle>Create a new Course.</DialogTitle>
 
                 <Form
                     {...store.form({ mergeQuery: { slug: slug } })}
@@ -132,17 +138,21 @@ function CourseCreateDialog(){
                         preserveScroll: true,
                     }}
                     resetOnSuccess
-                    onSuccess={() => {setOpen(false); setSlugTouched(false); setSlug('')}}
-                    onError={(errors) => (errors.slug == 'The slug has already been taken.') && setSlugTouched(true)}
+                    onSuccess={() => {
+                        setOpen(false);
+                        setSlugTouched(false);
+                        setSlug('');
+                    }}
+                    onError={(errors) =>
+                        errors.slug == 'The slug has already been taken.' &&
+                        setSlugTouched(true)
+                    }
                     className="space-y-6"
                 >
                     {({ processing, errors }) => (
                         <>
                             <div className="grid gap-2">
-                                <Label
-                                    htmlFor="title"
-                                    className="sr-only"
-                                >
+                                <Label htmlFor="title" className="sr-only">
                                     Title
                                 </Label>
 
@@ -150,7 +160,14 @@ function CourseCreateDialog(){
                                     id="title"
                                     type="text"
                                     name="title"
-                                    onChange={e => (!slugTouched) && setSlug(slugify(e.target.value, { lower: true }))}
+                                    onChange={(e) =>
+                                        !slugTouched &&
+                                        setSlug(
+                                            slugify(e.target.value, {
+                                                lower: true,
+                                            }),
+                                        )
+                                    }
                                     placeholder="Title"
                                 />
 
@@ -158,14 +175,11 @@ function CourseCreateDialog(){
                             </div>
 
                             <div className="grid gap-2">
-                                <Label
-                                    htmlFor="slug"
-                                    className="sr-only"
-                                >
+                                <Label htmlFor="slug" className="sr-only">
                                     Slug
                                 </Label>
 
-                                <div className='flex'>
+                                <div className="flex">
                                     <Input
                                         id="slug"
                                         type="text"
@@ -173,18 +187,19 @@ function CourseCreateDialog(){
                                         value={slug}
                                         placeholder="Slug"
                                         disabled={!slugTouched}
-                                        onChange={e => setSlug(slugify(e.target.value))}
+                                        onChange={(e) =>
+                                            setSlug(slugify(e.target.value))
+                                        }
                                     />
 
-                                    <Button 
-                                        variant={'ghost'} 
-                                        type='button' 
-                                        onClick={() =>  setSlugTouched(v => !v)}
-                                    >
-                                        {slugTouched 
-                                            ? <X /> 
-                                            : <Pen />
+                                    <Button
+                                        variant={'ghost'}
+                                        type="button"
+                                        onClick={() =>
+                                            setSlugTouched((v) => !v)
                                         }
+                                    >
+                                        {slugTouched ? <X /> : <Pen />}
                                     </Button>
                                 </div>
 
@@ -192,10 +207,7 @@ function CourseCreateDialog(){
                             </div>
 
                             <div className="grid gap-2">
-                                <Label
-                                    htmlFor="thumbnail"
-                                    className="sr-only"
-                                >
+                                <Label htmlFor="thumbnail" className="sr-only">
                                     Thumbnail
                                 </Label>
 
@@ -228,10 +240,7 @@ function CourseCreateDialog(){
                             </div>
 
                             <div className="grid gap-2">
-                                <Label
-                                    htmlFor="status"
-                                    className="sr-only"
-                                >
+                                <Label htmlFor="status" className="sr-only">
                                     Status
                                 </Label>
 
@@ -243,8 +252,12 @@ function CourseCreateDialog(){
                                     <SelectContent>
                                         <SelectGroup>
                                             <SelectLabel>Status</SelectLabel>
-                                            <SelectItem value="published">published</SelectItem>
-                                            <SelectItem value="draft">draft</SelectItem>
+                                            <SelectItem value="published">
+                                                published
+                                            </SelectItem>
+                                            <SelectItem value="draft">
+                                                draft
+                                            </SelectItem>
                                         </SelectGroup>
                                     </SelectContent>
                                 </Select>
@@ -270,10 +283,7 @@ function CourseCreateDialog(){
                             </div>
 
                             <DialogFooter className="gap-2">
-                                <Button
-                                    disabled={processing}
-                                    asChild
-                                >
+                                <Button disabled={processing} asChild>
                                     <button
                                         type="submit"
                                         data-test="submit-course-create-button"
@@ -289,4 +299,3 @@ function CourseCreateDialog(){
         </Dialog>
     );
 }
-

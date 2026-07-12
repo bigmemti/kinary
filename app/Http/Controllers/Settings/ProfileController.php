@@ -43,7 +43,7 @@ class ProfileController extends Controller
     /**
      * Delete the user's account.
      */
-    public function destroy(Request $request): Void
+    public function destroy(Request $request): void
     {
         $request->validate([
             'password' => ['required', 'current_password'],
@@ -58,6 +58,5 @@ class ProfileController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return;
     }
 }

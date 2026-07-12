@@ -28,7 +28,7 @@ class OrderController extends Controller
     {
         return inertia('admin/order/create', [
             'wallets' => Wallet::with(['user'])->get(),
-            'plans' => Plan::with(['course.teacher.user'])->get(), 
+            'plans' => Plan::with(['course.teacher.user'])->get(),
         ]);
     }
 
@@ -39,8 +39,9 @@ class OrderController extends Controller
     {
         $order = Order::create($request->validated());
 
-        if($request->has('plans'))
+        if ($request->has('plans')) {
             $order->plans()->sync($request->plans);
+        }
     }
 
     /**
@@ -60,8 +61,8 @@ class OrderController extends Controller
     {
         return inertia('admin/order/edit', [
             'wallets' => Wallet::with(['user'])->get(),
-            'plans' => Plan::with(['course.teacher.user'])->get(), 
-            'order' => $order->load(['plans' => fn($query) => $query->pluck('id')]),
+            'plans' => Plan::with(['course.teacher.user'])->get(),
+            'order' => $order->load(['plans' => fn ($query) => $query->pluck('id')]),
         ]);
 
     }
@@ -72,7 +73,7 @@ class OrderController extends Controller
     public function update(UpdateOrderRequest $request, Order $order)
     {
         $order->update($request->validated());
-        $order->plans()->syncWithPivotValues($request->plans, [ 'updated_at' => now() ]);
+        $order->plans()->syncWithPivotValues($request->plans, ['updated_at' => now()]);
     }
 
     /**

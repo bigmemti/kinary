@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreignIdFor(Space::class)->constrained();
             $table->smallInteger('score');
             $table->timestamps();
-            
+
             $table->unique(['access_id', 'space_id'], 'ASI');
         });
     }

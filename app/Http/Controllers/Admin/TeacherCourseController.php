@@ -14,7 +14,7 @@ class TeacherCourseController extends Controller
     public function index(Teacher $teacher)
     {
         return inertia('admin/teacher/course/index', [
-            'teacher' => $teacher->load(['courses' => fn($query) => $query->withCount('plans'), 'user']),
+            'teacher' => $teacher->load(['courses' => fn ($query) => $query->withCount('plans'), 'user']),
         ]);
     }
 

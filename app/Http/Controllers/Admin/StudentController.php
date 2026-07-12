@@ -57,7 +57,7 @@ class StudentController extends Controller
     {
         return inertia('admin/student/edit', [
             'student' => $student->load(['user']),
-            'users' => [ ...User::doesntHave('student')->get(), $student->user],
+            'users' => [...User::doesntHave('student')->get(), $student->user],
         ]);
     }
 
@@ -77,7 +77,7 @@ class StudentController extends Controller
     public function destroy(Student $student)
     {
         $student->delete();
-        
+
         return to_route('admin.student.index');
     }
 }

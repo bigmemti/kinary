@@ -14,11 +14,13 @@ class Enrollment extends Model
         'plan_id',
     ];
 
-    public function student(){
+    public function student()
+    {
         return $this->belongsTo(Student::class);
     }
 
-    public function plan(){
+    public function plan()
+    {
         return $this->belongsTo(Plan::class);
     }
 }

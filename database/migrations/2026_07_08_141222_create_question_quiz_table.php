@@ -19,7 +19,6 @@ return new class extends Migration
             $table->smallInteger('order');
             $table->timestamps();
 
-            
             $table->unique(['question_id', 'quiz_id'], 'QQI');
         });
     }

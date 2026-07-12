@@ -14,7 +14,7 @@ class CoursePlanController extends Controller
     public function index(Course $course)
     {
         return inertia('admin/course/plan/index', [
-            'course' => $course->load(['plans' => fn($query) => $query->withCount(['orders', 'students'])]),
+            'course' => $course->load(['plans' => fn ($query) => $query->withCount(['orders', 'students'])]),
         ]);
     }
 

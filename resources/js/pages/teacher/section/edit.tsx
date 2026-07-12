@@ -1,29 +1,35 @@
-import { dashboard } from "@/routes";
-import { Head } from "@inertiajs/react";
-import AppLayout from "@/layouts/app-layout";
-import { SectionForm } from "@/components/forms";
-import { BreadcrumbItem, Section, Course } from "@/types";
-import { edit, show } from "@/routes/teacher/section";
-import { DashboardContainer, DashboardHeader } from "@/components/dashboard";
-import { index } from "@/routes/admin/course/section";
+import { DashboardContainer, DashboardHeader } from '@/components/dashboard';
+import { SectionForm } from '@/components/forms';
+import AppLayout from '@/layouts/app-layout';
+import { dashboard } from '@/routes';
+import { index } from '@/routes/admin/course/section';
+import { edit, show } from '@/routes/teacher/section';
+import { BreadcrumbItem, Course, Section } from '@/types';
+import { Head } from '@inertiajs/react';
 
-export default function Edit({ section, courses }: { section: Section, courses: Course[] }) {
+export default function Edit({
+    section,
+    courses,
+}: {
+    section: Section;
+    courses: Course[];
+}) {
     const breadcrumbs: BreadcrumbItem[] = [
         {
             title: 'Dashboard',
-            href: dashboard().url
+            href: dashboard().url,
         },
         {
             title: 'Section',
-            href: index(section.course_id).url
+            href: index(section.course_id).url,
         },
         {
             title: section.name,
-            href: show(section).url
+            href: show(section).url,
         },
         {
             title: 'Edit',
-            href: edit(section).url
+            href: edit(section).url,
         },
     ];
 
@@ -38,7 +44,12 @@ export default function Edit({ section, courses }: { section: Section, courses: 
     );
 }
 
-function EditSectionForm({ section, courses }: { section: Section, courses: Course[] }) {
-    return <SectionForm type="edit" courses={courses} section={section} />
+function EditSectionForm({
+    section,
+    courses,
+}: {
+    section: Section;
+    courses: Course[];
+}) {
+    return <SectionForm type="edit" courses={courses} section={section} />;
 }
-

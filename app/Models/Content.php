@@ -2,11 +2,12 @@
 
 namespace App\Models;
 
+use Database\Factories\ContentFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Content extends Model
 {
-    /** @use HasFactory<\Database\Factories\ContentFactory> */
+    /** @use HasFactory<ContentFactory> */
     use HasFactory;
 
     /**
@@ -19,8 +20,8 @@ class Content extends Model
         'body',
     ];
 
-    public function lesson(){
+    public function lesson()
+    {
         return $this->belongsTo(Lesson::class);
     }
-
 }

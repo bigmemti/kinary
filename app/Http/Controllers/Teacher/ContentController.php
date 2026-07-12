@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Teacher;
 
 use App\Http\Controllers\Controller;
-use App\Models\Content;
 use App\Http\Requests\Teacher\StoreContentRequest;
 use App\Http\Requests\Teacher\UpdateContentRequest;
+use App\Models\Content;
 use App\Models\Lesson;
 
 class ContentController extends Controller

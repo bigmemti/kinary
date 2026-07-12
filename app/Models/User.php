@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -10,7 +11,7 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
+    /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable, TwoFactorAuthenticatable;
 
     /**
@@ -49,40 +50,52 @@ class User extends Authenticatable
             'two_factor_confirmed_at' => 'datetime',
         ];
     }
-    
-    public function transactions(){
+
+    public function transactions()
+    {
         return $this->hasMany(Transaction::class);
     }
-    
-    public function wallet(){
+
+    public function wallet()
+    {
         return $this->hasOne(Wallet::class);
     }
 
-    public function student(){
+    public function student()
+    {
         return $this->hasOne(Student::class);
     }
 
-    public function teacher(){
+    public function teacher()
+    {
         return $this->hasOne(Teacher::class);
     }
 
-    public function updateOrders() {
+    public function updateOrders()
+    {
         $this->wallet->orders()->where('status', 'pending')->where('updated_at', '<', now()->subHours(24))->update(['status' => 'expired']);
     }
 
-    public function hasActiveCart(){
+    public function hasActiveCart()
+    {
         $this->updateOrders();
+
         return $this->wallet->orders()->where('status', 'pending')->count() > 0;
     }
 
-    public function activeCart(){
+    public function activeCart()
+    {
         $this->updateOrders();
+
         return $this->wallet->orders()->where('status', 'pending')->first();
     }
 
-    public function cartItemsCount(){
-        if($this->hasActiveCart())
+    public function cartItemsCount()
+    {
+        if ($this->hasActiveCart()) {
             return $this->activeCart()->plans()->count();
+        }
+
         return 0;
     }
 }
