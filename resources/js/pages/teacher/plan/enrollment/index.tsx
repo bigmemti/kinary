@@ -73,7 +73,7 @@ function ResponsiveEnrollmentList({ students }: { students: Student[] }) {
     );
 }
 
-function EnrollmentActions({ student }: { student: Student }) {
+function EnrollmentActions() {
     return (
         <div className="mt-2 space-x-2 text-center xl:mt-1 xl:text-end"></div>
     );

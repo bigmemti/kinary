@@ -76,7 +76,7 @@ export interface Student {
     user?: User;
     enrollments_count?: number;
     enrollments?: Enrollment[];
-    pivot?: any;
+    pivot?: unknown;
     created_at: DateTime;
     updated_at: DateTime;
 }

@@ -7,7 +7,7 @@ import {
     PaginationPrevious,
 } from './ui/pagination';
 
-export default function Pagination({ meta }: any) {
+export default function Pagination({ meta }: unknown) {
     const pages = [];
 
     for (let i = 1; i <= meta.last_page; i++) {

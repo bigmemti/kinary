@@ -30,7 +30,7 @@ export default function Index({
     meta,
 }: {
     wallets: Wallet[];
-    meta: any;
+    meta: unknown;
 }) {
     // console.log(wallets);
     return (
