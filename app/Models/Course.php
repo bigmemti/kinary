@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Enums\CourseStatus;
+use App\Enums\TeacherRole;
 use Cviebrock\EloquentSluggable\Sluggable;
 use Database\Factories\CourseFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -25,20 +25,8 @@ class Course extends Model
         'description',
         'thumbnail',
         'intro_video_url',
-        'status',
+        'is_published',
     ];
-
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
-    {
-        return [
-            'status' => CourseStatus::class,
-        ];
-    }
 
     public function sluggable(): array
     {
@@ -63,6 +51,6 @@ class Course extends Model
 
     public function teacher()
     {
-        return $this->belongsTo(Teacher::class);
+        return $this->belongsToMany(Teacher::class)->withPivot('role')->wherePivot('role', '=', TeacherRole::Owner);
     }
 }
