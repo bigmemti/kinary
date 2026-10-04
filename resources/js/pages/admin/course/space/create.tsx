@@ -1,11 +1,11 @@
 import { DashboardContainer, DashboardHeader } from '@/components/dashboard';
-import { CoursePlanForm } from '@/components/forms';
 import AppLayout from '@/layouts/app-layout';
 import { dashboard } from '@/routes';
 import { show as course_show, index } from '@/routes/admin/course';
-import { create, index as plans } from '@/routes/admin/course/plan';
+import { create, index as spaces } from '@/routes/admin/course/space';
 import { BreadcrumbItem, Course } from '@/types';
 import { Head } from '@inertiajs/react';
+import  CourseSpaceForm  from './form';
 
 export default function Create({ course }: { course: Course }) {
     const breadcrumbs: BreadcrumbItem[] = [
@@ -22,8 +22,8 @@ export default function Create({ course }: { course: Course }) {
             href: course_show(course).url,
         },
         {
-            title: 'Plans',
-            href: plans(course).url,
+            title: 'Spaces',
+            href: spaces(course).url,
         },
         {
             title: 'Create',
@@ -33,10 +33,10 @@ export default function Create({ course }: { course: Course }) {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title={`Create a plan for ${course.title} Course`} />
+            <Head title={`Create a space for ${course.title} Course`} />
             <DashboardContainer>
-                <DashboardHeader header="Create a new Plan" />
-                <CoursePlanForm course={course} />
+                <DashboardHeader header="Create a new Space" />
+                <CourseSpaceForm course={course} />
             </DashboardContainer>
         </AppLayout>
     );

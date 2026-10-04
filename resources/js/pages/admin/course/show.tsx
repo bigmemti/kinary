@@ -11,9 +11,9 @@ import ResponsiveDataList from '@/components/responsive-data-list';
 import AppLayout from '@/layouts/app-layout';
 import { dashboard } from '@/routes';
 import { destroy, edit, index, show } from '@/routes/admin/course';
-import { index as plans } from '@/routes/admin/course/plan';
+import { index as spaces } from '@/routes/admin/course/space';
 import { index as sections } from '@/routes/admin/course/section';
-import { BreadcrumbItem, Course, Plan, Section } from '@/types';
+import { BreadcrumbItem, Course, Space, Section } from '@/types';
 import { Head } from '@inertiajs/react';
 import { Pen, Trash } from 'lucide-react';
 
@@ -43,54 +43,53 @@ export default function Show({ course }: { course: Course }) {
                 <DataContainer>
                     <CourseMeta course={course} />
                     <SectionsInfo course={course} />
-                    <PlansInfo course={course} />
+                    <SpacesInfo course={course} />
                 </DataContainer>
             </DashboardContainer>
         </AppLayout>
     );
 }
 
-function PlansInfo({ course }: { course: Course }) {
+function SpacesInfo({ course }: { course: Course }) {
     return (
         <>
-            <DashboardHeader header={`Plan info`} containerClassName="my-4">
-                <PlanActions course={course} />
+            <DashboardHeader header={`Space info`} containerClassName="my-4">
+                <SpaceActions course={course} />
             </DashboardHeader>
-            <PlansMeta course={course} />
-            {!!course.plans && course.plans?.length > 0 && (
-                <ResponsivePlanList plans={course.plans} />
+            <SpacesMeta course={course} />
+            {!!course.spaces && course.spaces?.length > 0 && (
+                <ResponsiveSpaceList spaces={course.spaces} />
             )}
         </>
     );
 }
 
-function ResponsivePlanList({ plans }: { plans: Plan[] }) {
+function ResponsiveSpaceList({ spaces }: { spaces: Space[] }) {
     return (
         <ResponsiveDataList
-            data={plans}
+            data={spaces}
             columns={[
-                { header: 'ID', cell: (plan) => plan.id },
-                { header: 'Plan', cell: (plan) => plan.name },
-                { header: 'Price', cell: (plan) => plan.price },
-                { header: 'Created At', cell: (plan) => plan.created_at },
-                { header: 'Updated At', cell: (plan) => plan.updated_at },
+                { header: 'ID', cell: (space) => space.id },
+                { header: 'Space', cell: (space) => space.name },
+                { header: 'Created At', cell: (space) => space.created_at },
+                { header: 'Updated At', cell: (space) => space.updated_at },
             ]}
         />
     );
 }
 
-function PlansMeta({ course }: { course: Course }) {
+function SpacesMeta({ course }: { course: Course }) {
     return (
         <>
-            <InfoBlock label="Plans Count" value={course.plans_count} />
+            <InfoBlock label="Spaces Count" value={course.spaces_count} />
         </>
     );
 }
 
-function PlanActions({ course }: { course: Course }) {
+function SpaceActions({ course }: { course: Course }) {
     return (
         <ActionButtonContainer>
-            <ButtonLink href={plans(course).url}>Plans</ButtonLink>
+            <ButtonLink href={spaces(course).url}>Spaces</ButtonLink>
         </ActionButtonContainer>
     );
 }
@@ -140,11 +139,13 @@ function SectionActions({ course }: { course: Course }) {
 }
 
 function CourseMeta({ course }: { course: Course }) {
+    console.log(course);
+    
     return (
         <>
             <InfoBlock label="ID" value={course.id} />
-            <InfoBlock label="User ID" value={course.user?.id} />
-            <InfoBlock label="User Name" value={course.user?.name} />
+            <InfoBlock label="Teacher ID" value={course.teacher.user?.id} />
+            <InfoBlock label="Teacher Name" value={course.teacher.user?.name} />
             <InfoBlock label="Created At" value={course.created_at} />
             <InfoBlock label="Updated At" value={course.updated_at} />
         </>

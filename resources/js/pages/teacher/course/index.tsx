@@ -10,7 +10,7 @@ import ResponsiveDataList from '@/components/responsive-data-list';
 import AppLayout from '@/layouts/app-layout';
 import { dashboard } from '@/routes';
 import { create, destroy, edit, index, show } from '@/routes/teacher/course';
-import { index as plans } from '@/routes/teacher/course/plan';
+import { index as spaces } from '@/routes/teacher/course/space';
 import { index as sections } from '@/routes/teacher/course/section';
 import { BreadcrumbItem, Course } from '@/types';
 import { Head } from '@inertiajs/react';
@@ -48,7 +48,7 @@ function ResponsiveCourseList({ courses }: { courses: Course[] }) {
             columns={[
                 { header: 'ID', cell: (course) => course.id },
                 { header: 'Course', cell: (course) => course.title },
-                { header: 'Plan Count', cell: (course) => course.plans_count },
+                { header: 'Space Count', cell: (course) => course.spaces_count },
                 {
                     header: 'Section Count',
                     cell: (course) => course.sections_count,
@@ -65,7 +65,7 @@ function ResponsiveCourseList({ courses }: { courses: Course[] }) {
 function CourseActions({ course }: { course: Course }) {
     return (
         <div className="mt-2 space-x-2 text-center xl:mt-1 xl:text-end">
-            {!(course.plans_count || course.sections_count) && (
+            {!(course.spaces_count || course.sections_count) && (
                 <FormButton
                     className="inline"
                     form={destroy.form(course)}
@@ -77,7 +77,7 @@ function CourseActions({ course }: { course: Course }) {
             <ButtonLink href={sections(course).url}>
                 <TableRowsSplit />
             </ButtonLink>
-            <ButtonLink href={plans(course).url}>
+            <ButtonLink href={spaces(course).url}>
                 <Layers />
             </ButtonLink>
             <ButtonLink href={edit(course).url}>

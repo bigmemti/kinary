@@ -103,16 +103,16 @@ export interface Teacher {
 
 export interface Course {
     id: number;
-    teacher_id: number;
-    teacher?: Teacher;
+    teacher: Teacher;
+    teachers?: Teacher[];
     title: string;
     slug: string;
     description: string;
     thumbnail: string;
     intro_video_url: string;
     status: 'published' | 'draft';
-    plans?: Plan[];
-    plans_count?: number;
+    spaces?: Plan[];
+    spaces_count?: number;
     sections?: Section[];
     sections_count?: number;
     created_at: DateTime;
@@ -174,6 +174,17 @@ export interface Transaction {
     authority: string;
     status: string;
     paid_at: DateTime;
+    created_at: DateTime;
+    updated_at: DateTime;
+}
+
+export interface Space{
+    id: number;
+    course_id: number;
+    course?: Course;
+    name: string;
+    plans?: Plan[];
+    plans_count?: number;
     created_at: DateTime;
     updated_at: DateTime;
 }
