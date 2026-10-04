@@ -53,7 +53,7 @@ const mainNavItems: NavItem[] = [
     {
         title: 'Studying Courses',
         href: studying_courses(),
-        icon: Book,
+        icon: BookOpen,
     },
     {
         title: 'Teaching Courses',
