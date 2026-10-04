@@ -6,6 +6,8 @@ use App\Enums\TeacherRole;
 use Cviebrock\EloquentSluggable\Sluggable;
 use Database\Factories\CourseFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasOneThrough;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Course extends Model
@@ -19,7 +21,6 @@ class Course extends Model
      * @var list<string>
      */
     protected $fillable = [
-        'teacher_id',
         'title',
         'slug',
         'description',
@@ -39,9 +40,9 @@ class Course extends Model
         ];
     }
 
-    public function plans()
+    public function spaces()
     {
-        return $this->hasMany(Plan::class);
+        return $this->hasMany(Space::class);
     }
 
     public function sections()
@@ -49,8 +50,21 @@ class Course extends Model
         return $this->hasMany(Section::class);
     }
 
-    public function teacher()
+    public function teachers()
     {
-        return $this->belongsToMany(Teacher::class)->withPivot('role')->wherePivot('role', '=', TeacherRole::Owner);
+        return $this->belongsToMany(Teacher::class);
+    }
+
+    public function teacher(): HasOneThrough
+    {
+        return $this->newHasOneThrough(
+            Teacher::query(),
+            $this,
+            (new Pivot)->setTable('course_teacher'),
+            'course_id',
+            'id',
+            'id',
+            'teacher_id',
+        )->where('course_teacher.role', TeacherRole::Owner);
     }
 }

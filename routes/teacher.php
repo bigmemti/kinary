@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth', 'verified'])->prefix('teacher')->name('teacher.')->group(function () {
     Route::resource('course', Teacher\CourseController::class);
-    Route::resource('course.plan', Teacher\PlanController::class)->shallow();
+    Route::resource('course.space', Teacher\SpaceController::class)->shallow();
     Route::resource('course.section', Teacher\SectionController::class)->shallow();
 
     Route::resource('plan.enrollment', Teacher\EnrollmentController::class)->only(['index'])->shallow();

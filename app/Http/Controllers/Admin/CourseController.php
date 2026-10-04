@@ -17,7 +17,7 @@ class CourseController extends Controller
     public function index()
     {
         return Inertia::render('admin/course/index', [
-            'courses' => Course::with('teacher.user')->withCount(['plans', 'sections'])->get(),
+            'courses' => Course::with('teacher.user')->withCount(['spaces', 'sections'])->get(),
         ]);
     }
 
@@ -36,8 +36,9 @@ class CourseController extends Controller
      */
     public function store(StoreCourseRequest $request)
     {
-        Course::create($request->validated());
+        $course = Course::create($request->validated());
 
+        $course->teachers()->attach($request->input('teacher_id'));
     }
 
     /**
@@ -46,7 +47,7 @@ class CourseController extends Controller
     public function show(Course $course)
     {
         return Inertia::render('admin/course/show', [
-            'course' => $course->load('plans', 'sections', 'teacher.user'),
+            'course' => $course->load('spaces', 'sections', 'teacher.user'),
         ]);
     }
 

@@ -13,7 +13,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('spaces', function (Blueprint $table) {
-            $table->foreignIdFor(Quiz::class)->after('course_id')->constrained();
+            $table->foreignIdFor(Quiz::class)->nullable()->after('course_id')->constrained();
         });
     }
 

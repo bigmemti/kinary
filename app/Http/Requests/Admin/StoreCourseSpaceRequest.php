@@ -2,19 +2,19 @@
 
 namespace App\Http\Requests\Admin;
 
-use App\Models\Plan;
+use App\Models\Space;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 
-class StoreCoursePlanRequest extends FormRequest
+class StoreCourseSpaceRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return Gate::allows('create', Plan::class);
+        return Gate::allows('create', Space::class);
     }
 
     /**
@@ -26,7 +26,6 @@ class StoreCoursePlanRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
-            'price' => 'required|integer',
         ];
     }
 }

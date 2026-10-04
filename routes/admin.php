@@ -16,8 +16,11 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
     Route::resource('teacher.course', Admin\TeacherCourseController::class)->only(['index', 'create', 'store'])->shallow();
 
     Route::resource('course', Admin\CourseController::class);
-    Route::resource('course.plan', Admin\CoursePlanController::class)->only(['index', 'create', 'store'])->shallow();
+    Route::resource('course.space', Admin\CourseSpaceController::class)->only(['index', 'create', 'store'])->shallow();
     Route::resource('course.section', Admin\CourseSectionController::class)->only(['index', 'create', 'store'])->shallow();
+    
+    Route::resource('space', Admin\SpaceController::class);
+    Route::resource('space.plan', Admin\SpacePlanController::class)->only(['index', 'create', 'store'])->shallow();
 
     Route::resource('plan', Admin\PlanController::class);
     Route::resource('plan.order', Admin\PlanOrderController::class)->only(['index'])->shallow();

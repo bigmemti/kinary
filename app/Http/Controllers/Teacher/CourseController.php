@@ -15,7 +15,7 @@ class CourseController extends Controller
     public function index()
     {
         return inertia('teacher/course/index', [
-            'courses' => auth()->user()->teacher->courses->loadCount(['plans', 'sections']),
+            'courses' => auth()->user()->teacher->courses->loadCount(['spaces', 'sections']),
         ]);
     }
 
@@ -41,7 +41,7 @@ class CourseController extends Controller
     public function show(Course $course)
     {
         return inertia('teacher/course/show', [
-            'course' => $course->loadCount(['plans', 'sections'])->load(['plans', 'sections']),
+            'course' => $course->loadCount(['spaces', 'sections'])->load(['spaces', 'sections']),
         ]);
     }
 

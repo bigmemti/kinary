@@ -6,15 +6,15 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreCoursePlanRequest;
 use App\Models\Course;
 
-class CoursePlanController extends Controller
+class CourseSpaceController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index(Course $course)
     {
-        return inertia('admin/course/plan/index', [
-            'course' => $course->load(['plans' => fn ($query) => $query->withCount(['orders', 'students'])]),
+        return inertia('admin/course/space/index', [
+            'course' => $course->load(['spaces' => fn ($query) => $query->withCount(['plans'])]),
         ]);
     }
 
@@ -23,7 +23,7 @@ class CoursePlanController extends Controller
      */
     public function create(Course $course)
     {
-        return inertia('admin/course/plan/create', [
+        return inertia('admin/course/space/create', [
             'course' => $course,
         ]);
     }
@@ -33,6 +33,6 @@ class CoursePlanController extends Controller
      */
     public function store(StoreCoursePlanRequest $request, Course $course)
     {
-        $course->plans()->create($request->validated());
+        $course->spaces()->create($request->validated());
     }
 }
