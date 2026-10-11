@@ -2,7 +2,11 @@
 
 namespace App\Providers;
 
+use App\Models\Student;
+use App\Models\Teacher;
 use App\Models\User;
+use App\Observers\StudentObserver;
+use App\Observers\TeacherObserver;
 use App\Observers\UserObserver;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
@@ -23,6 +27,8 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         User::observe(UserObserver::class);
+        Student::observe(StudentObserver::class);
+        Teacher::observe(TeacherObserver::class);
 
         Route::macro('softDeletableResource', function ($name, $controller, $options = []) {
             Route::resource($name, $controller, $options);

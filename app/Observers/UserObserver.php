@@ -11,8 +11,8 @@ class UserObserver
      */
     public function created(User $user): void
     {
-        // dd('safe');
         $user->wallet()->firstOrCreate([]);
+        $user->assignRole('user');
 
         $user->student()->firstOrCreate([]);
     }

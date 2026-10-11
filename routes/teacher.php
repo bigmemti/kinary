@@ -3,7 +3,7 @@
 use App\Http\Controllers\Teacher;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['auth', 'verified'])->prefix('teacher')->name('teacher.')->group(function () {
+Route::middleware(['auth', 'verified', 'role:teacher'])->prefix('teacher')->name('teacher.')->group(function () {
     Route::resource('course', Teacher\CourseController::class);
     Route::resource('course.space', Teacher\SpaceController::class)->shallow();
     Route::resource('course.section', Teacher\SectionController::class)->shallow();
