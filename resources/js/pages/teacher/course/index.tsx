@@ -14,7 +14,7 @@ import { index as spaces } from '@/routes/teacher/course/space';
 import { index as sections } from '@/routes/teacher/course/section';
 import { BreadcrumbItem, Course } from '@/types';
 import { Head } from '@inertiajs/react';
-import { Eye, Layers, Pen, TableRowsSplit, Trash } from 'lucide-react';
+import { Eye, Cloud, Pen, TableRowsSplit, Trash } from 'lucide-react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -78,7 +78,7 @@ function CourseActions({ course }: { course: Course }) {
                 <TableRowsSplit />
             </ButtonLink>
             <ButtonLink href={spaces(course).url}>
-                <Layers />
+                <Cloud />
             </ButtonLink>
             <ButtonLink href={edit(course).url}>
                 <Pen />

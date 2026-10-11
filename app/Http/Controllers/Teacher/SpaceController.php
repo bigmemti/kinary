@@ -16,7 +16,7 @@ class SpaceController extends Controller
     public function index(Course $course)
     {
         return inertia('teacher/course/space/index', [
-            'course' => $course->load(['spaces' => fn ($query) => $query->withCount(['students', 'orders'])]),
+            'course' => $course->load(['spaces' => fn ($query) => $query->withCount(['plans'])]),
         ]);
     }
 
@@ -44,7 +44,7 @@ class SpaceController extends Controller
     public function show(Space $space)
     {
         return inertia('teacher/space/show', [
-            'space' => $space->loadCount(['students', 'orders'])->load(['students.user']),
+            'space' => $space->loadCount(['plans'])->load(['plans']),
         ]);
     }
 

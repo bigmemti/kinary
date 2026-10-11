@@ -32,7 +32,9 @@ class CourseController extends Controller
      */
     public function store(StoreCourseRequest $request)
     {
-        auth()->user()->teacher->courses()->create($request->validated());
+        $course = Course::create($request->validated());
+
+        $course->teachers()->attach(auth()->user()->id);
     }
 
     /**
