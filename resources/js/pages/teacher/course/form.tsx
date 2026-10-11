@@ -19,15 +19,16 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import course_links from '@/routes/teacher/course';
 import { Course, WithType } from '@/types';
-import { Form } from '@inertiajs/react';
+import { Form, router } from '@inertiajs/react';
 import { Pen, X } from 'lucide-react';
 import { useState } from 'react';
 import slugify from 'slugify';
 
 export default function CourseForm({
     type,
+    visitOnSuccess = course_links.index().url,
     course,
-}: WithType<{ course?: Course }>) {
+}: WithType<{ course?: Course; visitOnSuccess?: string }>) {
     const [slugTouched, setSlugTouched] = useState(type === 'edit');
     const [slug, setSlug] = useState(course?.slug ?? '');
     const form =
@@ -45,61 +46,65 @@ export default function CourseForm({
                 errors.slug == 'The slug has already been taken.' &&
                 setSlugTouched(true)
             }
+            onSuccess={() => router.visit(visitOnSuccess)}
             className="mt-4 flex flex-col gap-4"
         >
             {({ processing, errors }) => (
                 <FormContainer>
-                    <FieldContainer>
-                        <Label htmlFor="title">Title</Label>
+                    <div className='grid gap-4 xl:grid-cols-2'>
+                        <FieldContainer>
+                            <Label htmlFor="title">Title</Label>
 
-                        <Input
-                            id="title"
-                            type="text"
-                            name="title"
-                            tabIndex={1}
-                            autoFocus
-                            defaultValue={course?.title}
-                            onChange={(e) =>
-                                !slugTouched &&
-                                setSlug(
-                                    slugify(e.target.value, { lower: true }),
-                                )
-                            }
-                            placeholder="Title"
-                        />
-
-                        <InputError message={errors.title} />
-                    </FieldContainer>
-
-                    <FieldContainer>
-                        <Label htmlFor="slug">Slug</Label>
-
-                        <div className="flex">
                             <Input
-                                id="slug"
+                                id="title"
                                 type="text"
-                                name="slug"
-                                value={slug}
-                                tabIndex={2}
-                                placeholder="Slug"
-                                disabled={!slugTouched}
+                                name="title"
+                                tabIndex={1}
+                                autoFocus
+                                defaultValue={course?.title}
                                 onChange={(e) =>
-                                    setSlug(slugify(e.target.value))
+                                    !slugTouched &&
+                                    setSlug(
+                                        slugify(e.target.value, { lower: true }),
+                                    )
                                 }
+                                placeholder="Title"
                             />
 
-                            <Button
-                                variant={'ghost'}
-                                type="button"
-                                onClick={() => setSlugTouched((v) => !v)}
-                            >
-                                {slugTouched ? <X /> : <Pen />}
-                            </Button>
-                        </div>
+                            <InputError message={errors.title} />
+                        </FieldContainer>
 
-                        <InputError message={errors.slug} />
-                    </FieldContainer>
+                        <FieldContainer>
+                            <Label htmlFor="slug">Slug</Label>
 
+                            <div className="flex">
+                                <Input
+                                    id="slug"
+                                    type="text"
+                                    name="slug"
+                                    value={slug}
+                                    tabIndex={2}
+                                    placeholder="Slug"
+                                    disabled={!slugTouched}
+                                    onChange={(e) =>
+                                        setSlug(slugify(e.target.value))
+                                    }
+                                />
+
+                                <Button
+                                    variant={'ghost'}
+                                    type="button"
+                                    onClick={() => setSlugTouched((v) => !v)}
+                                >
+                                    {slugTouched ? <X /> : <Pen />}
+                                </Button>
+                            </div>
+
+                            <InputError message={errors.slug} />
+                        </FieldContainer>
+                    </div>
+
+                    <div className='grid gap-4 xl:grid-cols-2'>
                     <FieldContainer>
                         <Label htmlFor="thumbnail">Thumbnail</Label>
 
@@ -129,6 +134,7 @@ export default function CourseForm({
 
                         <InputError message={errors.intro_video_url} />
                     </FieldContainer>
+                    </div>
 
                     <FieldContainer>
                         <Label htmlFor="status">Status</Label>
@@ -141,7 +147,7 @@ export default function CourseForm({
                             <SelectContent>
                                 <SelectGroup>
                                     <SelectLabel>Status</SelectLabel>
-                                    <SelectItem value="published">
+                                    <SelectItem value="published" defaultChecked>
                                         published
                                     </SelectItem>
                                     <SelectItem value="draft">draft</SelectItem>

@@ -1716,7 +1716,7 @@ export function UserSelect({
 }
 
 export function FormContainer({ children }: PropsWithChildren) {
-    return <div className="grid gap-6">{children}</div>;
+    return <div className="grid gap-6 w-full px-16 lg:min-w-2xl max-w-6xl xl:min-w-4xl  mx-auto">{children}</div>;
 }
 
 export function FieldContainer({ children }: PropsWithChildren) {
@@ -1733,8 +1733,8 @@ export function SubmitButton({
     return (
         <div className="mt-2 text-end">
             <Button type="submit" tabIndex={tabindex}>
+                Submit  
                 {processing && <Spinner />}
-                Submit
             </Button>
         </div>
     );
