@@ -6,7 +6,7 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { resolveUrl } from '@/lib/utils';
-import { type NavItem } from '@/types';
+import { SharedData, type NavItem } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
 
 export function NavMain({
@@ -17,11 +17,13 @@ export function NavMain({
     items: NavItem[];
 }) {
     const page = usePage();
+    const { auth } = usePage<SharedData>().props; 
+
     return (
         <SidebarGroup className="px-2 py-0">
             <SidebarGroupLabel>{label}</SidebarGroupLabel>
             <SidebarMenu>
-                {items.map((item) => (
+                {items.map((item) => (!('can' in item) || (auth.roles.includes(item.can?.role?? '')) || (auth.permissions.includes(item.can?.permission?? ''))) && (
                     <SidebarMenuItem key={item.title}>
                         <SidebarMenuButton
                             asChild

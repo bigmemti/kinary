@@ -25,8 +25,8 @@ import { index as users } from '@/routes/admin/user';
 import { index as wallets } from '@/routes/admin/wallet';
 import { index as studying_courses } from '@/routes/student/enrollment';
 import { index as teaching_courses } from '@/routes/teacher/course';
-import { type NavItem } from '@/types';
-import { Link } from '@inertiajs/react';
+import { SharedData, type NavItem } from '@/types';
+import { Link, usePage } from '@inertiajs/react';
 import {
     ArrowDownUp,
     Book,
@@ -54,11 +54,17 @@ const mainNavItems: NavItem[] = [
         title: 'Studying Courses',
         href: studying_courses(),
         icon: BookOpen,
+        can: {
+            role: 'student'
+        }
     },
     {
         title: 'Teaching Courses',
         href: teaching_courses(),
         icon: Book,
+        can: {
+            role: 'teacher'
+        }
     },
 ];
 
@@ -128,6 +134,8 @@ const adminNavItems: NavItem[] = [
 const footerNavItems: NavItem[] = [];
 
 export function AppSidebar() {
+    const { auth } = usePage<SharedData>().props;    
+    
     return (
         <Sidebar collapsible="icon" variant="inset">
             <SidebarHeader>
@@ -144,7 +152,7 @@ export function AppSidebar() {
 
             <SidebarContent>
                 <NavMain items={mainNavItems} />
-                <NavMain label="Admin" items={adminNavItems} />
+                { auth.roles.includes('admin') && <NavMain label="Admin" items={adminNavItems} /> }
             </SidebarContent>
 
             <SidebarFooter>
