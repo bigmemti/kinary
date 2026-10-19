@@ -1,8 +1,8 @@
 import { DashboardContainer, DashboardHeader } from '@/components/dashboard';
 import AppLayout from '@/layouts/app-layout';
 import { dashboard } from '@/routes';
-import { index } from '@/routes/teacher/course/plan';
 import { edit, show } from '@/routes/teacher/plan';
+import { index } from '@/routes/teacher/space/plan';
 import { BreadcrumbItem, Plan } from '@/types';
 import { Head } from '@inertiajs/react';
 import PlanForm from './form';
@@ -15,7 +15,7 @@ export default function Edit({ plan }: { plan: Plan }) {
         },
         {
             title: 'Plan',
-            href: index(plan.course_id).url,
+            href: index(plan.space_id).url,
         },
         {
             title: plan.name,

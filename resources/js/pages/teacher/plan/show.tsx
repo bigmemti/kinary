@@ -10,9 +10,9 @@ import FormButton from '@/components/form-button';
 import ResponsiveDataList from '@/components/responsive-data-list';
 import AppLayout from '@/layouts/app-layout';
 import { dashboard } from '@/routes';
-import { index } from '@/routes/teacher/course/plan';
 import { destroy, edit, show } from '@/routes/teacher/plan';
 import { index as students } from '@/routes/teacher/plan/enrollment';
+import { index } from '@/routes/teacher/space/plan';
 import { BreadcrumbItem, Plan, Student } from '@/types';
 import { Head } from '@inertiajs/react';
 import { Pen, Trash } from 'lucide-react';
@@ -25,7 +25,7 @@ export default function Show({ plan }: { plan: Plan }) {
         },
         {
             title: 'Plan',
-            href: index(plan.course_id).url,
+            href: index(plan.space_id).url,
         },
         {
             title: plan.name,

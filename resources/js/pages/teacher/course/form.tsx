@@ -28,7 +28,12 @@ export default function CourseForm({
     type,
     visitOnSuccess = course_links.index().url,
     course,
-}: WithType<{ course?: Course; visitOnSuccess?: string }>) {
+    canPublish = true,
+}: WithType<{
+    course?: Course;
+    visitOnSuccess?: string;
+    canPublish?: boolean;
+}>) {
     const [slugTouched, setSlugTouched] = useState(type === 'edit');
     const [slug, setSlug] = useState(course?.slug ?? '');
     const form =
@@ -51,7 +56,7 @@ export default function CourseForm({
         >
             {({ processing, errors }) => (
                 <FormContainer>
-                    <div className='grid gap-4 xl:grid-cols-2'>
+                    <div className="grid gap-4 xl:grid-cols-2">
                         <FieldContainer>
                             <Label htmlFor="title">Title</Label>
 
@@ -65,7 +70,9 @@ export default function CourseForm({
                                 onChange={(e) =>
                                     !slugTouched &&
                                     setSlug(
-                                        slugify(e.target.value, { lower: true }),
+                                        slugify(e.target.value, {
+                                            lower: true,
+                                        }),
                                     )
                                 }
                                 placeholder="Title"
@@ -104,58 +111,65 @@ export default function CourseForm({
                         </FieldContainer>
                     </div>
 
-                    <div className='grid gap-4 xl:grid-cols-2'>
-                    <FieldContainer>
-                        <Label htmlFor="thumbnail">Thumbnail</Label>
+                    <div className="grid gap-4 xl:grid-cols-2">
+                        <FieldContainer>
+                            <Label htmlFor="thumbnail">Thumbnail</Label>
 
-                        <Input
-                            id="thumbnail"
-                            type="text"
-                            tabIndex={3}
-                            name="thumbnail"
-                            defaultValue={course?.thumbnail}
-                            placeholder="Thumbnail"
-                        />
+                            <Input
+                                id="thumbnail"
+                                type="text"
+                                tabIndex={3}
+                                name="thumbnail"
+                                defaultValue={course?.thumbnail}
+                                placeholder="Thumbnail"
+                            />
 
-                        <InputError message={errors.thumbnail} />
-                    </FieldContainer>
+                            <InputError message={errors.thumbnail} />
+                        </FieldContainer>
 
-                    <FieldContainer>
-                        <Label htmlFor="intro_video_url">Intro Video Url</Label>
+                        <FieldContainer>
+                            <Label htmlFor="intro_video_url">
+                                Intro Video Url
+                            </Label>
 
-                        <Input
-                            id="intro_video_url"
-                            type="text"
-                            name="intro_video_url"
-                            tabIndex={4}
-                            defaultValue={course?.intro_video_url}
-                            placeholder="Intro Video Url"
-                        />
+                            <Input
+                                id="intro_video_url"
+                                type="text"
+                                name="intro_video_url"
+                                tabIndex={4}
+                                defaultValue={course?.intro_video_url}
+                                placeholder="Intro Video Url"
+                            />
 
-                        <InputError message={errors.intro_video_url} />
-                    </FieldContainer>
+                            <InputError message={errors.intro_video_url} />
+                        </FieldContainer>
                     </div>
 
                     <FieldContainer>
-                        <Label htmlFor="status">Status</Label>
+                        <Label htmlFor="course-publication">Status</Label>
 
-                        <Select name="status" defaultValue={course?.status}>
-                            <SelectTrigger className="w-full">
+                        <Select
+                            name="is_published"
+                            disabled={!canPublish}
+                            defaultValue={course?.is_published ? '1' : '0'}
+                        >
+                            <SelectTrigger
+                                id="course-publication"
+                                className="w-full"
+                            >
                                 <SelectValue placeholder="Status" />
                             </SelectTrigger>
 
                             <SelectContent>
                                 <SelectGroup>
                                     <SelectLabel>Status</SelectLabel>
-                                    <SelectItem value="published" defaultChecked>
-                                        published
-                                    </SelectItem>
-                                    <SelectItem value="draft">draft</SelectItem>
+                                    <SelectItem value="1">published</SelectItem>
+                                    <SelectItem value="0">draft</SelectItem>
                                 </SelectGroup>
                             </SelectContent>
                         </Select>
 
-                        <InputError message={errors.status} />
+                        <InputError message={errors.is_published} />
                     </FieldContainer>
 
                     <FieldContainer>

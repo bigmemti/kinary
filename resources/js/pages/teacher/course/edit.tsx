@@ -6,7 +6,13 @@ import { BreadcrumbItem, Course } from '@/types';
 import { Head } from '@inertiajs/react';
 import CourseForm from './form';
 
-export default function Edit({ course }: { course: Course }) {
+export default function Edit({
+    course,
+    canPublish,
+}: {
+    course: Course;
+    canPublish: boolean;
+}) {
     const breadcrumbs: BreadcrumbItem[] = [
         {
             title: 'Dashboard',
@@ -31,12 +37,18 @@ export default function Edit({ course }: { course: Course }) {
             <Head title="Edit Course" />
             <DashboardContainer>
                 <DashboardHeader header={`Edit Course ${course.title} info`} />
-                <EditCourseForm course={course} />
+                <EditCourseForm course={course} canPublish={canPublish} />
             </DashboardContainer>
         </AppLayout>
     );
 }
 
-function EditCourseForm({ course }: { course: Course }) {
-    return <CourseForm type="edit" course={course} />;
+function EditCourseForm({
+    course,
+    canPublish,
+}: {
+    course: Course;
+    canPublish: boolean;
+}) {
+    return <CourseForm type="edit" course={course} canPublish={canPublish} />;
 }

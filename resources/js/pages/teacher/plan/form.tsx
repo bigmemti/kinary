@@ -4,22 +4,30 @@ import {
     SubmitButton,
 } from '@/components/forms';
 import InputError from '@/components/input-error';
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import course_links from '@/routes/teacher/course';
 import plan_links from '@/routes/teacher/plan';
 import { Course, Plan, WithType } from '@/types';
-import { Form } from '@inertiajs/react';
+import { Form, Link } from '@inertiajs/react';
 
 export default function PlanForm({
     type,
     plan,
     course,
 }: WithType<{ plan?: Plan; course?: Course }>) {
-    const form =
-        type === 'create'
-            ? course_links.plan.store.form(course!)
-            : plan_links.update.form(plan!);
+    if (type === 'create' && course) {
+        return (
+            <Button asChild>
+                <Link href={course_links.editor(course)}>
+                    مدیریت پلن‌ها در ویرایشگر دوره
+                </Link>
+            </Button>
+        );
+    }
+    if (!plan) return null;
+    const form = plan_links.update.form(plan);
 
     return (
         <Form

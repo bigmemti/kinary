@@ -23,7 +23,7 @@ import {
     User,
     Wallet,
 } from '@/types';
-import { Form, router } from '@inertiajs/react';
+import { Form, Link, router } from '@inertiajs/react';
 import { Pen, X } from 'lucide-react';
 import React, { PropsWithChildren, useState } from 'react';
 import slugify from 'slugify';
@@ -1063,52 +1063,11 @@ export function CourseSectionForm({ course }: { course: Course }) {
 
 export function CoursePlanForm({ course }: { course: Course }) {
     return (
-        <Form
-            {...course_links.plan.store.form(course)}
-            disableWhileProcessing
-            onSuccess={() => router.visit(course_links.plan.index(course).url)}
-            className="mt-4 flex flex-col gap-4"
-        >
-            {({ processing, errors }) => (
-                <>
-                    <div className="grid gap-2">
-                        <Label htmlFor="name">Name</Label>
-
-                        <Input
-                            id="name"
-                            type="text"
-                            tabIndex={3}
-                            name="name"
-                            placeholder="Name"
-                        />
-
-                        <InputError message={errors.name} />
-                    </div>
-
-                    <div className="grid gap-2">
-                        <Label htmlFor="price">Price</Label>
-
-                        <Input
-                            id="price"
-                            type="number"
-                            step={1000}
-                            name="price"
-                            tabIndex={4}
-                            placeholder="Price"
-                        />
-
-                        <InputError message={errors.price} />
-                    </div>
-
-                    <div className="mt-2 text-end">
-                        <Button type="submit" tabIndex={7}>
-                            {processing && <Spinner />}
-                            Submit
-                        </Button>
-                    </div>
-                </>
-            )}
-        </Form>
+        <Button asChild>
+            <Link href={course_links.space.index(course)}>
+                Choose a space to manage its plans
+            </Link>
+        </Button>
     );
 }
 
@@ -1716,7 +1675,11 @@ export function UserSelect({
 }
 
 export function FormContainer({ children }: PropsWithChildren) {
-    return <div className="grid gap-6 w-full px-16 lg:min-w-2xl max-w-6xl xl:min-w-4xl  mx-auto">{children}</div>;
+    return (
+        <div className="mx-auto grid w-full max-w-6xl gap-6 px-16 lg:min-w-2xl xl:min-w-4xl">
+            {children}
+        </div>
+    );
 }
 
 export function FieldContainer({ children }: PropsWithChildren) {
@@ -1733,7 +1696,7 @@ export function SubmitButton({
     return (
         <div className="mt-2 text-end">
             <Button type="submit" tabIndex={tabindex}>
-                Submit  
+                Submit
                 {processing && <Spinner />}
             </Button>
         </div>

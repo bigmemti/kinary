@@ -13,7 +13,7 @@ import { Label } from '@/components/ui/label';
 import AppLayout from '@/layouts/app-layout';
 import { dashboard } from '@/routes';
 import { index } from '@/routes/admin/course';
-import { store } from '@/routes/admin/course/plan';
+import { store } from '@/routes/admin/course/space';
 import { BreadcrumbItem, Course } from '@/types';
 import { Form, Head } from '@inertiajs/react';
 import { Plus } from 'lucide-react';
@@ -38,7 +38,7 @@ export default function Show({ course }: { course: Course }) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={course.title} />
-            <PlanCreateDialog course={course} />
+            <SpaceCreateDialog course={course} />
             <DashboardContainer>
                 <div>
                     <div>{course.id}</div>
@@ -52,10 +52,9 @@ export default function Show({ course }: { course: Course }) {
                     <div>{course.updated_at}</div>
                     <div>{course.deleted_at}</div>
                 </div>
-                {course.plans?.map((plan) => (
-                    <div key={plan.id}>
-                        <div>{plan.name}</div>
-                        <div>{plan.price}</div>
+                {course.spaces?.map((space) => (
+                    <div key={space.id}>
+                        <div>{space.name}</div>
                     </div>
                 ))}
             </DashboardContainer>
@@ -63,19 +62,19 @@ export default function Show({ course }: { course: Course }) {
     );
 }
 
-function PlanCreateDialog({ course }: { course: Course }) {
+function SpaceCreateDialog({ course }: { course: Course }) {
     const [open, setOpen] = useState(false);
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
                 <Button className="self-end" onClick={() => setOpen(true)}>
-                    Create new plan <Plus />
+                    Create new space <Plus />
                 </Button>
             </DialogTrigger>
 
             <DialogContent>
-                <DialogTitle>Create a new Course.</DialogTitle>
+                <DialogTitle>Create a new space.</DialogTitle>
 
                 <Form
                     {...store.form(course)}
@@ -101,22 +100,6 @@ function PlanCreateDialog({ course }: { course: Course }) {
                                 />
 
                                 <InputError message={errors.name} />
-                            </div>
-
-                            <div className="grid gap-2">
-                                <Label htmlFor="price" className="sr-only">
-                                    Price
-                                </Label>
-
-                                <Input
-                                    id="price"
-                                    type="number"
-                                    step={1000}
-                                    name="price"
-                                    placeholder="Price"
-                                />
-
-                                <InputError message={errors.price} />
                             </div>
 
                             <DialogFooter className="gap-2">

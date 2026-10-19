@@ -10,8 +10,8 @@ import FormButton from '@/components/form-button';
 import ResponsiveDataList from '@/components/responsive-data-list';
 import AppLayout from '@/layouts/app-layout';
 import { dashboard } from '@/routes';
+import { index as enrollments } from '@/routes/student/enrollment';
 import { destroy, edit, index, show } from '@/routes/teacher/course';
-import { index as plans } from '@/routes/teacher/course/plan';
 import { index as sections } from '@/routes/teacher/course/section';
 import { BreadcrumbItem, Course, Plan, Section } from '@/types';
 import { Head } from '@inertiajs/react';
@@ -54,11 +54,16 @@ function PlansInfo({ course }: { course: Course }) {
     return (
         <>
             <DashboardHeader header={`Plan info`} containerClassName="my-4">
-                <PlanActions course={course} />
+                <PlanActions />
             </DashboardHeader>
             <PlansMeta course={course} />
-            {!!course.plans && course.plans?.length > 0 && (
-                <ResponsivePlanList plans={course.plans} />
+            {!!course.spaces?.some((space) => space.plans?.length) && (
+                <ResponsivePlanList
+                    plans={
+                        course.spaces?.flatMap((space) => space.plans ?? []) ??
+                        []
+                    }
+                />
             )}
         </>
     );
@@ -82,15 +87,23 @@ function ResponsivePlanList({ plans }: { plans: Plan[] }) {
 function PlansMeta({ course }: { course: Course }) {
     return (
         <>
-            <InfoBlock label="Plans Count" value={course.plans_count} />
+            <InfoBlock
+                label="Plans Count"
+                value={
+                    course.spaces?.reduce(
+                        (count, space) => count + (space.plans?.length ?? 0),
+                        0,
+                    ) ?? 0
+                }
+            />
         </>
     );
 }
 
-function PlanActions({ course }: { course: Course }) {
+function PlanActions() {
     return (
         <ActionButtonContainer>
-            <ButtonLink href={plans(course).url}>Plans</ButtonLink>
+            <ButtonLink href={enrollments().url}>Enrollments</ButtonLink>
         </ActionButtonContainer>
     );
 }

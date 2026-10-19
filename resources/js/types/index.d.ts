@@ -25,7 +25,7 @@ export interface NavItem {
     can?: Can;
 }
 
-export interface Can{
+export interface Can {
     role?: string;
     permission?: string;
 }
@@ -118,8 +118,9 @@ export interface Course {
     description: string;
     thumbnail: string;
     intro_video_url: string;
-    status: 'published' | 'draft';
-    spaces?: Plan[];
+    is_published: boolean;
+    status?: 'published' | 'draft';
+    spaces?: Space[];
     spaces_count?: number;
     sections?: Section[];
     sections_count?: number;
@@ -130,7 +131,9 @@ export interface Course {
 
 export interface Plan {
     id: number;
-    course_id: number;
+    space_id: number;
+    space?: Space;
+    course_id?: number;
     course?: Course;
     name: string;
     price: number;
@@ -186,7 +189,7 @@ export interface Transaction {
     updated_at: DateTime;
 }
 
-export interface Space{
+export interface Space {
     id: number;
     course_id: number;
     course?: Course;

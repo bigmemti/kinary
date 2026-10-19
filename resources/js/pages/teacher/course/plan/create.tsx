@@ -1,8 +1,12 @@
 import { DashboardContainer, DashboardHeader } from '@/components/dashboard';
 import AppLayout from '@/layouts/app-layout';
 import { dashboard } from '@/routes';
-import { show as course_show, index } from '@/routes/teacher/course';
-import { create, index as plans } from '@/routes/teacher/course/plan';
+import {
+    show as course_show,
+    editor as create,
+    index,
+    editor as plans,
+} from '@/routes/teacher/course';
 import { BreadcrumbItem, Course } from '@/types';
 import { Head } from '@inertiajs/react';
 import CoursePlanForm from './form';

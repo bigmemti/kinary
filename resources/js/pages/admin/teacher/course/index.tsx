@@ -9,7 +9,7 @@ import ResponsiveDataList from '@/components/responsive-data-list';
 import AppLayout from '@/layouts/app-layout';
 import { dashboard } from '@/routes';
 import { destroy, edit, show } from '@/routes/admin/course';
-import { index as plans } from '@/routes/admin/course/plan';
+import { index as spaces } from '@/routes/admin/course/space';
 import { index, show as teacher_show } from '@/routes/admin/teacher';
 import { index as courses, create } from '@/routes/admin/teacher/course';
 import { BreadcrumbItem, Course, Teacher } from '@/types';
@@ -79,7 +79,7 @@ function ResponsiveCourseList({ courses }: { courses: Course[] }) {
 function CourseActions({ course }: { course: Course }) {
     return (
         <div className="mt-2 space-x-2 text-center xl:mt-1 xl:text-end">
-            {!course.plans_count ? (
+            {!course.spaces_count ? (
                 <FormButton
                     className="inline"
                     form={destroy.form(course)}
@@ -88,7 +88,7 @@ function CourseActions({ course }: { course: Course }) {
                     <Trash />
                 </FormButton>
             ) : (
-                <ButtonLink href={plans(course).url}>
+                <ButtonLink href={spaces(course).url}>
                     <Layers />
                 </ButtonLink>
             )}

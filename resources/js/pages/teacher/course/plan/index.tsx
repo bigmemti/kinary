@@ -8,8 +8,12 @@ import FormButton from '@/components/form-button';
 import ResponsiveDataList from '@/components/responsive-data-list';
 import AppLayout from '@/layouts/app-layout';
 import { dashboard } from '@/routes';
-import { show as course_show, index } from '@/routes/teacher/course';
-import { create, index as plans } from '@/routes/teacher/course/plan';
+import {
+    show as course_show,
+    editor as create,
+    index,
+    editor as plans,
+} from '@/routes/teacher/course';
 import { destroy, edit, show } from '@/routes/teacher/plan';
 import { index as enrollments } from '@/routes/teacher/plan/enrollment';
 import { BreadcrumbItem, Course, Plan } from '@/types';
@@ -46,8 +50,14 @@ export default function Index({ course }: { course: Course }) {
                         model="plan"
                     />
                 </DashboardHeader>
-                {!!course.plans && course.plans?.length > 0 && (
-                    <ResponsivePlanList plans={course.plans} />
+                {!!course.spaces?.some((space) => space.plans?.length) && (
+                    <ResponsivePlanList
+                        plans={
+                            course.spaces?.flatMap(
+                                (space) => space.plans ?? [],
+                            ) ?? []
+                        }
+                    />
                 )}
             </DashboardContainer>
         </AppLayout>
