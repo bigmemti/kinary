@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Database\Factories\LessonFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Lesson extends Model
 {
@@ -18,7 +19,20 @@ class Lesson extends Model
     protected $fillable = [
         'section_id',
         'name',
+        'order',
+        'thumbnail',
+        'images',
     ];
+
+    protected function casts(): array
+    {
+        return ['images' => 'array', 'order' => 'integer'];
+    }
+
+    public function pricings(): HasMany
+    {
+        return $this->hasMany(Pricing::class);
+    }
 
     public function section()
     {

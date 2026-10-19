@@ -6,5 +6,5 @@ use Illuminate\Database\Eloquent\Model;
 
 class ImageContent extends Model
 {
-    //
+    protected $fillable = ['name', 'path'];
 }

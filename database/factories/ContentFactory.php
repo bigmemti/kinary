@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Content;
+use App\Models\TextContent;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -18,7 +19,17 @@ class ContentFactory extends Factory
     public function definition(): array
     {
         return [
-            'body' => fake()->text(250),
+            'description' => fake()->sentence(),
+            'order' => fake()->numberBetween(0, 100),
         ];
+    }
+
+    public function text(): static
+    {
+        return $this->state(function (): array {
+            $text = TextContent::query()->create(['body' => fake()->text(250)]);
+
+            return ['contentable_type' => TextContent::class, 'contentable_id' => $text->id];
+        });
     }
 }

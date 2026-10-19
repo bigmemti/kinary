@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Plan;
+use App\Models\Space;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -18,6 +19,8 @@ class PlanFactory extends Factory
     public function definition(): array
     {
         return [
+            'space_id' => Space::factory(),
+            'order' => 1,
             'name' => fake()->text(10),
             'price' => fake()->numberBetween(10, 99) * 10000,
         ];

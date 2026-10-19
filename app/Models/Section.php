@@ -18,6 +18,7 @@ class Section extends Model
     protected $fillable = [
         'course_id',
         'name',
+        'order',
     ];
 
     public function course()

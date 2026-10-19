@@ -6,6 +6,7 @@ use App\Enums\TeacherRole;
 use Cviebrock\EloquentSluggable\Sluggable;
 use Database\Factories\CourseFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -50,9 +51,17 @@ class Course extends Model
         return $this->hasMany(Section::class);
     }
 
-    public function teachers()
+    public function teachers(): BelongsToMany
     {
-        return $this->belongsToMany(Teacher::class);
+        return $this->belongsToMany(Teacher::class)->withPivot('role')->withTimestamps();
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return ['is_published' => 'boolean'];
     }
 
     public function teacher(): HasOneThrough

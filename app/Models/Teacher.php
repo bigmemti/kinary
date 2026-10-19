@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Database\Factories\TeacherFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Teacher extends Model
 {
@@ -24,8 +25,8 @@ class Teacher extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function courses()
+    public function courses(): BelongsToMany
     {
-        return $this->belongsToMany(Course::class);
+        return $this->belongsToMany(Course::class)->withPivot('role')->withTimestamps();
     }
 }
