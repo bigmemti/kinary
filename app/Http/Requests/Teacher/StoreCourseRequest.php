@@ -12,7 +12,7 @@ class StoreCourseRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        return $this->user()?->hasRole('teacher') && $this->user()->teacher()->exists();
     }
 
     /**
@@ -26,9 +26,9 @@ class StoreCourseRequest extends FormRequest
             'title' => 'required|string|max:255',
             'slug' => 'required|string|max:255|unique:courses,slug',
             'description' => 'nullable|string|max:4096',
-            'thumbnail' => 'nullable|string|max:255',
-            'intro_video_url' => 'nullable|string|max:255',
-            'status' => 'in:draft,published',
+            'thumbnail' => 'nullable|url:http,https|max:255',
+            'intro_video_url' => 'nullable|url:http,https|max:255',
+            'is_published' => 'sometimes|boolean',
         ];
     }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Requests\Teacher;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Gate;
 
 class UpdateLessonRequest extends FormRequest
 {
@@ -12,6 +13,10 @@ class UpdateLessonRequest extends FormRequest
      */
     public function authorize(): bool
     {
+        $course = $this->route('section')?->course ?? $this->route('lesson')?->section?->course;
+        abort_unless($course, 404);
+        Gate::authorize('updateEditorStructure', $course);
+
         return true;
     }
 
@@ -24,6 +29,7 @@ class UpdateLessonRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
+            'order' => 'sometimes|integer|min:0|max:32767',
         ];
     }
 }

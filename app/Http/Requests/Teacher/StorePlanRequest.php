@@ -4,6 +4,7 @@ namespace App\Http\Requests\Teacher;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Gate;
 
 class StorePlanRequest extends FormRequest
 {
@@ -12,6 +13,10 @@ class StorePlanRequest extends FormRequest
      */
     public function authorize(): bool
     {
+        $course = $this->route('space')?->course ?? $this->route('plan')?->space?->course;
+        abort_unless($course, 404);
+        Gate::authorize('manageEditorCommerce', $course);
+
         return true;
     }
 
@@ -24,7 +29,8 @@ class StorePlanRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
-            'price' => 'required|integer',
+            'price' => 'required|integer|min:0|max:4294967295',
+            'order' => 'sometimes|integer|min:0|max:32767',
         ];
     }
 }
