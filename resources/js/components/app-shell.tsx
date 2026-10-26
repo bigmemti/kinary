@@ -12,9 +12,15 @@ export function AppShell({ children, variant = 'header' }: AppShellProps) {
 
     if (variant === 'header') {
         return (
-            <div className="flex min-h-screen w-full flex-col">{children}</div>
+            <div dir="ltr" className="flex min-h-screen w-full flex-col">
+                {children}
+            </div>
         );
     }
 
-    return <SidebarProvider defaultOpen={isOpen}>{children}</SidebarProvider>;
+    return (
+        <SidebarProvider dir="ltr" defaultOpen={isOpen}>
+            {children}
+        </SidebarProvider>
+    );
 }

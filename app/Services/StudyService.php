@@ -1,0 +1,181 @@
+<?php
+
+namespace App\Services;
+
+use App\Models\Content;
+use App\Models\Enrollment;
+use App\Models\FileContent;
+use App\Models\ImageContent;
+use App\Models\Lesson;
+use App\Models\Progress;
+use App\Models\RemindContent;
+use App\Models\Space;
+use App\Models\TableContent;
+use App\Models\TextContent;
+use App\Models\User;
+use App\Models\VideoContent;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+
+class StudyService
+{
+    /** @return list<array<string, mixed>> */
+    public function library(User $user): array
+    {
+        return $user->student->enrollments()->where('is_active', true)->with('plan.space.course')->get()
+            ->groupBy('plan.space_id')->map(function (Collection $enrollments) use ($user): array {
+                $space = $enrollments->first()->plan->space;
+                $contents = $this->contents($user, $space)->get();
+                $readIds = $this->readIds($user, $space);
+                $sections = $this->sections($contents, $readIds);
+                $latest = $enrollments->sortByDesc('last_visited_at')->first();
+                $lessons = collect($sections)->flatMap(fn (array $section): array => $section['lessons']);
+                $firstUnreadLesson = $lessons->first(fn (array $lesson): bool => $lesson['readCount'] < $lesson['totalCount']);
+                $lastLessonId = $lessons->contains('id', $latest->last_lesson_id) ? $latest->last_lesson_id : null;
+
+                return [
+                    'id' => $space->id,
+                    'name' => $space->name,
+                    'courseTitle' => $space->course->title,
+                    'plans' => $enrollments->pluck('plan.name')->unique()->values()->all(),
+                    'lastVisitedAt' => $latest->last_visited_at,
+                    'resumeLessonId' => $firstUnreadLesson['id'] ?? $lastLessonId ?? $lessons->first()['id'] ?? null,
+                    'sections' => $sections,
+                    ...$this->progress($contents, $readIds),
+                ];
+            })->sortByDesc('lastVisitedAt')->values()->all();
+    }
+
+    /** @return Builder<Content> */
+    private function contents(User $user, Space $space): Builder
+    {
+        $planIds = $user->student->enrollments()->where('is_active', true)
+            ->whereHas('plan', fn (Builder $query): Builder => $query->where('space_id', $space->id))->pluck('plan_id');
+
+        return Content::query()->whereHas('lesson.section', fn (Builder $query): Builder => $query->where('course_id', $space->course_id))
+            ->whereHas('accesses', fn (Builder $query): Builder => $query->whereIn('plan_id', $planIds))
+            ->with('lesson.section')->orderBy('order')->orderBy('id');
+    }
+
+    private function authorizeSpace(User $user, Space $space): void
+    {
+        abort_unless($user->student?->enrollments()->where('is_active', true)
+            ->whereHas('plan', fn (Builder $query): Builder => $query->where('space_id', $space->id))->exists(), 404);
+    }
+
+    public function authorizeContent(User $user, Space $space, Content $content): void
+    {
+        $this->authorizeSpace($user, $space);
+        abort_unless($this->contents($user, $space)->whereKey($content->id)->exists(), 404);
+    }
+
+    /** @return Collection<int, int> */
+    private function readIds(User $user, Space $space): Collection
+    {
+        $enrollmentIds = $user->student->enrollments()
+            ->whereHas('plan', fn (Builder $query): Builder => $query->where('space_id', $space->id))->pluck('id');
+
+        return Progress::query()->whereIn('enrollment_id', $enrollmentIds)->where('status', 'read')
+            ->distinct()->pluck('content_id');
+    }
+
+    /** @return array{readCount: int, totalCount: int, percentage: int} */
+    private function progress(Collection $contents, Collection $readIds): array
+    {
+        $total = $contents->count();
+        $read = $contents->whereIn('id', $readIds)->count();
+
+        return ['readCount' => $read, 'totalCount' => $total, 'percentage' => $total > 0 ? (int) floor($read * 100 / $total) : 0];
+    }
+
+    /** @return list<array<string, mixed>> */
+    private function sections(Collection $contents, Collection $readIds): array
+    {
+        return $contents->groupBy('lesson.section_id')->map(function (Collection $sectionContents) use ($readIds): array {
+            $section = $sectionContents->first()->lesson->section;
+
+            return [
+                'id' => $section->id, 'name' => $section->name, 'order' => $section->order,
+                'lessons' => $sectionContents->groupBy('lesson_id')->map(function (Collection $lessonContents) use ($readIds): array {
+                    $lesson = $lessonContents->first()->lesson;
+
+                    return ['id' => $lesson->id, 'name' => $lesson->name, 'order' => $lesson->order, ...$this->progress($lessonContents, $readIds)];
+                })->sortBy([['order', 'asc'], ['id', 'asc']])->values()->all(),
+            ];
+        })->sortBy([['order', 'asc'], ['id', 'asc']])->values()->all();
+    }
+
+    /** @return array<string, mixed> */
+    public function lessonData(User $user, Space $space, Lesson $lesson): array
+    {
+        $this->authorizeSpace($user, $space);
+        $contents = $this->contents($user, $space)->get();
+        $lessonContents = $contents->where('lesson_id', $lesson->id)->values();
+        abort_if($lessonContents->isEmpty(), 404);
+        $readIds = $this->readIds($user, $space);
+        $sections = $this->sections($contents, $readIds);
+        $lessons = collect($sections)->flatMap(fn (array $section): array => $section['lessons'])->values();
+        $position = $lessons->search(fn (array $item): bool => $item['id'] === $lesson->id);
+
+        return [
+            'space' => ['id' => $space->id, 'name' => $space->name, 'courseTitle' => $space->course->title, ...$this->progress($contents, $readIds)],
+            'sections' => $sections,
+            'lesson' => ['id' => $lesson->id, 'name' => $lesson->name, 'sectionName' => $lesson->section->name],
+            'contents' => $lessonContents->map(fn (Content $content): array => $this->contentData($content, $space, $contents))->all(),
+            'previousLesson' => $lessons->get($position - 1),
+            'nextLesson' => $lessons->get($position + 1),
+        ];
+    }
+
+    public function visit(User $user, Space $space, Lesson $lesson): void
+    {
+        $this->authorizeSpace($user, $space);
+        DB::transaction(function () use ($user, $space, $lesson): void {
+            $enrollments = $user->student->enrollments()->where('is_active', true)
+                ->whereHas('plan', fn (Builder $query): Builder => $query->where('space_id', $space->id))->lockForUpdate()->get();
+            $contents = $this->contents($user, $space)->where('lesson_id', $lesson->id)->with('accesses')->get();
+            abort_if($contents->isEmpty(), 404);
+            $now = now();
+            foreach ($contents as $content) {
+                $enrollment = $enrollments->first(fn (Enrollment $item): bool => $content->accesses->contains('plan_id', $item->plan_id));
+                Progress::query()->firstOrCreate(['content_id' => $content->id, 'enrollment_id' => $enrollment->id])
+                    ->update(['status' => 'read', 'read_at' => $now]);
+            }
+            $user->student->enrollments()->whereIn('id', $enrollments->modelKeys())
+                ->update(['last_visited_at' => $now, 'last_lesson_id' => $lesson->id]);
+        });
+    }
+
+    /** @param list<int> $visited
+     * @return array<string, mixed>
+     */
+    private function contentData(Content $content, Space $space, Collection $allowed, array $visited = []): array
+    {
+        $types = [TextContent::class, ImageContent::class, VideoContent::class, FileContent::class, TableContent::class, RemindContent::class];
+        $record = in_array($content->contentable_type, $types, true) ? $content->contentable : null;
+        $data = ['id' => $content->id, 'description' => $content->description, 'type' => 'unavailable'];
+
+        if ($record instanceof RemindContent) {
+            $target = $allowed->firstWhere('id', $record->content_id);
+            if ($target && ! in_array($target->id, [...$visited, $content->id], true)) {
+                return [...$data, 'type' => 'remind', 'target' => $this->contentData($target, $space, $allowed, [...$visited, $content->id])];
+            }
+        } elseif ($record instanceof TextContent) {
+            return [...$data, 'type' => 'text', 'body' => $record->body];
+        } elseif ($record instanceof TableContent) {
+            return [...$data, 'type' => 'table', 'rows' => $record->table];
+        } elseif ($record instanceof ImageContent || $record instanceof VideoContent || $record instanceof FileContent) {
+            return [...$data, 'name' => $record->name, 'type' => match ($record::class) {
+                ImageContent::class => 'image', VideoContent::class => 'video', default => 'file',
+            }, 'url' => match ($record::class) {
+                ImageContent::class => Storage::disk('public')->url($record->path),
+                VideoContent::class => preg_match('~^https?://~i', $record->path) ? $record->path : null,
+                default => route('student.study.download', [$space, $content]),
+            }];
+        }
+
+        return $data;
+    }
+}

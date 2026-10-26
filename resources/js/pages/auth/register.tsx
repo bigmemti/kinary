@@ -1,115 +1,142 @@
-import { login } from '@/routes';
-import { store } from '@/routes/register';
-import { Form, Head } from '@inertiajs/react';
-
 import InputError from '@/components/input-error';
-import TextLink from '@/components/text-link';
-import { Button } from '@/components/ui/button';
+import StorefrontAuth from '@/components/storefront-auth';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
-import AuthLayout from '@/layouts/auth-layout';
+import { login } from '@/routes';
+import { store } from '@/routes/register';
+import { Form, Link } from '@inertiajs/react';
 
 export default function Register() {
     return (
-        <AuthLayout
-            title="Create an account"
-            description="Enter your details below to create your account"
+        <StorefrontAuth
+            title="ساخت حساب کاربری"
+            description="به آکادمی خوش آمدی. اطلاعاتت را وارد کن و مسیر یادگیری‌ات را شروع کن."
         >
-            <Head title="Register" />
             <Form
                 {...store.form()}
                 resetOnSuccess={['password', 'password_confirmation']}
                 disableWhileProcessing
-                className="flex flex-col gap-6"
+                noValidate
+                className="grid gap-5"
             >
                 {({ processing, errors }) => (
                     <>
-                        <div className="grid gap-6">
-                            <div className="grid gap-2">
-                                <Label htmlFor="name">Name</Label>
-                                <Input
-                                    id="name"
-                                    type="text"
-                                    required
-                                    autoFocus
-                                    tabIndex={1}
-                                    autoComplete="name"
-                                    name="name"
-                                    placeholder="Full name"
-                                />
-                                <InputError
-                                    message={errors.name}
-                                    className="mt-2"
-                                />
-                            </div>
-
-                            <div className="grid gap-2">
-                                <Label htmlFor="email">Email address</Label>
-                                <Input
-                                    id="email"
-                                    type="email"
-                                    required
-                                    tabIndex={2}
-                                    autoComplete="email"
-                                    name="email"
-                                    placeholder="email@example.com"
-                                />
-                                <InputError message={errors.email} />
-                            </div>
-
-                            <div className="grid gap-2">
-                                <Label htmlFor="password">Password</Label>
-                                <Input
-                                    id="password"
-                                    type="password"
-                                    required
-                                    tabIndex={3}
-                                    autoComplete="new-password"
-                                    name="password"
-                                    placeholder="Password"
-                                />
-                                <InputError message={errors.password} />
-                            </div>
-
-                            <div className="grid gap-2">
-                                <Label htmlFor="password_confirmation">
-                                    Confirm password
-                                </Label>
-                                <Input
-                                    id="password_confirmation"
-                                    type="password"
-                                    required
-                                    tabIndex={4}
-                                    autoComplete="new-password"
-                                    name="password_confirmation"
-                                    placeholder="Confirm password"
-                                />
-                                <InputError
-                                    message={errors.password_confirmation}
-                                />
-                            </div>
-
-                            <Button
-                                type="submit"
-                                className="mt-2 w-full"
-                                tabIndex={5}
-                                data-test="register-user-button"
+                        <div className="grid gap-2">
+                            <Label htmlFor="name">نام و نام خانوادگی</Label>
+                            <Input
+                                id="name"
+                                name="name"
+                                type="text"
+                                autoComplete="name"
+                                required
+                                autoFocus
+                                placeholder="نام کامل شما"
+                                className="storefront-input"
+                                aria-invalid={!!errors.name}
+                                aria-describedby={
+                                    errors.name ? 'name-error' : undefined
+                                }
+                            />
+                            <InputError
+                                id="name-error"
+                                message={errors.name}
+                                role="alert"
+                            />
+                        </div>
+                        <div className="grid gap-2">
+                            <Label htmlFor="email">ایمیل</Label>
+                            <Input
+                                id="email"
+                                name="email"
+                                type="email"
+                                autoComplete="email"
+                                required
+                                dir="ltr"
+                                placeholder="نشانی ایمیل شما"
+                                className="storefront-input placeholder:text-right"
+                                aria-invalid={!!errors.email}
+                                aria-describedby={
+                                    errors.email ? 'email-error' : undefined
+                                }
+                            />
+                            <InputError
+                                id="email-error"
+                                message={errors.email}
+                                role="alert"
+                            />
+                        </div>
+                        <div className="grid gap-2">
+                            <Label htmlFor="password">رمز عبور</Label>
+                            <Input
+                                id="password"
+                                name="password"
+                                type="password"
+                                autoComplete="new-password"
+                                required
+                                placeholder="یک رمز عبور انتخاب کنید"
+                                className="storefront-input"
+                                aria-invalid={!!errors.password}
+                                aria-describedby={
+                                    errors.password
+                                        ? 'password-error'
+                                        : undefined
+                                }
+                            />
+                            <InputError
+                                id="password-error"
+                                message={errors.password}
+                                role="alert"
+                            />
+                        </div>
+                        <div className="grid gap-2">
+                            <Label htmlFor="password_confirmation">
+                                تکرار رمز عبور
+                            </Label>
+                            <Input
+                                id="password_confirmation"
+                                name="password_confirmation"
+                                type="password"
+                                autoComplete="new-password"
+                                required
+                                placeholder="رمز عبور را دوباره وارد کنید"
+                                className="storefront-input"
+                                aria-invalid={!!errors.password_confirmation}
+                                aria-describedby={
+                                    errors.password_confirmation
+                                        ? 'password-confirmation-error'
+                                        : undefined
+                                }
+                            />
+                            <InputError
+                                id="password-confirmation-error"
+                                message={errors.password_confirmation}
+                                role="alert"
+                            />
+                        </div>
+                        <button
+                            type="submit"
+                            disabled={processing}
+                            className="storefront-button w-full gap-2 disabled:opacity-50"
+                            data-test="register-user-button"
+                        >
+                            {processing && (
+                                <Spinner aria-label="در حال ساخت حساب" />
+                            )}
+                            {processing ? 'در حال ساخت حساب…' : 'ساخت حساب'}
+                        </button>
+                        <p className="text-center text-sm leading-7 opacity-80">
+                            قبلاً ثبت‌نام کرده‌ای؟{' '}
+                            <Link
+                                href={login()}
+                                className="font-bold underline underline-offset-4"
                             >
-                                {processing && <Spinner />}
-                                Create account
-                            </Button>
-                        </div>
-
-                        <div className="text-center text-sm text-muted-foreground">
-                            Already have an account?{' '}
-                            <TextLink href={login()} tabIndex={6}>
-                                Log in
-                            </TextLink>
-                        </div>
+                                وارد حسابت شو
+                            </Link>
+                        </p>
                     </>
                 )}
             </Form>
-        </AuthLayout>
+        </StorefrontAuth>
     );
 }

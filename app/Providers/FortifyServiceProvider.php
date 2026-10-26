@@ -51,6 +51,10 @@ class FortifyServiceProvider extends ServiceProvider
             'canResetPassword' => Features::enabled(Features::resetPasswords()),
             'canRegister' => Features::enabled(Features::registration()),
             'status' => $request->session()->get('status'),
+            'canonicalUrl' => route('login'),
+        ])->withViewData([
+            'storefrontTitle' => 'ورود به حساب | آکادمی',
+            'storefrontDescription' => 'برای ادامه مسیر یادگیری وارد حساب آکادمی شوید.',
         ]));
 
         Fortify::resetPasswordView(fn (Request $request) => Inertia::render('auth/reset-password', [
@@ -66,7 +70,12 @@ class FortifyServiceProvider extends ServiceProvider
             'status' => $request->session()->get('status'),
         ]));
 
-        Fortify::registerView(fn () => Inertia::render('auth/register'));
+        Fortify::registerView(fn () => Inertia::render('auth/register', [
+            'canonicalUrl' => route('register'),
+        ])->withViewData([
+            'storefrontTitle' => 'ساخت حساب کاربری | آکادمی',
+            'storefrontDescription' => 'حساب آکادمی خود را بسازید و مسیر یادگیری مهندسی نرم‌افزار را آغاز کنید.',
+        ]));
 
         Fortify::twoFactorChallengeView(fn () => Inertia::render('auth/two-factor-challenge'));
 

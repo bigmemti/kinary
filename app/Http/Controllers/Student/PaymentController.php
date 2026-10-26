@@ -2,48 +2,138 @@
 
 namespace App\Http\Controllers\Student;
 
+use App\Enums\LedgerType;
 use App\Enums\TransactionStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Plan;
+use App\Models\Transaction;
+use App\Services\CartService;
 use App\Services\PaymentService;
-use Illuminate\Support\Facades\Auth;
+use GuzzleHttp\Exception\GuzzleException;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
+use Inertia\Inertia;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use UnexpectedValueException;
 
 class PaymentController extends Controller
 {
-    public function buy(Plan $plan)
+    public function buy(Request $request, Plan $plan, CartService $cart): RedirectResponse
     {
-        $order = (Auth::user()->hasActiveCart()) ? Auth::user()->activeCart() : Auth::user()->wallet->orders()->create();
+        $enrolled = $cart->select($request->user(), $plan);
 
-        $order->plans()->syncWithoutDetaching([$plan->id]);
-
-        return redirect()->back();
+        return to_route('course.show', $plan->space->course->slug)->with('cart_notice',
+            $enrolled ? 'شرکت در دوره با موفقیت انجام شد.' : 'سبد خرید به‌روز شد.');
     }
 
-    public function checkout(PaymentService $service)
+    public function checkout(Request $request, PaymentService $service, CartService $cart): Response
     {
-        $authority = $service->request(['amount' => Auth::user()->activeCart()->plans()->sum('price'), 'description' => 'test']);
-        Auth::user()->activeCart()->transactions()->create(['authority' => $authority, 'amount' => Auth::user()->activeCart()->plans()->sum('price'), 'gateway' => 'zarinpal']);
+        try {
+            $authority = DB::transaction(function () use ($request, $service, $cart): ?string {
+                $user = $request->user();
+                $wallet = $user->wallet()->lockForUpdate()->firstOrFail();
+                $order = $cart->active($user);
+                if (! $order) {
+                    throw ValidationException::withMessages(['cart' => 'سبد خرید شما خالی است.']);
+                }
+                $cart->validate($user, $order);
+                $shortfall = max(0, $order->amount - $wallet->balance);
+                if ($shortfall === 0) {
+                    $cart->purchase($user, $wallet, $order);
 
-        return redirect()->away($service->getPage($authority));
+                    return null;
+                }
+                $pending = $wallet->transactions()->where('status', TransactionStatus::Pending)
+                    ->where('amount', $shortfall)->where('gateway', 'zarinpal')->latest('id')->first();
+                if ($pending) {
+                    return $pending->authority;
+                }
+                $authority = $service->request([
+                    'amount' => $shortfall,
+                    'description' => 'افزایش موجودی کیف پول آکادمی',
+                ]);
+                $wallet->transactions()->create([
+                    'authority' => $authority,
+                    'amount' => $shortfall,
+                    'gateway' => 'zarinpal',
+                    'status' => TransactionStatus::Pending,
+                ]);
+
+                return $authority;
+            });
+        } catch (GuzzleException|UnexpectedValueException $exception) {
+            report($exception);
+
+            return to_route('cart.index')->withErrors(['cart' => 'ارتباط با درگاه برقرار نشد. دوباره تلاش کنید.']);
+        }
+
+        return $authority === null
+            ? to_route('dashboard')->with('cart_notice', 'خرید از موجودی کیف پول انجام شد و دسترسی شما فعال شد.')
+            : Inertia::location($service->getPage($authority));
     }
 
-    public function callback(PaymentService $service)
+    public function callback(Request $request, PaymentService $service, CartService $cart): RedirectResponse
     {
-        $authority = request('Authority');
-        $transaction = Auth::user()->activeCart()->transactions()->where('authority', $authority)->where('status', 'pending')->first();
-        if (! $transaction) {
-            return to_route('home')->withErrors(['payment' => 'Invalid transaction']);
-        }
+        $result = DB::transaction(function () use ($request, $service, $cart): string {
+            $user = $request->user();
+            $wallet = $user->wallet()->lockForUpdate()->firstOrFail();
+            $transaction = Transaction::query()->where('wallet_id', $user->wallet->id)
+                ->where('authority', $request->query('Authority'))
+                ->lockForUpdate()->first();
+            if (! $transaction) {
+                return 'failed';
+            }
+            if ($transaction->status === TransactionStatus::Paid) {
+                return 'already_paid';
+            }
+            if ($transaction->status !== TransactionStatus::Pending) {
+                return 'failed';
+            }
+            try {
+                $success = $request->query('Status') === 'OK'
+                    && $service->verify((int) $transaction->amount, $transaction->authority);
+            } catch (GuzzleException|UnexpectedValueException $exception) {
+                report($exception);
 
-        $success = $service->verify($transaction->amount, $authority);
-        $plans = Auth::user()->activeCart()->plans;
+                return 'failed';
+            }
+            $transaction->update($success
+                ? ['status' => TransactionStatus::Paid, 'paid_at' => now()]
+                : ['status' => TransactionStatus::Failed]);
+            if (! $success) {
+                return 'failed';
+            }
+            $ledger = $wallet->ledgers()->create(['amount' => $transaction->amount, 'type' => LedgerType::Deposit]);
+            $wallet->balance += $transaction->amount;
+            $wallet->save();
+            $transaction->ledger()->associate($ledger);
+            $transaction->save();
 
-        $transaction->update($success ? ['status' => TransactionStatus::Paid, 'paid_at' => now()] : ['status' => TransactionStatus::Failed]);
-        Auth::user()->activeCart()->update($success ? ['status' => 'paid'] : ['status' => 'pending']);
-        if ($success) {
-            Auth::user()->student->plans()->syncWithoutDetaching($plans->pluck('id'));
-        }
+            $order = $cart->active($user);
+            if (! $order) {
+                return 'deposited';
+            }
+            try {
+                $cart->validate($user, $order);
+            } catch (ValidationException|NotFoundHttpException) {
+                return 'deposited';
+            }
+            if ($wallet->balance < $order->amount) {
+                return 'deposited';
+            }
+            $cart->purchase($user, $wallet, $order);
 
-        return to_route($success ? 'dashboard' : 'home');
+            return 'purchased';
+        });
+
+        return match ($result) {
+            'purchased' => to_route('dashboard')->with('cart_notice', 'پرداخت موفق بود و دسترسی شما فعال شد.'),
+            'already_paid' => to_route('dashboard')->with('cart_notice', 'این تراکنش قبلاً تأیید شده است.'),
+            'deposited' => to_route('cart.index')->with('cart_notice', 'مبلغ پرداختی به کیف پول اضافه شد. برای تکمیل خرید، سبد خرید را بررسی کنید.'),
+            default => to_route('cart.index')->withErrors(['cart' => 'پرداخت تأیید نشد. در صورت کسر وجه، پیش از پرداخت دوباره وضعیت تراکنش را پیگیری کنید.']),
+        };
     }
 }

@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Route;
 
 // frontend
 Route::get('/', [HomeController::class, 'index'])->name('home');
-Route::resource('course', CourseController::class)->only(['show'])->scoped(['course' => 'slug']);
+Route::resource('course', CourseController::class)->only(['index', 'show'])->scoped(['course' => 'slug']);
 
 require __DIR__.'/admin.php';
 require __DIR__.'/dashboard.php';

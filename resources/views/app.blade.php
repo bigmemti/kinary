@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" @class(['dark' => ($appearance ?? 'system') == 'dark'])>
+<html lang="{{ isset($storefrontTitle) ? 'fa' : str_replace('_', '-', app()->getLocale()) }}" dir="{{ $page['props']['pageDirection'] ?? 'ltr' }}" @class(['dark' => ($appearance ?? 'system') == 'dark'])>
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -30,7 +30,11 @@
             }
         </style>
 
-        <title inertia>{{ config('app.name', 'Laravel') }}</title>
+        <title inertia>{{ $storefrontTitle ?? config('app.name', 'Laravel') }}</title>
+        @isset($storefrontDescription)
+            <meta name="description" content="{{ $storefrontDescription }}" inertia="description">
+            <link rel="canonical" href="{{ url()->current() }}" inertia="canonical">
+        @endisset
 
         <link rel="icon" href="/favicon.ico" sizes="any">
         <link rel="icon" href="/favicon.svg" type="image/svg+xml">

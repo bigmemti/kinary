@@ -51,7 +51,7 @@ const mainNavItems: NavItem[] = [
         icon: LayoutGrid,
     },
     {
-        title: 'Studying Courses',
+        title: 'دوره‌های در حال مطالعه',
         href: studying_courses(),
         icon: BookOpen,
         can: {

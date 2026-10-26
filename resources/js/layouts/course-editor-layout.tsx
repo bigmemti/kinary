@@ -18,7 +18,7 @@ export default function CourseEditorLayout({
 }) {
     return (
         <div
-            dir="rtl"
+            dir="ltr"
             className="flex h-dvh flex-col overflow-hidden bg-background text-foreground"
         >
             <header className="flex shrink-0 items-center gap-3 border-b px-4 py-3 md:px-6">

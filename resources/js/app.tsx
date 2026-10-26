@@ -1,6 +1,6 @@
 import '../css/app.css';
 
-import { createInertiaApp } from '@inertiajs/react';
+import { createInertiaApp, router } from '@inertiajs/react';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
@@ -9,13 +9,24 @@ import { initializeTheme } from './hooks/use-appearance';
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
 createInertiaApp({
-    title: (title) => (title ? `${title} - ${appName}` : appName),
+    title: (title) =>
+        title.endsWith(' | آکادمی')
+            ? title
+            : title
+              ? `${title} - ${appName}`
+              : appName,
     resolve: (name) =>
         resolvePageComponent(
             `./pages/${name}.tsx`,
             import.meta.glob('./pages/**/*.tsx'),
         ),
     setup({ el, App, props }) {
+        document.documentElement.dir =
+            props.initialPage.props.pageDirection === 'rtl' ? 'rtl' : 'ltr';
+        router.on('navigate', (event) => {
+            document.documentElement.dir =
+                event.detail.page.props.pageDirection === 'rtl' ? 'rtl' : 'ltr';
+        });
         const root = createRoot(el);
 
         root.render(

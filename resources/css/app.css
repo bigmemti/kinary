@@ -141,3 +141,32 @@
         @apply bg-background text-foreground;
     }
 }
+
+.storefront {
+    font-family: Tahoma, 'Segoe UI', sans-serif;
+}
+
+.storefront :is(a, button, input, summary):focus-visible {
+    outline: 2px solid #8b9b5a;
+    outline-offset: 5px;
+}
+
+.storefront-button {
+    @apply inline-flex items-center justify-center rounded-xl bg-[#244d40] px-4 py-3 text-sm font-semibold text-white transition hover:bg-[#356550] dark:bg-[#d9e3ad] dark:text-[#243b37] dark:hover:bg-[#e7edcc];
+}
+
+.storefront-eyebrow {
+    @apply mb-3 text-xs font-medium text-[#687943] dark:text-[#d9e3ad];
+}
+
+.storefront-heading {
+    @apply text-2xl leading-relaxed font-bold sm:text-3xl;
+}
+
+.storefront :is(section[id], main[id]) {
+    scroll-margin-top: 2rem;
+}
+
+.storefront-input {
+    @apply h-12 rounded-xl border-current/20 bg-transparent px-4 text-sm shadow-none placeholder:text-current/45 focus-visible:border-[#8b9b5a] focus-visible:ring-[#8b9b5a]/25;
+}

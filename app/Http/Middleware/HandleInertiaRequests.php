@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Services\CartService;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -48,6 +49,11 @@ class HandleInertiaRequests extends Middleware
                 'permissions' => fn (): array => $request->user()?->getAllPermissions()->pluck('name')->unique()->values()->all() ?? [],
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
+            'pageDirection' => $request->routeIs('home', 'course.*', 'cart.*', 'login', 'register') ? 'rtl' : 'ltr',
+            'cartNotice' => fn (): ?string => $request->session()->get('cart_notice'),
+            'storefrontCart' => fn (): array => $request->user() && $request->routeIs('home', 'course.*', 'cart.*', 'login', 'register')
+                ? app(CartService::class)->items($request->user())
+                : [],
         ];
     }
 }

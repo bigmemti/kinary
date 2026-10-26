@@ -1,15 +1,12 @@
 import InputError from '@/components/input-error';
-import TextLink from '@/components/text-link';
-import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
+import StorefrontAuth from '@/components/storefront-auth';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
-import AuthLayout from '@/layouts/auth-layout';
 import { register } from '@/routes';
 import { store } from '@/routes/login';
 import { request } from '@/routes/password';
-import { Form, Head } from '@inertiajs/react';
+import { Form, Link } from '@inertiajs/react';
 
 interface LoginProps {
     status?: string;
@@ -23,98 +20,114 @@ export default function Login({
     canRegister,
 }: LoginProps) {
     return (
-        <AuthLayout
-            title="Log in to your account"
-            description="Enter your email and password below to log in"
+        <StorefrontAuth
+            title="ورود به حساب"
+            description="خوش برگشتی. برای ادامه مسیر یادگیری وارد حساب خودت شو."
         >
-            <Head title="Log in" />
-
+            {status && (
+                <p
+                    role="status"
+                    className="mb-6 rounded-xl bg-[#e7ebdf] p-4 text-sm leading-7 text-[#244d40]"
+                >
+                    {status}
+                </p>
+            )}
             <Form
                 {...store.form()}
                 resetOnSuccess={['password']}
-                className="flex flex-col gap-6"
+                noValidate
+                className="grid gap-6"
             >
                 {({ processing, errors }) => (
                     <>
-                        <div className="grid gap-6">
-                            <div className="grid gap-2">
-                                <Label htmlFor="email">Email address</Label>
-                                <Input
-                                    id="email"
-                                    type="email"
-                                    name="email"
-                                    required
-                                    autoFocus
-                                    tabIndex={1}
-                                    autoComplete="email"
-                                    placeholder="email@example.com"
-                                />
-                                <InputError message={errors.email} />
-                            </div>
-
-                            <div className="grid gap-2">
-                                <div className="flex items-center">
-                                    <Label htmlFor="password">Password</Label>
-                                    {canResetPassword && (
-                                        <TextLink
-                                            href={request()}
-                                            className="ml-auto text-sm"
-                                            tabIndex={5}
-                                        >
-                                            Forgot password?
-                                        </TextLink>
-                                    )}
-                                </div>
-                                <Input
-                                    id="password"
-                                    type="password"
-                                    name="password"
-                                    required
-                                    tabIndex={2}
-                                    autoComplete="current-password"
-                                    placeholder="Password"
-                                />
-                                <InputError message={errors.password} />
-                            </div>
-
-                            <div className="flex items-center space-x-3">
-                                <Checkbox
-                                    id="remember"
-                                    name="remember"
-                                    tabIndex={3}
-                                />
-                                <Label htmlFor="remember">Remember me</Label>
-                            </div>
-
-                            <Button
-                                type="submit"
-                                className="mt-4 w-full"
-                                tabIndex={4}
-                                disabled={processing}
-                                data-test="login-button"
-                            >
-                                {processing && <Spinner />}
-                                Log in
-                            </Button>
+                        <div className="grid gap-2">
+                            <Label htmlFor="email">ایمیل</Label>
+                            <Input
+                                id="email"
+                                name="email"
+                                type="email"
+                                autoComplete="email"
+                                required
+                                autoFocus
+                                dir="ltr"
+                                placeholder="نشانی ایمیل شما"
+                                className="storefront-input placeholder:text-right"
+                                aria-invalid={!!errors.email}
+                                aria-describedby={
+                                    errors.email ? 'email-error' : undefined
+                                }
+                            />
+                            <InputError
+                                id="email-error"
+                                message={errors.email}
+                                role="alert"
+                            />
                         </div>
-
+                        <div className="grid gap-2">
+                            <Label htmlFor="password">رمز عبور</Label>
+                            <Input
+                                id="password"
+                                name="password"
+                                type="password"
+                                autoComplete="current-password"
+                                required
+                                placeholder="رمز عبور شما"
+                                className="storefront-input"
+                                aria-invalid={!!errors.password}
+                                aria-describedby={
+                                    errors.password
+                                        ? 'password-error'
+                                        : undefined
+                                }
+                            />
+                            <InputError
+                                id="password-error"
+                                message={errors.password}
+                                role="alert"
+                            />
+                        </div>
+                        <div className="flex flex-wrap items-center justify-between gap-4 text-sm">
+                            <label className="flex cursor-pointer items-center gap-2">
+                                <input
+                                    name="remember"
+                                    type="checkbox"
+                                    value="1"
+                                    className="size-4 accent-[#244d40]"
+                                />
+                                مرا به خاطر بسپار
+                            </label>
+                            {canResetPassword && (
+                                <Link
+                                    href={request()}
+                                    className="underline underline-offset-4"
+                                >
+                                    رمز عبورت را فراموش کردی؟
+                                </Link>
+                            )}
+                        </div>
+                        <button
+                            type="submit"
+                            disabled={processing}
+                            className="storefront-button w-full gap-2 disabled:opacity-50"
+                            data-test="login-button"
+                        >
+                            {processing && <Spinner aria-label="در حال ورود" />}
+                            {processing ? 'در حال ورود…' : 'ورود به حساب'}
+                        </button>
                         {canRegister && (
-                            <div className="text-center text-sm text-muted-foreground">
-                                Don't have an account?{' '}
-                                <TextLink href={register()} tabIndex={5}>
-                                    Sign up
-                                </TextLink>
-                            </div>
+                            <p className="text-center text-sm leading-7 opacity-80">
+                                هنوز حساب نداری؟{' '}
+                                <Link
+                                    href={register()}
+                                    className="font-bold underline underline-offset-4"
+                                >
+                                    ثبت‌نام کن
+                                </Link>
+                            </p>
                         )}
                     </>
                 )}
             </Form>
-
-            {status && (
-                <div className="mb-4 text-center text-sm font-medium text-green-600">
-                    {status}
-                </div>
-            )}
-        </AuthLayout>
+        </StorefrontAuth>
     );
 }

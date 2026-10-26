@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use GuzzleHttp\Client;
+use UnexpectedValueException;
 
 class PaymentService
 {
@@ -10,43 +11,48 @@ class PaymentService
         private Client $client
     ) {}
 
-    public function request(array $body)
+    /** @param array{amount: int, description: string} $body */
+    public function request(array $body): string
     {
         $response = $this->client->post('https://sandbox.zarinpal.com/pg/v4/payment/request.json', [
             'json' => [
                 'merchant_id' => '1344b4d5-0048-11e8-94db-005056a205be',
                 ...$body,
-                'callback_url' => 'http://127.0.0.1:8000/pay/callback',
+                'amount' => $body['amount'] * 10,
+                'currency' => 'IRR',
+                'callback_url' => route('callback'),
             ],
+            'connect_timeout' => 5,
+            'timeout' => 20,
         ]);
 
-        return json_decode($response->getBody(), true)['data']['authority'];
+        $data = json_decode($response->getBody(), true)['data'] ?? [];
+        if (($data['code'] ?? null) !== 100 || empty($data['authority'])) {
+            throw new UnexpectedValueException('Payment request did not return an authority.');
+        }
+
+        return $data['authority'];
     }
 
-    public function getPage(string $authority)
+    public function getPage(string $authority): string
     {
         return 'https://sandbox.zarinpal.com/pg/StartPay/'.$authority;
     }
 
-    public function verify($amount, $authority)
+    public function verify(int $amount, string $authority): bool
     {
-        if (request('Status') == 'OK') {
-            $client = new Client;
+        $response = $this->client->post('https://sandbox.zarinpal.com/pg/v4/payment/verify.json', [
+            'json' => [
+                'merchant_id' => '1344b4d5-0048-11e8-94db-005056a205be',
+                'amount' => $amount * 10,
+                'authority' => $authority,
+            ],
+            'connect_timeout' => 5,
+            'timeout' => 20,
+        ]);
 
-            $response = $client->post('https://sandbox.zarinpal.com/pg/v4/payment/verify.json', [
-                'json' => [
-                    'merchant_id' => '1344b4d5-0048-11e8-94db-005056a205be',
-                    'amount' => $amount,
-                    'authority' => $authority,
-                ],
-            ]);
+        $body = json_decode($response->getBody(), true);
 
-            $body = json_decode($response->getBody(), true);
-            $code = $body['data']['code'];
-        } else {
-            $code = 403;
-        }
-
-        return $code == 100;
+        return in_array($body['data']['code'] ?? null, [100, 101], true);
     }
 }
