@@ -70,8 +70,6 @@ export interface Order {
     wallet?: Wallet;
     plans?: Plan[];
     plans_count?: number;
-    transactions?: Transaction[];
-    transactions_count?: number;
     status: string;
     amount?: number;
     created_at: DateTime;
@@ -178,8 +176,9 @@ export interface Content {
 
 export interface Transaction {
     id: number;
-    order_id: number;
-    order?: Order;
+    wallet_id: number;
+    wallet?: Wallet;
+    ledger_id: number | null;
     amount: number;
     gateway: string;
     authority: string;

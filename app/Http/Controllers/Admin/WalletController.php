@@ -50,8 +50,8 @@ class WalletController extends Controller
             'wallet' => $wallet->load([
                 'user',
                 'orders' => fn ($query) => $query
-                                                // ->with(['plans.course.teacher.user', 'transactions'])
-                    ->withCount(['plans', 'transactions'])
+                                                // ->with(['plans.course.teacher.user'])
+                    ->withCount(['plans'])
                     ->withSum('plans as amount', 'price')]
             )->loadCount('orders'),
         ]);

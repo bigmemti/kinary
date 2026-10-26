@@ -53,20 +53,9 @@ function TransactionMeta({ transaction }: { transaction: Transaction }) {
             <InfoBlock label="Gateway" value={transaction.gateway} />
             <InfoBlock label="Status" value={transaction.status} />
             <InfoBlock label="Paid At" value={transaction.paid_at} />
-            <InfoBlock label="Order" value={transaction.order?.id} />
-            <InfoBlock label="Order Amount" value={transaction.order?.amount} />
-            <InfoBlock
-                label="Wallet ID"
-                value={transaction.order?.wallet?.id}
-            />
-            <InfoBlock
-                label="User ID"
-                value={transaction.order?.wallet?.user?.id}
-            />
-            <InfoBlock
-                label="Wallet"
-                value={transaction.order?.wallet?.user?.name}
-            />
+            <InfoBlock label="Wallet ID" value={transaction.wallet?.id} />
+            <InfoBlock label="User ID" value={transaction.wallet?.user?.id} />
+            <InfoBlock label="Wallet" value={transaction.wallet?.user?.name} />
             <InfoBlock label="Created At" value={transaction.created_at} />
             <InfoBlock label="Updated At" value={transaction.updated_at} />
         </>

@@ -5,8 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreTransactionRequest;
 use App\Http\Requests\Admin\UpdateTransactionRequest;
-use App\Models\Order;
 use App\Models\Transaction;
+use App\Models\Wallet;
 
 class TransactionController extends Controller
 {
@@ -16,7 +16,7 @@ class TransactionController extends Controller
     public function index()
     {
         return inertia('admin/transaction/index', [
-            'transactions' => Transaction::with(['order' => fn ($query) => $query->with(['wallet.user'])->withSum('plans as amount', 'price')])->get(),
+            'transactions' => Transaction::with(['wallet.user', 'ledger'])->get(),
         ]);
     }
 
@@ -26,7 +26,7 @@ class TransactionController extends Controller
     public function create()
     {
         return inertia('admin/transaction/create', [
-            'orders' => Order::withSum('plans as amount', 'price')->with('wallet.user')->get(),
+            'wallets' => Wallet::with('user')->get(),
         ]);
     }
 
@@ -44,7 +44,7 @@ class TransactionController extends Controller
     public function show(Transaction $transaction)
     {
         return inertia('admin/transaction/show', [
-            'transaction' => $transaction->load(['order' => fn ($query) => $query->with(['wallet.user'])->withSum('plans as amount', 'price')]),
+            'transaction' => $transaction->load(['wallet.user', 'ledger']),
         ]);
     }
 
@@ -54,7 +54,7 @@ class TransactionController extends Controller
     public function edit(Transaction $transaction)
     {
         return inertia('admin/transaction/edit', [
-            'orders' => Order::withSum('plans as amount', 'price')->with('wallet.user')->get(),
+            'wallets' => Wallet::with('user')->get(),
             'transaction' => $transaction,
         ]);
     }

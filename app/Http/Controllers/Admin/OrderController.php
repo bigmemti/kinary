@@ -17,7 +17,7 @@ class OrderController extends Controller
     public function index()
     {
         return inertia('admin/order/index', [
-            'orders' => Order::with(['wallet.user'])->withCount(['plans', 'transactions'])->withSum('plans as amount', 'price')->latest()->get(),
+            'orders' => Order::with(['wallet.user'])->withCount(['plans'])->withSum('plans as amount', 'price')->latest()->get(),
         ]);
     }
 
@@ -50,7 +50,7 @@ class OrderController extends Controller
     public function show(Order $order)
     {
         return inertia('admin/order/show', [
-            'order' => $order->load(['wallet.user', 'plans.course.teacher.user', 'transactions'])->loadCount(['plans', 'transactions'])->loadSum('plans as amount', 'price'),
+            'order' => $order->load(['wallet.user', 'plans.course.teacher.user'])->loadCount(['plans'])->loadSum('plans as amount', 'price'),
         ]);
     }
 

@@ -10,10 +10,9 @@ import AppLayout from '@/layouts/app-layout';
 import { dashboard } from '@/routes';
 import { create, destroy, edit, index, show } from '@/routes/admin/order';
 import { index as plans } from '@/routes/admin/order/plan';
-import { index as transactions } from '@/routes/admin/order/transaction';
 import { BreadcrumbItem, Order } from '@/types';
 import { Head } from '@inertiajs/react';
-import { Eye, File, Pen, TableRowsSplit, Trash } from 'lucide-react';
+import { Eye, File, Pen, Trash } from 'lucide-react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -51,10 +50,6 @@ function ResponsiveOrderList({ orders }: { orders: Order[] }) {
                     cell: (order) => order.wallet?.user?.name,
                 },
                 { header: 'Plan Count', cell: (order) => order.plans_count },
-                {
-                    header: 'Transaction Count',
-                    cell: (order) => order.transactions_count,
-                },
                 { header: 'Status', cell: (order) => order.status },
                 { header: 'Amount', cell: (order) => order.amount },
                 {
@@ -71,7 +66,7 @@ function ResponsiveOrderList({ orders }: { orders: Order[] }) {
 function OrderActions({ order }: { order: Order }) {
     return (
         <div className="mt-2 space-x-2 text-center xl:mt-1 xl:text-end">
-            {!order.transactions_count && (
+            {order.status === 'pending' && (
                 <FormButton
                     className="inline"
                     form={destroy.form(order)}
@@ -80,9 +75,6 @@ function OrderActions({ order }: { order: Order }) {
                     <Trash />
                 </FormButton>
             )}
-            <ButtonLink href={transactions(order).url}>
-                <TableRowsSplit />
-            </ButtonLink>
             <ButtonLink href={plans(order).url}>
                 <File />
             </ButtonLink>

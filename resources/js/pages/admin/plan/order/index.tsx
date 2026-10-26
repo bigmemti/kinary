@@ -4,13 +4,12 @@ import ResponsiveDataList from '@/components/responsive-data-list';
 import AppLayout from '@/layouts/app-layout';
 import { dashboard } from '@/routes';
 import { edit, show } from '@/routes/admin/order';
-import { index as transactions } from '@/routes/admin/order/transaction';
 import { index, show as plan_show } from '@/routes/admin/plan';
 import { index as orders } from '@/routes/admin/plan/order';
 import { show as wallet } from '@/routes/admin/wallet';
 import { BreadcrumbItem, Order, Plan } from '@/types';
 import { Head } from '@inertiajs/react';
-import { Eye, File, Pen, Wallet } from 'lucide-react';
+import { Eye, Pen, Wallet } from 'lucide-react';
 
 export default function Index({ plan }: { plan: Plan }) {
     const breadcrumbs: BreadcrumbItem[] = [
@@ -55,10 +54,6 @@ function ResponsiveOrderList({ orders }: { orders: Order[] }) {
                 { header: 'User', cell: (order) => order.wallet?.user?.name },
                 { header: 'Amount', cell: (order) => order.amount },
                 { header: 'Plan Count', cell: (order) => order.plans_count },
-                {
-                    header: 'Transaction Count',
-                    cell: (order) => order.transactions_count,
-                },
                 { header: 'Status', cell: (order) => order.status },
                 { header: 'Created At', cell: (order) => order.created_at },
                 { header: 'Updated At', cell: (order) => order.updated_at },
@@ -76,9 +71,6 @@ function ResponsiveOrderList({ orders }: { orders: Order[] }) {
 function OrderActions({ order }: { order: Order }) {
     return (
         <div className="mt-2 space-x-2 text-center xl:mt-1 xl:text-end">
-            <ButtonLink href={transactions(order).url}>
-                <File />
-            </ButtonLink>
             <ButtonLink href={wallet(order.wallet_id).url}>
                 <Wallet />
             </ButtonLink>

@@ -33,7 +33,7 @@ class UpdateTransactionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'order_id' => 'integer|required|exists:orders,id',
+            'wallet_id' => 'integer|required|exists:wallets,id',
             'amount' => 'required|integer',
             'gateway' => 'string|required|in:zarinpal',
             'status' => 'string|required|in:paid,pending,failed',

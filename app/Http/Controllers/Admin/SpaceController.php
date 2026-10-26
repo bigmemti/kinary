@@ -46,7 +46,7 @@ class SpaceController extends Controller
         return inertia('admin/space/show', [
             'space' => $space->load([
                 'course.teacher.user',
-                'orders' => fn ($query) => $query->take(5)->with(['wallet.user'])->withCount(['transactions'])->withSum('spaces as amount', 'price'),
+                'orders' => fn ($query) => $query->take(5)->with(['wallet.user'])->withSum('spaces as amount', 'price'),
                 'students' => fn ($query) => $query->take(5)->with(['user']),
             ])->loadCount(['orders', 'students']),
         ]);

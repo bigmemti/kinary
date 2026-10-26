@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
 class Wallet extends Model
 {
     /**
@@ -13,6 +15,21 @@ class Wallet extends Model
         'user_id',
         'status',
     ];
+
+    protected function casts(): array
+    {
+        return ['balance' => 'integer'];
+    }
+
+    public function transactions(): HasMany
+    {
+        return $this->hasMany(Transaction::class);
+    }
+
+    public function ledgers(): HasMany
+    {
+        return $this->hasMany(Ledger::class);
+    }
 
     public function user()
     {

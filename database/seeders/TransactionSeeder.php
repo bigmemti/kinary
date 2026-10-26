@@ -2,46 +2,36 @@
 
 namespace Database\Seeders;
 
-use App\Models\Order;
+use App\Enums\LedgerType;
+use App\Enums\TransactionStatus;
 use App\Models\Transaction;
+use App\Models\Wallet;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class TransactionSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        // failed
-        Order::getInRandomOrder(rand(5, 10))
-            ->each(
-                fn ($order) => Transaction::factory(rand(1, 3), [
-                    'amount' => $order->plans()->sum('price'),
-                    'status' => 'failed',
-                ])->for($order)->create()
-            );
-
-        // paid
-        Order::where('status', 'paid')
-            ->get()
-            ->each(
-                fn ($order) => Transaction::factory(state: [
-                    'amount' => $order->plans()->sum('price'),
-                    'status' => 'paid',
-                ])->for($order)->create()
-
-            );
-
-        // pending
-        Order::whereNot('status', 'paid')
-            ->inRandomOrder()
-            ->take(rand(5, 8))
-            ->get()
-            ->each(
-                fn ($order) => Transaction::factory(state: [
-                    'amount' => $order->plans()->sum('price'),
-                ])->for($order)->create()
-            );
+        Wallet::query()->each(function (Wallet $wallet): void {
+            DB::transaction(function () use ($wallet): void {
+                $wallet = Wallet::query()->lockForUpdate()->findOrFail($wallet->id);
+                foreach (TransactionStatus::cases() as $status) {
+                    $amount = fake()->numberBetween(10, 50) * 10000;
+                    $ledger = null;
+                    if ($status === TransactionStatus::Paid) {
+                        $ledger = $wallet->ledgers()->create(['amount' => $amount, 'type' => LedgerType::Deposit]);
+                        $wallet->balance += $amount;
+                        $wallet->save();
+                    }
+                    Transaction::factory()->for($wallet)->create([
+                        'amount' => $amount,
+                        'status' => $status,
+                        'ledger_id' => $ledger?->id,
+                        'paid_at' => $status === TransactionStatus::Paid ? now() : null,
+                    ]);
+                }
+            });
+        });
     }
 }

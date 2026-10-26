@@ -24,6 +24,8 @@ class AdminSeeder extends Seeder
             ]
         );
 
+        $user->assignRole('admin');
+
         Teacher::create(['user_id' => $user->id]);
     }
 }

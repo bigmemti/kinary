@@ -3,15 +3,15 @@ import { TransactionForm } from '@/components/forms';
 import AppLayout from '@/layouts/app-layout';
 import { dashboard } from '@/routes';
 import { edit, index, show } from '@/routes/admin/transaction';
-import { BreadcrumbItem, Order, Transaction } from '@/types';
+import { BreadcrumbItem, Transaction, Wallet } from '@/types';
 import { Head } from '@inertiajs/react';
 
 export default function Edit({
     transaction,
-    orders,
+    wallets,
 }: {
     transaction: Transaction;
-    orders: Order[];
+    wallets: Wallet[];
 }) {
     const breadcrumbs: BreadcrumbItem[] = [
         {
@@ -39,7 +39,7 @@ export default function Edit({
                 <DashboardHeader header={`Edit ${transaction.id} info`} />
                 <EditTransactionForm
                     transaction={transaction}
-                    orders={orders}
+                    wallets={wallets}
                 />
             </DashboardContainer>
         </AppLayout>
@@ -48,16 +48,16 @@ export default function Edit({
 
 function EditTransactionForm({
     transaction,
-    orders,
+    wallets,
 }: {
     transaction: Transaction;
-    orders: Order[];
+    wallets: Wallet[];
 }) {
     return (
         <TransactionForm
             type="edit"
             transaction={transaction}
-            orders={orders}
+            wallets={wallets}
         />
     );
 }

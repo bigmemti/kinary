@@ -64,10 +64,6 @@ function ResponsiveOrderList({ orders }: { orders: Order[] }) {
                 { header: 'ID', cell: (order) => order.id },
                 { header: 'Amount', cell: (order) => order.amount },
                 { header: 'Plan Count', cell: (order) => order.plans_count },
-                {
-                    header: 'Transaction Count',
-                    cell: (order) => order.transactions_count,
-                },
                 { header: 'Status', cell: (order) => order.status },
                 { header: 'Created At', cell: (order) => order.created_at },
                 { header: 'Updated At', cell: (order) => order.updated_at },

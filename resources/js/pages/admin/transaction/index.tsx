@@ -57,8 +57,7 @@ function ResponsiveTransactionList({
                 { header: 'ID', cell: (transaction) => transaction.id },
                 {
                     header: 'Wallet',
-                    cell: (transaction) =>
-                        transaction.order?.wallet?.user?.name,
+                    cell: (transaction) => transaction.wallet?.user?.name,
                 },
                 { header: 'Amount', cell: (transaction) => transaction.amount },
                 {

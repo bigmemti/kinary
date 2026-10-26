@@ -58,11 +58,11 @@ import { Textarea } from './ui/textarea';
 
 export function TransactionForm({
     type,
-    orders,
+    wallets,
     transaction,
 }: {
     type: 'create' | 'edit';
-    orders: Order[];
+    wallets: Wallet[];
     transaction?: Transaction;
 }) {
     const form =
@@ -81,18 +81,13 @@ export function TransactionForm({
                 <>
                     <div className="grid gap-6">
                         <div className="grid gap-2">
-                            <Label htmlFor="order_id">Wallet</Label>
+                            <Label htmlFor="wallet_id">Wallet</Label>
                             <Combobox
-                                items={orders}
-                                name="order_id"
-                                defaultValue={transaction?.order_id}
-                                onValueChange={(value) =>
-                                    setAmount(
-                                        value ? (orders[value].amount ?? 0) : 0,
-                                    )
-                                }
+                                items={wallets}
+                                name="wallet_id"
+                                defaultValue={transaction?.wallet_id}
                             >
-                                <ComboboxInput placeholder="Select a order" />
+                                <ComboboxInput placeholder="Select a wallet" />
                                 <ComboboxContent>
                                     <ComboboxEmpty>
                                         No items found.
@@ -103,15 +98,14 @@ export function TransactionForm({
                                                 key={item.id}
                                                 value={item.id}
                                             >
-                                                {item.id}.
-                                                {item.wallet?.user?.name}
+                                                {item.id}.{item.user?.name}
                                             </ComboboxItem>
                                         )}
                                     </ComboboxList>
                                 </ComboboxContent>
                             </Combobox>
                             <InputError
-                                message={errors.order_id}
+                                message={errors.wallet_id}
                                 className="mt-2"
                             />
                         </div>
@@ -126,6 +120,9 @@ export function TransactionForm({
                                 name="amount"
                                 tabIndex={2}
                                 value={amount}
+                                onChange={(event) =>
+                                    setAmount(Number(event.target.value))
+                                }
                                 placeholder="Amount"
                             />
 
@@ -210,128 +207,6 @@ export function TransactionForm({
                                 tabIndex={2}
                                 placeholder="Paid At"
                                 defaultValue={transaction?.paid_at}
-                            />
-
-                            <InputError message={errors.paid_at} />
-                        </div>
-
-                        <div className="mt-2 text-end">
-                            <Button type="submit" tabIndex={2}>
-                                {processing && <Spinner />}
-                                Submit
-                            </Button>
-                        </div>
-                    </div>
-                </>
-            )}
-        </Form>
-    );
-}
-
-export function OrderTransactionForm({ order }: { order: Order }) {
-    return (
-        <Form
-            {...order_links.transaction.store.form(order)}
-            disableWhileProcessing
-            onSuccess={() =>
-                router.visit(order_links.transaction.index(order).url)
-            }
-            className="mt-4 flex flex-col"
-        >
-            {({ processing, errors }) => (
-                <>
-                    <div className="grid gap-6">
-                        <div className="grid gap-2">
-                            <Label htmlFor="amount">Amount</Label>
-
-                            <Input
-                                id="amount"
-                                type="number"
-                                step={1000}
-                                name="amount"
-                                tabIndex={2}
-                                defaultValue={order.amount}
-                                placeholder="Amount"
-                            />
-
-                            <InputError message={errors.amount} />
-                        </div>
-
-                        <div className="grid gap-2">
-                            <Label htmlFor="gateway">Gateway</Label>
-                            <Select
-                                id="gateway"
-                                tabIndex={1}
-                                name="gateway"
-                                defaultValue="zarinpal"
-                                required
-                                autoFocus
-                            >
-                                <SelectTrigger>
-                                    <SelectValue placeholder="Select a gateway" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectGroup>
-                                        {['zarinpal'].map((gateway) => (
-                                            <SelectItem
-                                                key={gateway}
-                                                value={gateway}
-                                            >
-                                                {gateway}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectGroup>
-                                </SelectContent>
-                            </Select>
-                            <InputError
-                                message={errors.gateway}
-                                className="mt-2"
-                            />
-                        </div>
-
-                        <div className="grid gap-2">
-                            <Label htmlFor="status">Status</Label>
-                            <Select
-                                id="status"
-                                tabIndex={1}
-                                name="status"
-                                required
-                                autoFocus
-                                defaultValue={'pending'}
-                            >
-                                <SelectTrigger>
-                                    <SelectValue placeholder="Select a status" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectGroup>
-                                        {['pending', 'paid', 'failed'].map(
-                                            (status) => (
-                                                <SelectItem
-                                                    key={status}
-                                                    value={status}
-                                                >
-                                                    {status}
-                                                </SelectItem>
-                                            ),
-                                        )}
-                                    </SelectGroup>
-                                </SelectContent>
-                            </Select>
-                            <InputError
-                                message={errors.status}
-                                className="mt-2"
-                            />
-                        </div>
-
-                        <div className="grid gap-2">
-                            <Label htmlFor="paid_at">Paid At</Label>
-
-                            <Input
-                                id="paid_at"
-                                type="datetime-local"
-                                name="paid_at"
-                                tabIndex={2}
-                                placeholder="Paid At"
                             />
 
                             <InputError message={errors.paid_at} />

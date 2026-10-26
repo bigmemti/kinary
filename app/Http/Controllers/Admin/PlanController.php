@@ -46,7 +46,7 @@ class PlanController extends Controller
         return inertia('admin/plan/show', [
             'plan' => $plan->load([
                 'course.teacher.user',
-                'orders' => fn ($query) => $query->take(5)->with(['wallet.user'])->withCount(['transactions'])->withSum('plans as amount', 'price'),
+                'orders' => fn ($query) => $query->take(5)->with(['wallet.user'])->withSum('plans as amount', 'price'),
                 'students' => fn ($query) => $query->take(5)->with(['user']),
             ])->loadCount(['orders', 'students']),
         ]);

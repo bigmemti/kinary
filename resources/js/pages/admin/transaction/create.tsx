@@ -3,7 +3,7 @@ import { TransactionForm } from '@/components/forms';
 import AppLayout from '@/layouts/app-layout';
 import { dashboard } from '@/routes';
 import { create, index } from '@/routes/admin/transaction';
-import { BreadcrumbItem, Order } from '@/types';
+import { BreadcrumbItem, Wallet } from '@/types';
 import { Head } from '@inertiajs/react';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -21,18 +21,18 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-export default function Create({ orders }: { orders: Order[] }) {
+export default function Create({ wallets }: { wallets: Wallet[] }) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Create Transaction" />
             <DashboardContainer>
                 <DashboardHeader header="Create a new Transaction" />
-                <CreateTransactionForm orders={orders} />
+                <CreateTransactionForm wallets={wallets} />
             </DashboardContainer>
         </AppLayout>
     );
 }
 
-function CreateTransactionForm({ orders }: { orders: Order[] }) {
-    return <TransactionForm type="create" orders={orders} />;
+function CreateTransactionForm({ wallets }: { wallets: Wallet[] }) {
+    return <TransactionForm type="create" wallets={wallets} />;
 }

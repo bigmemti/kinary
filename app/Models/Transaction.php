@@ -6,6 +6,7 @@ use App\Enums\TransactionGateway;
 use App\Enums\TransactionStatus;
 use Database\Factories\TransactionFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Transaction extends Model
 {
@@ -18,7 +19,8 @@ class Transaction extends Model
      * @var list<string>
      */
     protected $fillable = [
-        'order_id',
+        'wallet_id',
+        'ledger_id',
         'amount',
         'gateway',
         'authority',
@@ -34,13 +36,20 @@ class Transaction extends Model
     protected function casts(): array
     {
         return [
+            'amount' => 'integer',
+            'paid_at' => 'datetime',
             'gateway' => TransactionGateway::class,
             'status' => TransactionStatus::class,
         ];
     }
 
-    public function order()
+    public function wallet(): BelongsTo
     {
-        return $this->belongsTo(Order::class);
+        return $this->belongsTo(Wallet::class);
+    }
+
+    public function ledger(): BelongsTo
+    {
+        return $this->belongsTo(Ledger::class);
     }
 }

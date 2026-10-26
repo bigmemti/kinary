@@ -12,8 +12,7 @@ import AppLayout from '@/layouts/app-layout';
 import { dashboard } from '@/routes';
 import { destroy, edit, index, show } from '@/routes/admin/order';
 import { index as plans } from '@/routes/admin/order/plan';
-import { index as transactions } from '@/routes/admin/order/transaction';
-import { BreadcrumbItem, Order, Plan, Transaction } from '@/types';
+import { BreadcrumbItem, Order, Plan } from '@/types';
 import { Head } from '@inertiajs/react';
 import { Pen, Trash } from 'lucide-react';
 
@@ -44,7 +43,6 @@ export default function Show({ order }: { order: Order }) {
                 </DashboardHeader>
                 <DataContainer>
                     <OrderMeta order={order} />
-                    <TransactionsInfo order={order} />
                     <PlansInfo order={order} />
                 </DataContainer>
             </DashboardContainer>
@@ -102,75 +100,6 @@ function PlanActions({ order }: { order: Order }) {
     );
 }
 
-function TransactionsInfo({ order }: { order: Order }) {
-    return (
-        <>
-            <DashboardHeader
-                header={`Transaction info`}
-                containerClassName="my-4"
-            >
-                <TransactionActions order={order} />
-            </DashboardHeader>
-            <TransactionsMeta order={order} />
-            {!!order.transactions && order.transactions?.length > 0 && (
-                <ResponsiveTransactionList transactions={order.transactions} />
-            )}
-        </>
-    );
-}
-
-function ResponsiveTransactionList({
-    transactions,
-}: {
-    transactions: Transaction[];
-}) {
-    return (
-        <ResponsiveDataList
-            data={transactions}
-            columns={[
-                { header: 'ID', cell: (transaction) => transaction.id },
-                { header: 'Amount', cell: (transaction) => transaction.amount },
-                {
-                    header: 'Gateway',
-                    cell: (transaction) => transaction.gateway,
-                },
-                { header: 'Status', cell: (transaction) => transaction.status },
-                {
-                    header: 'Paid At',
-                    cell: (transaction) => transaction.paid_at,
-                },
-                {
-                    header: 'Created At',
-                    cell: (transaction) => transaction.created_at,
-                },
-                {
-                    header: 'Updated At',
-                    cell: (transaction) => transaction.updated_at,
-                },
-            ]}
-        />
-    );
-}
-
-function TransactionsMeta({ order }: { order: Order }) {
-    return (
-        <>
-            <InfoBlock
-                label="Transactions Count"
-                value={order.transactions_count}
-            />
-        </>
-    );
-}
-
-function TransactionActions({ order }: { order: Order }) {
-    return (
-        <ActionButtonContainer>
-            <ButtonLink href={transactions(order).url}>Transactions</ButtonLink>
-        </ActionButtonContainer>
-    );
-}
-
 function OrderMeta({ order }: { order: Order }) {
     return (
         <>
@@ -189,7 +118,7 @@ function OrderMeta({ order }: { order: Order }) {
 function OrderActions({ order }: { order: Order }) {
     return (
         <ActionButtonContainer>
-            {!!order.transactions_count && (
+            {order.status === 'pending' && (
                 <FormButton
                     className="inline"
                     form={destroy.form(order)}
