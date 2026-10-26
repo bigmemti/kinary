@@ -1,3 +1,7 @@
+## Theme — read before UI work
+
+Before creating or editing any user-facing page or component, read [THEME.md](THEME.md) and follow its Persian/RTL design, palette, shared components, and course access presentation rules. Preserve this theme unless the user explicitly requests a change.
+
 <laravel-boost-guidelines>
 === foundation rules ===
 
