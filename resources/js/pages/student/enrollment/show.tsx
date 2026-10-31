@@ -150,7 +150,7 @@ function Reader({
                                         space: space.id,
                                         lesson: previousLesson.id,
                                     })}
-                                    className="storefront-button max-w-full break-words"
+                                    className="storefront-button max-w-full wrap-break-word"
                                 >
                                     درس قبلی: {previousLesson.name}
                                 </Link>
@@ -163,7 +163,7 @@ function Reader({
                                         space: space.id,
                                         lesson: nextLesson.id,
                                     })}
-                                    className="storefront-button max-w-full break-words"
+                                    className="storefront-button max-w-full wrap-break-word"
                                 >
                                     درس بعدی: {nextLesson.name}
                                 </Link>
@@ -195,7 +195,7 @@ function ContentBlock({ content }: { content: StudyContent }) {
             {content.type === 'text' && (
                 <div
                     dir="auto"
-                    className="leading-9 break-words whitespace-pre-wrap"
+                    className="leading-9 wrap-break-word whitespace-pre-wrap"
                 >
                     {content.body}
                 </div>
