@@ -56,4 +56,22 @@ class HandleInertiaRequests extends Middleware
                 : [],
         ];
     }
+
+    public function handle(
+        Request $request,
+        \Closure $next
+    ) {
+        config([
+            'inertia.ssr.enabled' => $request->routeIs(
+                'home',
+                'cart.index',
+                'course.index',
+                'course.show',
+                'login',
+                'register',
+            ),
+        ]);
+    
+        return parent::handle($request, $next);
+    }    
 }

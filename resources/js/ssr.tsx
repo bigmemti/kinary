@@ -4,6 +4,7 @@ import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import ReactDOMServer from 'react-dom/server';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+const port = Number(process.env.INERTIA_SSR_PORT || 13714);
 
 createServer((page) =>
     createInertiaApp({
@@ -24,4 +25,5 @@ createServer((page) =>
             return <App {...props} />;
         },
     }),
+    port,
 );

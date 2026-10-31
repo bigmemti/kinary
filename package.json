@@ -3,8 +3,8 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "build": "vite build",
-        "build:ssr": "vite build && vite build --ssr",
+        "build": "vite build && vite build --ssr",
+        "start": "node bootstrap/ssr/ssr.js",
         "dev": "vite",
         "format": "prettier --write resources/",
         "format:check": "prettier --check resources/",

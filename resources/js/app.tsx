@@ -3,7 +3,7 @@ import '../css/app.css';
 import { createInertiaApp, router } from '@inertiajs/react';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { StrictMode } from 'react';
-import { createRoot } from 'react-dom/client';
+import { createRoot, hydrateRoot } from 'react-dom/client';
 import { initializeTheme } from './hooks/use-appearance';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
@@ -27,13 +27,9 @@ createInertiaApp({
             document.documentElement.dir =
                 event.detail.page.props.pageDirection === 'rtl' ? 'rtl' : 'ltr';
         });
-        const root = createRoot(el);
+        const app = <StrictMode><App {...props} /></StrictMode>
 
-        root.render(
-            <StrictMode>
-                <App {...props} />
-            </StrictMode>,
-        );
+        const root = (el.hasChildNodes()) ? hydrateRoot(el, app) : createRoot(el).render(app);
     },
     progress: {
         color: '#4B5563',
