@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Frontend\CourseController;
 use App\Http\Controllers\Frontend\HomeController;
+use App\Models\Course;
 use Illuminate\Support\Facades\Route;
 
 // frontend
@@ -13,3 +14,13 @@ require __DIR__.'/dashboard.php';
 require __DIR__.'/student.php';
 require __DIR__.'/teacher.php';
 require __DIR__.'/settings.php';
+
+Route::get('/sitemap.xml', function () {
+    $courses = Course::query()
+        ->where('is_published', true)
+        ->get();
+
+    return response()
+        ->view('sitemap', compact('courses'))
+        ->header('Content-Type', 'application/xml; charset=UTF-8');
+});
