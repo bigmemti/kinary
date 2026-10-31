@@ -14,9 +14,9 @@ class PaymentService
     /** @param array{amount: int, description: string} $body */
     public function request(array $body): string
     {
-        $response = $this->client->post('https://sandbox.zarinpal.com/pg/v4/payment/request.json', [
+        $response = $this->client->post('https://payment.zarinpal.com/pg/v4/payment/request.json', [
             'json' => [
-                'merchant_id' => '1344b4d5-0048-11e8-94db-005056a205be',
+                'merchant_id' => env('MERCHANT_ID'),
                 ...$body,
                 'amount' => $body['amount'] * 10,
                 'currency' => 'IRR',
@@ -41,9 +41,9 @@ class PaymentService
 
     public function verify(int $amount, string $authority): bool
     {
-        $response = $this->client->post('https://sandbox.zarinpal.com/pg/v4/payment/verify.json', [
+        $response = $this->client->post('https://payment.zarinpal.com/pg/v4/payment/verify.json', [
             'json' => [
-                'merchant_id' => '1344b4d5-0048-11e8-94db-005056a205be',
+                'merchant_id' => env('MERCHANT_ID'),
                 'amount' => $amount * 10,
                 'authority' => $authority,
             ],
