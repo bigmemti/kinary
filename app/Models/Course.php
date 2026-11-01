@@ -3,18 +3,18 @@
 namespace App\Models;
 
 use App\Enums\TeacherRole;
+use App\Services\SlugFormatter;
 use Cviebrock\EloquentSluggable\Sluggable;
 use Database\Factories\CourseFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Database\Eloquent\Relations\Pivot;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Course extends Model
 {
     /** @use HasFactory<CourseFactory> */
-    use HasFactory, Sluggable, SoftDeletes;
+    use HasFactory, Sluggable;
 
     /**
      * The attributes that are mass assignable.
@@ -36,7 +36,8 @@ class Course extends Model
             'slug' => [
                 'source' => 'title',
                 'onUpdate' => false,
-                'includeTrashed' => true,
+                'maxLength' => 200,
+                'method' => [app(SlugFormatter::class), 'format'],
             ],
         ];
     }
