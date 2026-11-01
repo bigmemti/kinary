@@ -4,6 +4,7 @@
     "type": "module",
     "scripts": {
         "build": "vite build && vite build --ssr",
+        "build:ssr": "npm run build",
         "start": "node bootstrap/ssr/ssr.js",
         "dev": "vite",
         "format": "prettier --write resources/",
