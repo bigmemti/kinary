@@ -22,7 +22,7 @@ class HomeController extends Controller
                 ->where('is_published', true)
                 ->with('teacher.user:id,name')
                 ->latest('created_at')->orderByDesc('id')->limit(6)->get(),
-            'categories' => Category::query()->select(['id', 'name'])->orderBy('name')->get(),
+            'categories' => Category::query()->select(['id', 'name', 'slug'])->orderBy('name')->get(),
             'teachers' => Teacher::query()
                 ->whereHas('courses', fn (Builder $query): Builder => $query
                     ->where('is_published', true)
@@ -31,6 +31,7 @@ class HomeController extends Controller
                 ->map(fn (Teacher $teacher): array => [
                     'id' => $teacher->id,
                     'name' => $teacher->user->name,
+                    'description' => $teacher->description,
                 ]),
         ])->withViewData([
             'storefrontTitle' => 'یادگیری مهندسی نرم‌افزار | آکادمی',

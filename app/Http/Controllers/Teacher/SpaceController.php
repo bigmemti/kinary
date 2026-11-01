@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Teacher;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Teacher\StoreSpaceRequest;
 use App\Http\Requests\Teacher\UpdateSpaceRequest;
+use App\Models\Category;
 use App\Models\Course;
 use App\Models\Space;
 use Illuminate\Http\RedirectResponse;
@@ -52,7 +53,10 @@ class SpaceController extends Controller
             Gate::authorize('manageEditorCommerce', $course);
             $data = $request->validated();
 
-            return $course->spaces()->create($data);
+            $space = $course->spaces()->create(collect($data)->except(['category_ids', 'new_category'])->all());
+            $this->syncCategories($space, $data);
+
+            return $space;
         });
 
         return to_route('teacher.course.editor', $course)->with('editor_created', ['kind' => 'space', 'id' => $item->id, 'parent_id' => $course->id]);
@@ -96,10 +100,29 @@ class SpaceController extends Controller
         DB::transaction(function () use ($request, $space, $course): void {
             Course::query()->whereKey($course->id)->lockForUpdate()->firstOrFail();
             Gate::authorize('manageEditorCommerce', $course);
-            $space->update($request->validated());
+            $data = $request->validated();
+            $space->update(collect($data)->except(['category_ids', 'new_category'])->all());
+            $this->syncCategories($space, $data);
         });
 
         return to_route('teacher.course.editor', $course);
+    }
+
+    /** @param array<string, mixed> $data */
+    private function syncCategories(Space $space, array $data): void
+    {
+        if (! array_key_exists('category_ids', $data) && empty($data['new_category'])) {
+            return;
+        }
+
+        $ids = $data['category_ids'] ?? $space->categories()->pluck('categories.id')->all();
+        if (! empty($data['new_category'])) {
+            $category = new Category;
+            $category->name = $data['new_category'];
+            $category->save();
+            $ids[] = $category->id;
+        }
+        $space->categories()->sync($ids);
     }
 
     /**

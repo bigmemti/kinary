@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::resource('user', Admin\UserController::class);
+    Route::resource('category', Admin\CategoryController::class);
 
     Route::resource('student', Admin\StudentController::class);
     Route::resource('student.enrollment', Admin\StudentEnrollmentController::class)->only(['index', 'create', 'store'])->shallow();

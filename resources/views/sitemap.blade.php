@@ -8,6 +8,16 @@
         <loc>{{ route('course.index') }}</loc>
     </url>
 
+    @foreach ($categories as $category)
+        <url>
+            <loc>{{ route('category.show', $category->slug) }}</loc>
+        </url>
+    @endforeach
+
+    @foreach ($teachers as $teacher)
+        <url><loc>{{ route('teacher.show', $teacher) }}</loc></url>
+    @endforeach
+
     @foreach ($courses as $course)
         <url>
             <loc>{{ route('course.show', ['course' => $course->slug]) }}</loc>

@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use App\Services\CartService;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Vite;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
@@ -49,9 +50,9 @@ class HandleInertiaRequests extends Middleware
                 'permissions' => fn (): array => $request->user()?->getAllPermissions()->pluck('name')->unique()->values()->all() ?? [],
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
-            'pageDirection' => $request->routeIs('home', 'course.*', 'cart.*', 'login', 'register') ? 'rtl' : 'ltr',
+            'pageDirection' => $request->routeIs('home', 'course.*', 'category.*', 'cart.*', 'login', 'register') ? 'rtl' : 'ltr',
             'cartNotice' => fn (): ?string => $request->session()->get('cart_notice'),
-            'storefrontCart' => fn (): array => $request->user() && $request->routeIs('home', 'course.*', 'cart.*', 'login', 'register')
+            'storefrontCart' => fn (): array => $request->user() && $request->routeIs('home', 'course.*', 'category.*', 'cart.*', 'login', 'register')
                 ? app(CartService::class)->items($request->user())
                 : [],
         ];
@@ -62,16 +63,17 @@ class HandleInertiaRequests extends Middleware
         \Closure $next
     ) {
         config([
-            'inertia.ssr.enabled' => $request->routeIs(
+            'inertia.ssr.enabled' => ! Vite::isRunningHot() && $request->routeIs(
                 'home',
                 'cart.index',
                 'course.index',
                 'course.show',
+                'category.show',
                 'login',
                 'register',
             ),
         ]);
-    
+
         return parent::handle($request, $next);
-    }    
+    }
 }

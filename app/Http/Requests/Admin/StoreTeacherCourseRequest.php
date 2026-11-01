@@ -24,7 +24,7 @@ class StoreTeacherCourseRequest extends FormRequest
     {
         return [
             'title' => 'required|string|max:255',
-            'slug' => 'required|string|max:255|unique:courses,slug',
+            'slug' => ['nullable', 'string', 'max:255', 'regex:/^[\pL\pN_-]+$/u', 'unique:courses,slug'],
             'description' => 'nullable|string|max:4096',
             'thumbnail' => 'nullable|string|max:255',
             'intro_video_url' => 'nullable|string|max:255',

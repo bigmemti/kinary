@@ -24,9 +24,7 @@ import {
     Wallet,
 } from '@/types';
 import { Form, Link, router } from '@inertiajs/react';
-import { Pen, X } from 'lucide-react';
 import React, { PropsWithChildren, useState } from 'react';
-import slugify from 'slugify';
 import InputError from './input-error';
 import { Button } from './ui/button';
 import {
@@ -790,6 +788,28 @@ export function SectionForm({
                         <InputError message={errors.name} />
                     </div>
 
+                    <div className="grid gap-2">
+                        <Label htmlFor="admin-section-parent">فصل والد</Label>
+                        <select
+                            id="admin-section-parent"
+                            name="parent_id"
+                            defaultValue={section?.parent_id ?? ''}
+                            className="rounded-md border bg-background p-2"
+                        >
+                            <option value="">فصل اصلی</option>
+                            {courses.flatMap((course) =>
+                                (course.sections ?? [])
+                                    .filter((item) => item.id !== section?.id)
+                                    .map((item) => (
+                                        <option key={item.id} value={item.id}>
+                                            {course.title} — {item.name}
+                                        </option>
+                                    )),
+                            )}
+                        </select>
+                        <InputError message={errors.parent_id} />
+                    </div>
+
                     <div className="mt-2 text-end">
                         <Button type="submit" tabIndex={3}>
                             {processing && <Spinner />}
@@ -924,6 +944,23 @@ export function CourseSectionForm({ course }: { course: Course }) {
                         <InputError message={errors.name} />
                     </div>
 
+                    <div className="grid gap-2">
+                        <Label htmlFor="course-section-parent">فصل والد</Label>
+                        <select
+                            id="course-section-parent"
+                            name="parent_id"
+                            className="rounded-md border bg-background p-2"
+                        >
+                            <option value="">فصل اصلی</option>
+                            {course.sections?.map((section) => (
+                                <option key={section.id} value={section.id}>
+                                    {section.name}
+                                </option>
+                            ))}
+                        </select>
+                        <InputError message={errors.parent_id} />
+                    </div>
+
                     <div className="mt-2 text-end">
                         <Button type="submit" tabIndex={7}>
                             {processing && <Spinner />}
@@ -955,23 +992,15 @@ export function CourseForm({
     teachers: Teacher[];
     course?: Course;
 }) {
-    const [slugTouched, setSlugTouched] = useState(type === 'edit');
-    const [slug, setSlug] = useState(course?.slug ?? '');
     const form =
         type === 'create'
-            ? course_links.store.form({ mergeQuery: { slug: slug } })
-            : course_links.update.form(course ?? 0, {
-                  mergeQuery: { slug: slug },
-              });
+            ? course_links.store.form()
+            : course_links.update.form(course ?? 0);
 
     return (
         <Form
             {...form}
             disableWhileProcessing
-            onError={(errors) =>
-                errors.slug == 'The slug has already been taken.' &&
-                setSlugTouched(true)
-            }
             className="mt-4 flex flex-col gap-4"
         >
             {({ processing, errors }) => (
@@ -1013,12 +1042,6 @@ export function CourseForm({
                             tabIndex={1}
                             autoFocus
                             defaultValue={course?.title}
-                            onChange={(e) =>
-                                !slugTouched &&
-                                setSlug(
-                                    slugify(e.target.value, { lower: true }),
-                                )
-                            }
                             placeholder="Title"
                         />
 
@@ -1026,30 +1049,13 @@ export function CourseForm({
                     </div>
 
                     <div className="grid gap-2">
-                        <Label htmlFor="slug">Slug</Label>
-
-                        <div className="flex">
-                            <Input
-                                id="slug"
-                                type="text"
-                                name="slug"
-                                value={slug}
-                                tabIndex={2}
-                                placeholder="Slug"
-                                disabled={!slugTouched}
-                                onChange={(e) =>
-                                    setSlug(slugify(e.target.value))
-                                }
-                            />
-
-                            <Button
-                                variant={'ghost'}
-                                type="button"
-                                onClick={() => setSlugTouched((v) => !v)}
-                            >
-                                {slugTouched ? <X /> : <Pen />}
-                            </Button>
-                        </div>
+                        <Label htmlFor="slug">شناسه متنی</Label>
+                        <Input
+                            id="slug"
+                            name="slug"
+                            defaultValue={course?.slug}
+                            placeholder="?? ???? ???? ????? ?? شناسه متنی? ??????"
+                        />
 
                         <InputError message={errors.slug} />
                     </div>
@@ -1137,19 +1143,10 @@ export function CourseForm({
 }
 
 export function TeacherCourseForm({ teacher }: { teacher: Teacher }) {
-    const [slugTouched, setSlugTouched] = useState(false);
-    const [slug, setSlug] = useState('');
-
     return (
         <Form
-            {...teacher_links.course.store.form(teacher, {
-                mergeQuery: { slug: slug },
-            })}
+            {...teacher_links.course.store.form(teacher)}
             disableWhileProcessing
-            onError={(errors) =>
-                errors.slug == 'The slug has already been taken.' &&
-                setSlugTouched(true)
-            }
             className="mt-4 flex flex-col gap-4"
         >
             {({ processing, errors }) => (
@@ -1163,12 +1160,6 @@ export function TeacherCourseForm({ teacher }: { teacher: Teacher }) {
                             name="title"
                             tabIndex={1}
                             autoFocus
-                            onChange={(e) =>
-                                !slugTouched &&
-                                setSlug(
-                                    slugify(e.target.value, { lower: true }),
-                                )
-                            }
                             placeholder="Title"
                         />
 
@@ -1176,30 +1167,12 @@ export function TeacherCourseForm({ teacher }: { teacher: Teacher }) {
                     </div>
 
                     <div className="grid gap-2">
-                        <Label htmlFor="slug">Slug</Label>
-
-                        <div className="flex">
-                            <Input
-                                id="slug"
-                                type="text"
-                                name="slug"
-                                value={slug}
-                                tabIndex={2}
-                                placeholder="Slug"
-                                disabled={!slugTouched}
-                                onChange={(e) =>
-                                    setSlug(slugify(e.target.value))
-                                }
-                            />
-
-                            <Button
-                                variant={'ghost'}
-                                type="button"
-                                onClick={() => setSlugTouched((v) => !v)}
-                            >
-                                {slugTouched ? <X /> : <Pen />}
-                            </Button>
-                        </div>
+                        <Label htmlFor="slug">شناسه متنی</Label>
+                        <Input
+                            id="slug"
+                            name="slug"
+                            placeholder="?? ???? ???? ????? ?? شناسه متنی? ??????"
+                        />
 
                         <InputError message={errors.slug} />
                     </div>
@@ -1305,9 +1278,21 @@ export function TeacherForm({
                                 default_user={teacher?.user}
                             />
                             <InputError
-                                message={errors.name}
+                                message={errors.user_id}
                                 className="mt-2"
                             />
+                        </div>
+
+                        <div className="grid gap-2">
+                            <Label htmlFor="teacher-description">
+                                معرفی مدرس
+                            </Label>
+                            <Textarea
+                                id="teacher-description"
+                                name="description"
+                                defaultValue={teacher?.description ?? ''}
+                            />
+                            <InputError message={errors.description} />
                         </div>
 
                         <div className="mt-2 text-end">

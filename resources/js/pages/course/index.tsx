@@ -28,9 +28,8 @@ import { dashboard } from '@/routes';
 import { destroy, index, show, store } from '@/routes/admin/course';
 import { Course, type BreadcrumbItem } from '@/types';
 import { Form, Head } from '@inertiajs/react';
-import { Eye, Pen, Plus, Trash, X } from 'lucide-react';
+import { Eye, Plus, Trash } from 'lucide-react';
 import { PropsWithChildren, useState } from 'react';
-import slugify from 'slugify';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -118,8 +117,6 @@ function CardContainer({ children }: PropsWithChildren) {
 
 function CourseCreateDialog() {
     const [open, setOpen] = useState(false);
-    const [slugTouched, setSlugTouched] = useState(false);
-    const [slug, setSlug] = useState('');
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
@@ -133,20 +130,14 @@ function CourseCreateDialog() {
                 <DialogTitle>Create a new Course.</DialogTitle>
 
                 <Form
-                    {...store.form({ mergeQuery: { slug: slug } })}
+                    {...store.form()}
                     options={{
                         preserveScroll: true,
                     }}
                     resetOnSuccess
                     onSuccess={() => {
                         setOpen(false);
-                        setSlugTouched(false);
-                        setSlug('');
                     }}
-                    onError={(errors) =>
-                        errors.slug == 'The slug has already been taken.' &&
-                        setSlugTouched(true)
-                    }
                     className="space-y-6"
                 >
                     {({ processing, errors }) => (
@@ -160,14 +151,6 @@ function CourseCreateDialog() {
                                     id="title"
                                     type="text"
                                     name="title"
-                                    onChange={(e) =>
-                                        !slugTouched &&
-                                        setSlug(
-                                            slugify(e.target.value, {
-                                                lower: true,
-                                            }),
-                                        )
-                                    }
                                     placeholder="Title"
                                 />
 
@@ -176,32 +159,13 @@ function CourseCreateDialog() {
 
                             <div className="grid gap-2">
                                 <Label htmlFor="slug" className="sr-only">
-                                    Slug
+                                    شناسه متنی
                                 </Label>
-
-                                <div className="flex">
-                                    <Input
-                                        id="slug"
-                                        type="text"
-                                        name="slug"
-                                        value={slug}
-                                        placeholder="Slug"
-                                        disabled={!slugTouched}
-                                        onChange={(e) =>
-                                            setSlug(slugify(e.target.value))
-                                        }
-                                    />
-
-                                    <Button
-                                        variant={'ghost'}
-                                        type="button"
-                                        onClick={() =>
-                                            setSlugTouched((v) => !v)
-                                        }
-                                    >
-                                        {slugTouched ? <X /> : <Pen />}
-                                    </Button>
-                                </div>
+                                <Input
+                                    id="slug"
+                                    name="slug"
+                                    placeholder="?? ???? ???? ????? ?? شناسه متنی? ??????"
+                                />
 
                                 <InputError message={errors.slug} />
                             </div>

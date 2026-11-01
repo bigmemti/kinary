@@ -114,6 +114,14 @@ export default function CourseEditorSpaces({
                                 {space.quiz_id &&
                                     ` · آزمون شماره ${space.quiz_id}`}
                             </p>
+                            <p className="mt-1 text-xs leading-6 text-muted-foreground">
+                                دسته‌بندی‌ها:{' '}
+                                {space.categories.length
+                                    ? space.categories
+                                          .map((category) => category.name)
+                                          .join('، ')
+                                    : 'بدون دسته‌بندی'}
+                            </p>
                         </div>
                         {canManage && (
                             <div className="flex shrink-0">
@@ -249,6 +257,7 @@ export default function CourseEditorSpaces({
                     target={target}
                     courseId={courseId}
                     quizzes={overview.available_quizzes}
+                    categories={overview.available_categories}
                     onClose={() => {
                         setDirty(false);
                         setTarget(null);
@@ -266,6 +275,7 @@ function CommerceForm({
     target,
     courseId,
     quizzes,
+    categories,
     onClose,
     onStatus,
     onDirty,
@@ -274,6 +284,7 @@ function CommerceForm({
     target: Target;
     courseId: number;
     quizzes: CourseEditorOverview['available_quizzes'];
+    categories: CourseEditorOverview['available_categories'];
     onClose: () => void;
     onStatus: (status: CourseEditorSaveStatus) => void;
     onDirty: (dirty: boolean) => void;
@@ -285,6 +296,11 @@ function CommerceForm({
         order: target.kind === 'plan' ? String(target.item?.order ?? '') : '',
         quiz_id:
             target.kind === 'space' ? String(target.item?.quiz_id ?? '') : '',
+        category_ids:
+            target.kind === 'space'
+                ? (target.item?.categories ?? []).map((category) => category.id)
+                : [],
+        new_category: '',
     });
     useCourseEditorDirty(form.isDirty);
     const firstInput = useRef<HTMLInputElement>(null);
@@ -319,7 +335,12 @@ function CommerceForm({
         };
         form.transform((data) =>
             target.kind === 'space'
-                ? { name: data.name, quiz_id: data.quiz_id || null }
+                ? {
+                      name: data.name,
+                      quiz_id: data.quiz_id || null,
+                      category_ids: data.category_ids,
+                      new_category: data.new_category,
+                  }
                 : {
                       name: data.name,
                       price: data.price,
@@ -368,27 +389,95 @@ function CommerceForm({
                     <InputError message={form.errors.name} />
                 </div>
                 {target.kind === 'space' ? (
-                    <div className="space-y-2">
-                        <Label htmlFor="commerce-quiz">
-                            آزمون مرتبط (اختیاری)
-                        </Label>
-                        <select
-                            id="commerce-quiz"
-                            className="h-10 w-full rounded-md border bg-background px-3 text-sm"
-                            value={form.data.quiz_id}
-                            onChange={(e) =>
-                                form.setData('quiz_id', e.target.value)
-                            }
-                        >
-                            <option value="">بدون آزمون</option>
-                            {quizzes.map((quiz) => (
-                                <option key={quiz.id} value={quiz.id}>
-                                    آزمون {quiz.id} · نمره {quiz.score}
-                                </option>
+                    <>
+                        <div className="space-y-2">
+                            <Label htmlFor="commerce-quiz">
+                                آزمون مرتبط (اختیاری)
+                            </Label>
+                            <select
+                                id="commerce-quiz"
+                                className="h-10 w-full rounded-md border bg-background px-3 text-sm"
+                                value={form.data.quiz_id}
+                                onChange={(e) =>
+                                    form.setData('quiz_id', e.target.value)
+                                }
+                            >
+                                <option value="">بدون آزمون</option>
+                                {quizzes.map((quiz) => (
+                                    <option key={quiz.id} value={quiz.id}>
+                                        آزمون {quiz.id} · نمره {quiz.score}
+                                    </option>
+                                ))}
+                            </select>
+                            <InputError message={form.errors.quiz_id} />
+                        </div>
+                        <div className="space-y-2">
+                            <p className="text-sm font-medium">
+                                دسته‌بندی‌های فضای آموزشی
+                            </p>
+                            {categories.length === 0 && (
+                                <p className="text-sm text-muted-foreground">
+                                    هنوز دسته‌بندی‌ای وجود ندارد.
+                                </p>
+                            )}
+                            {categories.map((category) => (
+                                <label
+                                    key={category.id}
+                                    className="flex items-center gap-2 text-sm"
+                                >
+                                    <input
+                                        type="checkbox"
+                                        checked={form.data.category_ids.includes(
+                                            category.id,
+                                        )}
+                                        onChange={(event) =>
+                                            form.setData(
+                                                'category_ids',
+                                                event.target.checked
+                                                    ? [
+                                                          ...form.data
+                                                              .category_ids,
+                                                          category.id,
+                                                      ]
+                                                    : form.data.category_ids.filter(
+                                                          (id) =>
+                                                              id !==
+                                                              category.id,
+                                                      ),
+                                            )
+                                        }
+                                    />
+                                    {category.name}
+                                </label>
                             ))}
-                        </select>
-                        <InputError message={form.errors.quiz_id} />
-                    </div>
+                            <InputError
+                                message={
+                                    form.errors.category_ids ||
+                                    form.errors['category_ids.0']
+                                }
+                            />
+                            <Label htmlFor="commerce-new-category">
+                                ایجاد دسته‌بندی جدید
+                            </Label>
+                            <Input
+                                id="commerce-new-category"
+                                value={form.data.new_category}
+                                maxLength={255}
+                                onChange={(event) =>
+                                    form.setData(
+                                        'new_category',
+                                        event.target.value,
+                                    )
+                                }
+                                aria-invalid={!!form.errors.new_category}
+                            />
+                            <InputError message={form.errors.new_category} />
+                            <p className="text-xs leading-6 text-muted-foreground">
+                                دسته‌بندی جدید با ذخیره ساخته و به این فضای
+                                آموزشی اضافه می‌شود.
+                            </p>
+                        </div>
+                    </>
                 ) : (
                     <>
                         <div className="space-y-2">

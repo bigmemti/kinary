@@ -4,7 +4,6 @@ import {
     SubmitButton,
 } from '@/components/forms';
 import InputError from '@/components/input-error';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
@@ -20,9 +19,6 @@ import { Textarea } from '@/components/ui/textarea';
 import course_links from '@/routes/teacher/course';
 import { Course, WithType } from '@/types';
 import { Form, router } from '@inertiajs/react';
-import { Pen, X } from 'lucide-react';
-import { useState } from 'react';
-import slugify from 'slugify';
 
 export default function CourseForm({
     type,
@@ -34,23 +30,15 @@ export default function CourseForm({
     visitOnSuccess?: string;
     canPublish?: boolean;
 }>) {
-    const [slugTouched, setSlugTouched] = useState(type === 'edit');
-    const [slug, setSlug] = useState(course?.slug ?? '');
     const form =
         type === 'create'
-            ? course_links.store.form({ mergeQuery: { slug: slug } })
-            : course_links.update.form(course ?? 0, {
-                  mergeQuery: { slug: slug },
-              });
+            ? course_links.store.form()
+            : course_links.update.form(course ?? 0);
 
     return (
         <Form
             {...form}
             disableWhileProcessing
-            onError={(errors) =>
-                errors.slug == 'The slug has already been taken.' &&
-                setSlugTouched(true)
-            }
             onSuccess={() => router.visit(visitOnSuccess)}
             className="mt-4 flex flex-col gap-4"
         >
@@ -67,14 +55,6 @@ export default function CourseForm({
                                 tabIndex={1}
                                 autoFocus
                                 defaultValue={course?.title}
-                                onChange={(e) =>
-                                    !slugTouched &&
-                                    setSlug(
-                                        slugify(e.target.value, {
-                                            lower: true,
-                                        }),
-                                    )
-                                }
                                 placeholder="Title"
                             />
 
@@ -82,30 +62,13 @@ export default function CourseForm({
                         </FieldContainer>
 
                         <FieldContainer>
-                            <Label htmlFor="slug">Slug</Label>
-
-                            <div className="flex">
-                                <Input
-                                    id="slug"
-                                    type="text"
-                                    name="slug"
-                                    value={slug}
-                                    tabIndex={2}
-                                    placeholder="Slug"
-                                    disabled={!slugTouched}
-                                    onChange={(e) =>
-                                        setSlug(slugify(e.target.value))
-                                    }
-                                />
-
-                                <Button
-                                    variant={'ghost'}
-                                    type="button"
-                                    onClick={() => setSlugTouched((v) => !v)}
-                                >
-                                    {slugTouched ? <X /> : <Pen />}
-                                </Button>
-                            </div>
+                            <Label htmlFor="slug">شناسه متنی</Label>
+                            <Input
+                                id="slug"
+                                name="slug"
+                                defaultValue={course?.slug}
+                                placeholder="?? ???? ???? ????? ?? شناسه متنی? ??????"
+                            />
 
                             <InputError message={errors.slug} />
                         </FieldContainer>

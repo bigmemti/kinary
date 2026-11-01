@@ -30,6 +30,17 @@ class UpdateSpaceRequest extends FormRequest
         return [
             'name' => 'required|string|max:255',
             'quiz_id' => 'nullable|integer|exists:quizzes,id',
+            'category_ids' => 'sometimes|array',
+            'category_ids.*' => 'integer|distinct|exists:categories,id',
+            'new_category' => 'nullable|string|max:255|unique:categories,name',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'category_ids.*.exists' => 'دسته‌بندی انتخاب‌شده معتبر نیست.',
+            'new_category.unique' => 'این دسته‌بندی از قبل وجود دارد.',
         ];
     }
 }

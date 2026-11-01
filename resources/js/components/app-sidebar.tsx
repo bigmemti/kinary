@@ -11,6 +11,7 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
+import { index as categories } from '@/routes/admin/category';
 import { index as contents } from '@/routes/admin/content';
 import { index as courses } from '@/routes/admin/course';
 import { index as enrollments } from '@/routes/admin/enrollment';
@@ -55,20 +56,21 @@ const mainNavItems: NavItem[] = [
         href: studying_courses(),
         icon: BookOpen,
         can: {
-            role: 'student'
-        }
+            role: 'student',
+        },
     },
     {
         title: 'Teaching Courses',
         href: teaching_courses(),
         icon: Book,
         can: {
-            role: 'teacher'
-        }
+            role: 'teacher',
+        },
     },
 ];
 
 const adminNavItems: NavItem[] = [
+    { title: 'دسته‌بندی‌ها', href: categories(), icon: Layers },
     {
         title: 'Users',
         href: users(),
@@ -134,8 +136,8 @@ const adminNavItems: NavItem[] = [
 const footerNavItems: NavItem[] = [];
 
 export function AppSidebar() {
-    const { auth } = usePage<SharedData>().props;    
-    
+    const { auth } = usePage<SharedData>().props;
+
     return (
         <Sidebar collapsible="icon" variant="inset">
             <SidebarHeader>
@@ -152,7 +154,9 @@ export function AppSidebar() {
 
             <SidebarContent>
                 <NavMain items={mainNavItems} />
-                { auth.roles.includes('admin') && <NavMain label="Admin" items={adminNavItems} /> }
+                {auth.roles.includes('admin') && (
+                    <NavMain label="Admin" items={adminNavItems} />
+                )}
             </SidebarContent>
 
             <SidebarFooter>

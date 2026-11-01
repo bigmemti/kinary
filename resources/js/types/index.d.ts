@@ -99,6 +99,7 @@ export interface Enrollment {
 
 export interface Teacher {
     id: number;
+    description: string | null;
     user_id: number;
     user?: User;
     courses?: Course[];
@@ -146,6 +147,7 @@ export interface Plan {
 export interface Section {
     id: number;
     course_id: number;
+    parent_id: number | null;
     course?: Course;
     name: string;
     lessons?: Lesson[];

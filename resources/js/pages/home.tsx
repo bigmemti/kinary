@@ -5,7 +5,9 @@ import {
     Storefront,
     type PublicCourse,
 } from '@/components/storefront';
+import { show as categoryShow } from '@/routes/category';
 import { index as coursesIndex } from '@/routes/course';
+import { show as teacherShow } from '@/routes/teacher';
 import { Link } from '@inertiajs/react';
 import {
     ArrowDown,
@@ -21,8 +23,8 @@ import {
 
 interface HomeProps {
     courses: PublicCourse[];
-    categories: { id: number; name: string }[];
-    teachers: { id: number; name: string }[];
+    categories: { id: number; name: string; slug: string }[];
+    teachers: { id: number; name: string; description: string | null }[];
 }
 
 const questions = [
@@ -181,12 +183,17 @@ export default function Home({ courses, categories, teachers }: HomeProps) {
                 {categories.length ? (
                     <ul className="mt-8 flex flex-wrap gap-3">
                         {categories.map((category) => (
-                            <li
-                                key={category.id}
-                                className="flex items-center gap-3 rounded-2xl border border-current/15 bg-white/50 px-6 py-5 dark:bg-white/5"
-                            >
-                                <BookOpen className="size-5 opacity-60" />
-                                {category.name}
+                            <li key={category.id}>
+                                <Link
+                                    href={categoryShow(category.slug)}
+                                    className="flex items-center gap-3 rounded-2xl border border-current/15 bg-white/50 px-6 py-5 transition hover:bg-[#e7ebdf] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#8b9b5a] dark:bg-white/5 dark:hover:bg-white/10"
+                                >
+                                    <BookOpen
+                                        className="size-5 opacity-60"
+                                        aria-hidden="true"
+                                    />
+                                    {category.name}
+                                </Link>
                             </li>
                         ))}
                     </ul>
@@ -257,9 +264,17 @@ export default function Home({ courses, categories, teachers }: HomeProps) {
                                     <h3 className="font-bold">
                                         {teacher.name}
                                     </h3>
-                                    <p className="mt-2 text-sm opacity-65">
-                                        مدرس دوره‌های آکادمی
-                                    </p>
+                                    {teacher.description && (
+                                        <p className="mt-2 line-clamp-3 text-sm leading-7 opacity-70">
+                                            {teacher.description}
+                                        </p>
+                                    )}
+                                    <Link
+                                        href={teacherShow(teacher.id)}
+                                        className="mt-4 inline-block text-sm font-bold underline underline-offset-4"
+                                    >
+                                        مشاهده مدرس و دوره‌ها
+                                    </Link>
                                 </article>
                             ))}
                         </div>

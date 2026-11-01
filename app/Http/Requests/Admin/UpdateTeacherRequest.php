@@ -24,6 +24,7 @@ class UpdateTeacherRequest extends FormRequest
     {
         return [
             'user_id' => 'integer|required|exists:users,id|unique:teachers,user_id,'.request('teacher')->id,
+            'description' => 'nullable|string|max:10000',
         ];
     }
 }
