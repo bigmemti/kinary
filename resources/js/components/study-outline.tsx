@@ -1,4 +1,5 @@
 import { persianNumber } from '@/components/storefront';
+import { nestedSections, type NestedSection } from '@/lib/section-tree';
 import { lesson as lessonRoute } from '@/routes/student/study';
 import type { StudyProgress, StudySection } from '@/types/study';
 import { Link } from '@inertiajs/react';
@@ -51,52 +52,90 @@ export function StudyOutline({
                     هنوز محتوای قابل‌مطالعه‌ای برای این فضا قرار نگرفته است.
                 </p>
             )}
-            {sections.map((section) => (
-                <details
+            {nestedSections(sections).map((section) => (
+                <StudySectionItem
                     key={section.id}
-                    open={
-                        currentLessonId !== undefined &&
-                        section.lessons.some(
-                            (lesson) => lesson.id === currentLessonId,
-                        )
-                    }
-                    className="rounded-2xl border border-current/10"
-                >
-                    <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-2xl p-4 text-right font-semibold focus-visible:outline-2 focus-visible:outline-[#8b9b5a]">
-                        <span>بخش: {section.name}</span>
-                        <ChevronDown className="size-4 shrink-0" />
-                    </summary>
-                    <ul className="space-y-2 px-4 pb-4">
-                        {section.lessons.map((lesson) => (
-                            <li
-                                key={lesson.id}
-                                className="border-r border-current/15 pr-3"
-                            >
-                                <Link
-                                    href={lessonRoute({
-                                        space: spaceId,
-                                        lesson: lesson.id,
-                                    })}
-                                    aria-current={
-                                        lesson.id === currentLessonId
-                                            ? 'page'
-                                            : undefined
-                                    }
-                                    className="flex items-center justify-between gap-3 rounded-xl p-3 text-right leading-7 hover:bg-[#e7ebdf] focus-visible:outline-2 focus-visible:outline-[#8b9b5a] aria-[current=page]:bg-[#e7ebdf] dark:hover:bg-white/10 dark:aria-[current=page]:bg-white/10"
-                                >
-                                    <span>درس: {lesson.name}</span>
-                                    {lesson.readCount === lesson.totalCount && (
-                                        <CheckCircle2
-                                            aria-label="خوانده‌شده"
-                                            className="size-4 shrink-0 text-[#687943] dark:text-[#d9e3ad]"
-                                        />
-                                    )}
-                                </Link>
-                            </li>
-                        ))}
-                    </ul>
-                </details>
+                    section={section}
+                    spaceId={spaceId}
+                    currentLessonId={currentLessonId}
+                />
             ))}
         </div>
+    );
+}
+
+function containsLesson(
+    section: NestedSection<StudySection>,
+    lessonId: number,
+): boolean {
+    return (
+        section.lessons.some((lesson) => lesson.id === lessonId) ||
+        section.children.some((child) => containsLesson(child, lessonId))
+    );
+}
+
+function StudySectionItem({
+    section,
+    spaceId,
+    currentLessonId,
+}: {
+    section: NestedSection<StudySection>;
+    spaceId: number;
+    currentLessonId?: number;
+}) {
+    return (
+        <details
+            open={
+                currentLessonId !== undefined &&
+                containsLesson(section, currentLessonId)
+            }
+            className="rounded-2xl border border-current/10"
+        >
+            <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-2xl p-4 text-right font-semibold focus-visible:outline-2 focus-visible:outline-[#8b9b5a]">
+                <span>بخش: {section.name}</span>
+                <ChevronDown className="size-4 shrink-0" />
+            </summary>
+            <ul className="space-y-2 px-4 pb-4">
+                {section.lessons.map((lesson) => (
+                    <li
+                        key={lesson.id}
+                        className="border-r border-current/15 pr-3"
+                    >
+                        <Link
+                            href={lessonRoute({
+                                space: spaceId,
+                                lesson: lesson.id,
+                            })}
+                            aria-current={
+                                lesson.id === currentLessonId
+                                    ? 'page'
+                                    : undefined
+                            }
+                            className="flex items-center justify-between gap-3 rounded-xl p-3 text-right leading-7 hover:bg-[#e7ebdf] focus-visible:outline-2 focus-visible:outline-[#8b9b5a] aria-[current=page]:bg-[#e7ebdf] dark:hover:bg-white/10 dark:aria-[current=page]:bg-white/10"
+                        >
+                            <span>درس: {lesson.name}</span>
+                            {lesson.readCount === lesson.totalCount && (
+                                <CheckCircle2
+                                    aria-label="خوانده‌شده"
+                                    className="size-4 shrink-0 text-[#687943] dark:text-[#d9e3ad]"
+                                />
+                            )}
+                        </Link>
+                    </li>
+                ))}
+            </ul>
+            {section.children.length > 0 && (
+                <div className="space-y-3 px-4 pb-4">
+                    {section.children.map((child) => (
+                        <StudySectionItem
+                            key={child.id}
+                            section={child}
+                            spaceId={spaceId}
+                            currentLessonId={currentLessonId}
+                        />
+                    ))}
+                </div>
+            )}
+        </details>
     );
 }

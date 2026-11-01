@@ -43,6 +43,24 @@ const ItemForm = await component('course-editor-item-form');
 const Structure = await component('course-editor-structure');
 const ContentForm = await component('course-editor-content-form');
 
+test('section structure keeps children visible with string parent IDs and missing parents', () => {
+    const sections = [
+        { id: 1, name: 'Root', parent_id: null, order: 1, lessons: [] },
+        { id: 2, name: 'Child', parent_id: '1', order: 2, lessons: [] },
+        { id: 3, name: 'Orphan', parent_id: 999, order: 3, lessons: [] },
+    ];
+    const html = renderToStaticMarkup(
+        createElement(Structure, {
+            sections,
+            selection: null,
+            onSelect() {},
+        }),
+    );
+    assert.ok(html.indexOf('Root') < html.indexOf('Child'));
+    assert.match(html, /margin-inline-start:1.25rem/);
+    assert.match(html, /Orphan/);
+});
+
 function overview(
     permissions = {
         manage_commerce: true,

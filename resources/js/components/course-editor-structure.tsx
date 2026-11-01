@@ -4,6 +4,7 @@ import {
     CollapsibleContent,
     CollapsibleTrigger,
 } from '@/components/ui/collapsible';
+import { orderedSections } from '@/lib/section-tree';
 import { cn } from '@/lib/utils';
 import type {
     CourseEditorContent,
@@ -40,8 +41,13 @@ export default function CourseEditorStructure({
 }) {
     return (
         <ul aria-label="ساختار دوره" className="space-y-4">
-            {sections.map((section) => (
-                <li key={section.id}>
+            {orderedSections(sections).map((section) => (
+                <li
+                    key={section.id}
+                    style={{
+                        marginInlineStart: `${Math.min(section.depth, 6) * 1.25}rem`,
+                    }}
+                >
                     <StructureGroup
                         label={section.name}
                         reveal={

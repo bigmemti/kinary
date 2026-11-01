@@ -93,18 +93,27 @@ class StudyService
     /** @return list<array<string, mixed>> */
     private function sections(Collection $contents, Collection $readIds): array
     {
-        return $contents->groupBy('lesson.section_id')->map(function (Collection $sectionContents) use ($readIds): array {
+        if ($contents->isEmpty()) {
+            return [];
+        }
+        $visible = $contents->groupBy('lesson.section_id')->map(function (Collection $sectionContents) use ($readIds): array {
             $section = $sectionContents->first()->lesson->section;
 
             return [
-                'id' => $section->id, 'name' => $section->name, 'order' => $section->order,
+                'id' => $section->id, 'parent_id' => $section->parent_id, 'name' => $section->name, 'order' => $section->order,
                 'lessons' => $sectionContents->groupBy('lesson_id')->map(function (Collection $lessonContents) use ($readIds): array {
                     $lesson = $lessonContents->first()->lesson;
 
                     return ['id' => $lesson->id, 'name' => $lesson->name, 'order' => $lesson->order, ...$this->progress($lessonContents, $readIds)];
                 })->sortBy([['order', 'asc'], ['id', 'asc']])->values()->all(),
             ];
-        })->sortBy([['order', 'asc'], ['id', 'asc']])->values()->all();
+        });
+        $course = $contents->first()->lesson->section->course;
+        $sections = $course->sections()->orderBy('order')->orderBy('id')->get()->map(fn ($section): array => $visible->get($section->id) ?? [
+            'id' => $section->id, 'parent_id' => $section->parent_id, 'name' => $section->name, 'order' => $section->order, 'lessons' => [],
+        ])->all();
+
+        return app(SectionTree::class)->visible($sections);
     }
 
     /** @return array<string, mixed> */

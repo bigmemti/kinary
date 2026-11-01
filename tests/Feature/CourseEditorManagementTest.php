@@ -1,6 +1,7 @@
 <?php
 
 use App\Enums\TeacherRole;
+use App\Models\Category;
 use App\Models\Course;
 use App\Models\Lesson;
 use App\Models\Plan;
@@ -61,6 +62,41 @@ test('owner creates edits and deletes an unused space with its quiz setting', fu
     $this->assertDatabaseHas('spaces', ['id' => $space->id, 'name' => 'Edited space', 'quiz_id' => null]);
     $this->delete(route('teacher.space.destroy', $space))->assertRedirect(route('teacher.course.editor', $course));
     $this->assertModelMissing($space);
+});
+
+test('owner creates and assigns categories to a space and can remove an assignment', function () {
+    [$course, $teacher, $space] = editorManagementData();
+    $category = new Category;
+    $category->name = 'Existing';
+    $category->save();
+
+    $this->actingAs($teacher->user)->put(route('teacher.space.update', $space), [
+        'name' => $space->name, 'category_ids' => [$category->id], 'new_category' => 'New category',
+    ])->assertSessionHasNoErrors();
+
+    $created = Category::where('name', 'New category')->sole();
+    $this->assertDatabaseHas('category_space', ['space_id' => $space->id, 'category_id' => $category->id]);
+    $this->assertDatabaseHas('category_space', ['space_id' => $space->id, 'category_id' => $created->id]);
+
+    $this->put(route('teacher.space.update', $space), [
+        'name' => $space->name, 'category_ids' => [$created->id],
+    ])->assertSessionHasNoErrors();
+    $this->assertDatabaseMissing('category_space', ['space_id' => $space->id, 'category_id' => $category->id]);
+    $this->assertDatabaseHas('categories', ['id' => $category->id]);
+});
+
+test('invalid category input does not change a space or its categories', function () {
+    [$course, $teacher, $space] = editorManagementData();
+    $category = new Category;
+    $category->name = 'Existing';
+    $category->save();
+    $space->categories()->attach($category);
+
+    $this->actingAs($teacher->user)->put(route('teacher.space.update', $space), [
+        'name' => 'Changed', 'category_ids' => [999999], 'new_category' => 'Existing',
+    ])->assertSessionHasErrors(['category_ids.0', 'new_category']);
+    $this->assertDatabaseHas('spaces', ['id' => $space->id, 'name' => $space->name]);
+    $this->assertDatabaseHas('category_space', ['space_id' => $space->id, 'category_id' => $category->id]);
 });
 
 test('owner manages plans in their actual space with server assigned creation order', function () {

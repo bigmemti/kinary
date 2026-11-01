@@ -69,8 +69,8 @@ class CoursePageService
                 ];
             })->filter(fn (array $lesson): bool => $lesson['contentsCount'] > 0)->values();
 
-            return ['id' => $section->id, 'name' => $section->name, 'lessons' => $lessons->all()];
-        })->filter(fn (array $section): bool => $section['lessons'] !== [])->values();
+            return ['id' => $section->id, 'parent_id' => $section->parent_id, 'name' => $section->name, 'lessons' => $lessons->all()];
+        })->values();
 
         $lessonAccess = $sections->flatMap(fn (array $section): array => $section['lessons'])
             ->flatMap(fn (array $lesson): array => $lesson['planAccess']);
@@ -78,7 +78,7 @@ class CoursePageService
         return [
             'id' => $space->id,
             'name' => $space->name,
-            'sections' => $sections->all(),
+            'sections' => app(SectionTree::class)->visible($sections->all()),
             'plans' => $space->plans->map(function (Plan $plan) use ($lessonAccess, $current, $cartPlanId): array {
                 $access = $lessonAccess->where('planId', $plan->id);
                 $action = match (true) {

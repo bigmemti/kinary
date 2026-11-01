@@ -6,6 +6,7 @@ use App\Enums\TeacherRole;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Teacher\UpdateCourseTeachersRequest;
 use App\Http\Requests\Teacher\UpdateEditorCourseRequest;
+use App\Models\Category;
 use App\Models\Content;
 use App\Models\Course;
 use App\Models\FileContent;
@@ -106,7 +107,7 @@ class CourseEditorController extends Controller
                     ->select(['id', 'lesson_id', 'description', 'order', 'contentable_type', 'contentable_id'])->orderBy('order')->orderBy('id')
                     ->with(['accesses.requirements']),
             ])
-            ->get(['id', 'course_id', 'name', 'order']);
+            ->get(['id', 'course_id', 'parent_id', 'name', 'order']);
 
         $contents = new Collection($sections->flatMap(fn (Section $section) => $section->lessons->flatMap(fn (Lesson $lesson) => $lesson->contents))->all());
         $supportedTypes = [TextContent::class, ImageContent::class, VideoContent::class, FileContent::class, TableContent::class, RemindContent::class];
@@ -126,9 +127,10 @@ class CourseEditorController extends Controller
                 ->map(fn (Teacher $teacher): array => ['id' => $teacher->id, 'name' => $teacher->user->name])->all()
             : [];
 
-        $spaces = $course->spaces()->orderBy('id')->with(['plans' => fn (HasMany $query) => $query->orderBy('order')->orderBy('id')->withCount(['enrollments', 'orders'])])->get();
+        $spaces = $course->spaces()->orderBy('id')->with(['categories:id,name', 'plans' => fn (HasMany $query) => $query->orderBy('order')->orderBy('id')->withCount(['enrollments', 'orders'])])->get();
 
         return [
+            'available_categories' => Category::query()->orderBy('name')->get(['id', 'name'])->toArray(),
             'slug' => $course->slug,
             'description' => $course->description,
             'thumbnail' => $course->thumbnail,
@@ -146,6 +148,7 @@ class CourseEditorController extends Controller
             'has_owner' => $teachers->contains(fn (Teacher $teacher): bool => $teacher->pivot->role === TeacherRole::Owner->value),
             'available_teachers' => $availableTeachers,
             'sections' => $sections->map(fn (Section $section): array => [
+                'parent_id' => $section->parent_id,
                 'id' => $section->id,
                 'name' => $section->name,
                 'order' => (int) $section->order,
@@ -197,6 +200,7 @@ class CourseEditorController extends Controller
             ])->all(),
             'spaces' => $spaces->map(fn (Space $space): array => [
                 'id' => $space->id, 'name' => $space->name, 'quiz_id' => $space->quiz_id,
+                'categories' => $space->categories->map(fn (Category $category): array => ['id' => $category->id, 'name' => $category->name])->all(),
                 'delete_block_reason' => $space->deletionBlockReason(),
                 'plans' => $space->plans->map(fn (Plan $plan): array => [
                     'id' => $plan->id, 'name' => $plan->name, 'price' => $plan->price, 'order' => $plan->order,

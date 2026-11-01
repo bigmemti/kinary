@@ -4,6 +4,7 @@ namespace App\Http\Requests\Admin;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreSectionRequest extends FormRequest
 {
@@ -25,6 +26,7 @@ class StoreSectionRequest extends FormRequest
         return [
             'course_id' => 'required|integer|exists:courses,id',
             'name' => 'required|string|max:255',
+            'parent_id' => ['nullable', 'integer', Rule::exists('sections', 'id')->where('course_id', $this->input('course_id'))],
         ];
     }
 }

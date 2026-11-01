@@ -24,7 +24,7 @@ class CourseSectionController extends Controller
     public function create(Course $course)
     {
         return inertia('admin/course/section/create', [
-            'course' => $course,
+            'course' => $course->load('sections'),
         ]);
     }
 
@@ -33,6 +33,6 @@ class CourseSectionController extends Controller
      */
     public function store(StoreCourseSectionRequest $request, Course $course)
     {
-        $course->sections()->create($request->validated());
+        $course->sections()->create([...$request->validated(), 'order' => (int) $course->sections()->max('order') + 1]);
     }
 }

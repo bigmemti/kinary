@@ -26,7 +26,7 @@ class SectionController extends Controller
     public function create()
     {
         return inertia('admin/section/create', [
-            'courses' => Course::with('teacher.user')->get(),
+            'courses' => Course::with(['teacher.user', 'sections'])->get(),
         ]);
     }
 
@@ -35,7 +35,9 @@ class SectionController extends Controller
      */
     public function store(StoreSectionRequest $request)
     {
-        Section::create($request->validated());
+        $data = $request->validated();
+        $data['order'] = (int) Section::where('course_id', $data['course_id'])->max('order') + 1;
+        Section::create($data);
     }
 
     /**
@@ -54,7 +56,7 @@ class SectionController extends Controller
     public function edit(Section $section)
     {
         return inertia('admin/section/edit', [
-            'course' => Course::with('teacher.user')->get(),
+            'courses' => Course::with(['teacher.user', 'sections'])->get(),
             'section' => $section->load(['course.teacher.user']),
         ]);
     }

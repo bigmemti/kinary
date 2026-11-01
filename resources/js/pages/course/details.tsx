@@ -1,7 +1,9 @@
 import PlanCard, { type PublicPlan } from '@/components/plan-card';
 import { EmptyState, persianNumber, Storefront } from '@/components/storefront';
+import { nestedSections, type NestedSection } from '@/lib/section-tree';
 import { home } from '@/routes';
 import { index } from '@/routes/course';
+import { show as teacherShow } from '@/routes/teacher';
 import { Link } from '@inertiajs/react';
 import {
     ArrowDown,
@@ -11,7 +13,7 @@ import {
     Info,
     Layers3,
 } from 'lucide-react';
-import { type KeyboardEvent, useId, useRef, useState } from 'react';
+import { useId, useRef, useState, type KeyboardEvent } from 'react';
 
 interface PublicLesson {
     id: number;
@@ -20,11 +22,18 @@ interface PublicLesson {
     planAccess: { planId: number; planName: string; contentsCount: number }[];
 }
 
+interface PublicSection {
+    id: number;
+    name: string;
+    depth: number;
+    lessons: PublicLesson[];
+}
+
 interface PublicSpace {
     id: number;
     name: string;
     plans: PublicPlan[];
-    sections: { id: number; name: string; lessons: PublicLesson[] }[];
+    sections: PublicSection[];
 }
 
 interface CoursePageProps {
@@ -115,7 +124,14 @@ export default function CourseDetails({ course, spaces }: CoursePageProps) {
                                         <ul className="flex flex-wrap gap-x-5 gap-y-2 text-sm font-bold">
                                             {course.teachers.map((teacher) => (
                                                 <li key={teacher.id}>
-                                                    {teacher.name}
+                                                    <Link
+                                                        href={teacherShow(
+                                                            teacher.id,
+                                                        )}
+                                                        className="underline underline-offset-4"
+                                                    >
+                                                        {teacher.name}
+                                                    </Link>
                                                 </li>
                                             ))}
                                         </ul>
@@ -241,71 +257,14 @@ export default function CourseDetails({ course, spaces }: CoursePageProps) {
                         </div>
                         {selectedSpace.sections.length ? (
                             <div className="grid gap-4">
-                                {selectedSpace.sections.map((section) => (
-                                    <details
-                                        key={section.id}
-                                        className="group overflow-hidden rounded-2xl border border-current/15 bg-white dark:bg-white/5"
-                                    >
-                                        <summary className="flex cursor-pointer list-none items-center justify-between gap-4 p-5 [&::-webkit-details-marker]:hidden">
-                                            <span className="font-bold">
-                                                {section.name}
-                                            </span>
-                                            <span className="flex shrink-0 items-center gap-3 text-xs opacity-65">
-                                                {persianNumber(
-                                                    section.lessons.length,
-                                                )}{' '}
-                                                درس
-                                                <ChevronDown
-                                                    className="size-4 transition group-open:rotate-180"
-                                                    aria-hidden="true"
-                                                />
-                                            </span>
-                                        </summary>
-                                        <ul className="divide-y divide-current/10 border-t border-current/10">
-                                            {section.lessons.map((lesson) => (
-                                                <li
-                                                    key={lesson.id}
-                                                    className="p-5 sm:px-7"
-                                                >
-                                                    <h3 className="text-sm leading-7 font-bold">
-                                                        {lesson.name}
-                                                    </h3>
-                                                    <p className="mt-2 text-xs leading-7 opacity-60">
-                                                        {persianNumber(
-                                                            lesson.contentsCount,
-                                                        )}{' '}
-                                                        محتوای مرتبط با این فضا
-                                                    </p>
-                                                    <ul
-                                                        aria-label={`دسترسی پلن‌ها به محتوای درس ${lesson.name}`}
-                                                        className="mt-3 flex flex-wrap gap-2"
-                                                    >
-                                                        {lesson.planAccess.map(
-                                                            (access) => (
-                                                                <li
-                                                                    key={
-                                                                        access.planId
-                                                                    }
-                                                                    className="rounded-lg bg-[#e7ebdf] px-3 py-2 text-xs leading-6 dark:bg-white/10"
-                                                                >
-                                                                    {
-                                                                        access.planName
-                                                                    }
-                                                                    :{' '}
-                                                                    {persianNumber(
-                                                                        access.contentsCount,
-                                                                    )}{' '}
-                                                                    محتوای در
-                                                                    دسترس
-                                                                </li>
-                                                            ),
-                                                        )}
-                                                    </ul>
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    </details>
-                                ))}
+                                {nestedSections(selectedSpace.sections).map(
+                                    (section) => (
+                                        <PublicSectionItem
+                                            key={section.id}
+                                            section={section}
+                                        />
+                                    ),
+                                )}
                             </div>
                         ) : (
                             <EmptyState title="سرفصل مرتبطی برای این فضا ثبت نشده است">
@@ -349,5 +308,61 @@ export default function CourseDetails({ course, spaces }: CoursePageProps) {
                 )}
             </section>
         </Storefront>
+    );
+}
+
+export function PublicSectionItem({
+    section,
+}: {
+    section: NestedSection<PublicSection>;
+}) {
+    return (
+        <details className="group overflow-hidden rounded-2xl border border-current/15 bg-white dark:bg-white/5">
+            <summary className="flex cursor-pointer list-none items-center justify-between gap-4 p-5 [&::-webkit-details-marker]:hidden">
+                <span className="font-bold">{section.name}</span>
+                <span className="flex shrink-0 items-center gap-3 text-xs opacity-65">
+                    {persianNumber(section.lessons.length)} درس
+                    <ChevronDown
+                        className="size-4 transition group-open:rotate-180"
+                        aria-hidden="true"
+                    />
+                </span>
+            </summary>
+            <ul className="divide-y divide-current/10 border-t border-current/10">
+                {section.lessons.map((lesson) => (
+                    <li key={lesson.id} className="p-5 sm:px-7">
+                        <h3 className="text-sm leading-7 font-bold">
+                            {lesson.name}
+                        </h3>
+                        <p className="mt-2 text-xs leading-7 opacity-60">
+                            {persianNumber(lesson.contentsCount)} محتوای مرتبط
+                            با این فضا
+                        </p>
+                        <ul
+                            aria-label={`دسترسی پلن‌ها به محتوای درس ${lesson.name}`}
+                            className="mt-3 flex flex-wrap gap-2"
+                        >
+                            {lesson.planAccess.map((access) => (
+                                <li
+                                    key={access.planId}
+                                    className="rounded-lg bg-[#e7ebdf] px-3 py-2 text-xs leading-6 dark:bg-white/10"
+                                >
+                                    {access.planName}:{' '}
+                                    {persianNumber(access.contentsCount)} محتوای
+                                    در دسترس
+                                </li>
+                            ))}
+                        </ul>
+                    </li>
+                ))}
+            </ul>
+            {section.children.length > 0 && (
+                <div className="space-y-3 px-4 pb-4">
+                    {section.children.map((child) => (
+                        <PublicSectionItem key={child.id} section={child} />
+                    ))}
+                </div>
+            )}
+        </details>
     );
 }

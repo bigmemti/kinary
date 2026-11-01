@@ -12,6 +12,7 @@ export interface StudyLesson extends StudyProgress {
 export interface StudySection {
     id: number;
     name: string;
+    depth: number;
     lessons: StudyLesson[];
 }
 

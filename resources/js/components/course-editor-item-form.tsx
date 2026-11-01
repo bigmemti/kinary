@@ -103,6 +103,7 @@ function ItemForm({
     const form = useForm({
         name: item.name,
         order: String(item.order),
+        parent_id: section.parent_id == null ? '' : String(section.parent_id),
         thumbnail_file: null as File | null,
         remove_thumbnail: false,
         image_files: [] as File[],
@@ -118,11 +119,13 @@ function ItemForm({
         ) as Record<string, string>,
     });
     const [deleting, setDeleting] = useState(false);
+    const [verifiedSave, setVerifiedSave] = useState(false);
     const [deleteError, setDeleteError] = useState('');
     const [uploadKey, setUploadKey] = useState(0);
     const blocked = lesson
         ? lesson.contents.length > 0
-        : section.lessons.length > 0;
+        : section.lessons.length > 0 ||
+          overview.sections.some((item) => item.parent_id === section.id);
     const busy = form.processing || deleting;
     useCourseEditorDirty(form.isDirty);
     useEffect(() => {
@@ -161,13 +164,20 @@ function ItemForm({
                             }
                           : {}),
                   }
-                : { name: data.name, order: data.order },
+                : {
+                      name: data.name,
+                      order: data.order,
+                      parent_id: data.parent_id || null,
+                  },
         );
         const options = {
             only: ['overview', 'errors'],
             preserveScroll: true,
             preserveState: true,
-            onStart: () => onStatus('saving'),
+            onStart: () => {
+                setVerifiedSave(false);
+                onStatus('saving');
+            },
             onError: () => onStatus('error'),
             onSuccess: (page: { props: Record<string, unknown> }) => {
                 const savedOverview = page.props
@@ -175,6 +185,19 @@ function ItemForm({
                 const savedSection = savedOverview.sections.find(
                     (value) => value.id === section.id,
                 );
+                if (
+                    !lesson &&
+                    (!savedSection ||
+                        String(savedSection.parent_id ?? '') !==
+                            form.data.parent_id)
+                ) {
+                    form.setError(
+                        'parent_id',
+                        'فصل والد ذخیره نشد؛ دوباره تلاش کنید.',
+                    );
+                    onStatus('error');
+                    return;
+                }
                 const savedLesson = savedSection?.lessons.find(
                     (value) => value.id === lesson?.id,
                 );
@@ -183,6 +206,10 @@ function ItemForm({
                     ...form.data,
                     name: savedItem?.name ?? form.data.name,
                     order: String(savedItem?.order ?? form.data.order),
+                    parent_id:
+                        savedSection?.parent_id == null
+                            ? ''
+                            : String(savedSection.parent_id),
                     thumbnail_file: null,
                     image_files: [],
                     remove_images: [],
@@ -191,6 +218,7 @@ function ItemForm({
                 form.setData(values);
                 form.setDefaults(values);
                 setUploadKey((key) => key + 1);
+                setVerifiedSave(true);
                 onStatus('saved');
             },
         };
@@ -248,6 +276,32 @@ function ItemForm({
             </div>
             <form onSubmit={submit} className="space-y-5">
                 <fieldset disabled={busy} className="space-y-5">
+                    {!lesson && (
+                        <div className="space-y-2">
+                            <Label htmlFor="section-parent">فصل والد</Label>
+                            <select
+                                id="section-parent"
+                                className="w-full rounded-md border bg-background p-2"
+                                value={form.data.parent_id}
+                                onChange={(event) =>
+                                    form.setData(
+                                        'parent_id',
+                                        event.target.value,
+                                    )
+                                }
+                            >
+                                <option value="">فصل اصلی</option>
+                                {overview.sections
+                                    .filter((item) => item.id !== section.id)
+                                    .map((item) => (
+                                        <option key={item.id} value={item.id}>
+                                            {item.name}
+                                        </option>
+                                    ))}
+                            </select>
+                            <InputError message={form.errors.parent_id} />
+                        </div>
+                    )}
                     <div className="space-y-2">
                         <Label htmlFor="structure-name">
                             نام {lesson ? 'لسن' : 'سکشن'}
@@ -465,7 +519,7 @@ function ItemForm({
                     <Button className="w-full" type="submit">
                         {form.processing ? 'در حال ذخیره…' : 'ذخیره تغییرات'}
                     </Button>
-                    {form.recentlySuccessful && (
+                    {verifiedSave && !form.isDirty && (
                         <p
                             role="status"
                             className="text-sm text-green-600 dark:text-green-400"

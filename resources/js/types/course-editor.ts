@@ -14,6 +14,7 @@ export interface CourseEditorCourse {
 }
 
 export interface CourseEditorOverview {
+    available_categories: { id: number; name: string }[];
     slug: string;
     description: string | null;
     thumbnail: string | null;
@@ -51,6 +52,7 @@ export type CourseEditorSaveStatus =
 
 export interface CourseEditorSection {
     id: number;
+    parent_id: number | null;
     name: string;
     order: number;
     lessons: CourseEditorLesson[];
@@ -68,6 +70,7 @@ export interface CourseEditorLesson {
 }
 
 export interface CourseEditorSpace {
+    categories: { id: number; name: string }[];
     id: number;
     name: string;
     quiz_id: number | null;

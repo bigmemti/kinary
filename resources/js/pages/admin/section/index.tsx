@@ -7,6 +7,7 @@ import {
 import FormButton from '@/components/form-button';
 import ResponsiveDataList from '@/components/responsive-data-list';
 import AppLayout from '@/layouts/app-layout';
+import { orderedSections } from '@/lib/section-tree';
 import { dashboard } from '@/routes';
 import { create, destroy, edit, index, show } from '@/routes/admin/section';
 import { index as lessons } from '@/routes/admin/section/lesson';
@@ -42,7 +43,7 @@ export default function Index({ sections }: { sections: Section[] }) {
 function ResponsiveSectionList({ sections }: { sections: Section[] }) {
     return (
         <ResponsiveDataList
-            data={sections}
+            data={orderedSections(sections)}
             columns={[
                 { header: 'ID', cell: (section) => section.id },
                 { header: 'Course', cell: (section) => section.course?.title },
@@ -50,7 +51,18 @@ function ResponsiveSectionList({ sections }: { sections: Section[] }) {
                     header: 'Teacher',
                     cell: (section) => section.course?.teacher?.user?.name,
                 },
-                { header: 'Section', cell: (section) => section.name },
+                {
+                    header: 'Section',
+                    cell: (section) => (
+                        <span
+                            style={{
+                                marginInlineStart: `${Math.min(section.depth, 6) * 1.25}rem`,
+                            }}
+                        >
+                            {section.name}
+                        </span>
+                    ),
+                },
                 {
                     header: 'Lesson Count',
                     cell: (section) => section.lessons_count,

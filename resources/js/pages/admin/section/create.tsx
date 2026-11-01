@@ -3,7 +3,7 @@ import { SectionForm } from '@/components/forms';
 import AppLayout from '@/layouts/app-layout';
 import { dashboard } from '@/routes';
 import { create, index } from '@/routes/admin/section';
-import { BreadcrumbItem, User } from '@/types';
+import { BreadcrumbItem, Course } from '@/types';
 import { Head } from '@inertiajs/react';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -21,7 +21,7 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-export default function Create({ courses }: { courses: User[] }) {
+export default function Create({ courses }: { courses: Course[] }) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Section User" />
@@ -33,6 +33,6 @@ export default function Create({ courses }: { courses: User[] }) {
     );
 }
 
-function CreateSectionForm({ courses }: { courses: User[] }) {
+function CreateSectionForm({ courses }: { courses: Course[] }) {
     return <SectionForm type="create" courses={courses} />;
 }

@@ -118,6 +118,9 @@ class SectionController extends Controller
             Course::query()->whereKey($course->id)->lockForUpdate()->firstOrFail();
             Gate::authorize('deleteEditorStructure', $course);
             $section->refresh();
+            if ($section->children()->exists()) {
+                throw ValidationException::withMessages(['delete' => 'ابتدا زیرفصل‌ها را حذف کنید.']);
+            }
             if ($section->lessons()->exists()) {
                 throw ValidationException::withMessages(['delete' => 'ابتدا لسن‌های سکشن را حذف کنید.']);
             }
