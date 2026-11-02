@@ -36,7 +36,7 @@ class PaymentService
 
     public function getPage(string $authority): string
     {
-        return 'https://sandbox.zarinpal.com/pg/StartPay/'.$authority;
+        return 'https://payment.zarinpal.com/pg/StartPay/'.$authority;
     }
 
     public function verify(int $amount, string $authority): bool
