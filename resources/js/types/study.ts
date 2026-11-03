@@ -24,6 +24,15 @@ export interface StudySpace extends StudyProgress {
     lastVisitedAt: string | null;
     resumeLessonId: number | null;
     sections: StudySection[];
+    quizzes: {
+        id: number;
+        title: string;
+        contentId: number | null;
+        final: boolean;
+        limit: number | null;
+        canStart: boolean;
+        attempts: { id: number; startedAt: string | null; finished: boolean; score: string | null }[];
+    }[];
 }
 
 export interface StudyContent {
@@ -36,10 +45,13 @@ export interface StudyContent {
         | 'file'
         | 'table'
         | 'remind'
+        | 'quiz'
         | 'unavailable';
     body?: string;
     name?: string;
     url?: string | null;
     rows?: string[][];
     target?: StudyContent;
+    quizId?: number;
+    latestScore?: string | null;
 }

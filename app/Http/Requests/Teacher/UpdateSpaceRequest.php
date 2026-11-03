@@ -5,6 +5,7 @@ namespace App\Http\Requests\Teacher;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\Rule;
 
 class UpdateSpaceRequest extends FormRequest
 {
@@ -29,7 +30,7 @@ class UpdateSpaceRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
-            'quiz_id' => 'nullable|integer|exists:quizzes,id',
+            'quiz_id' => ['nullable', 'integer', Rule::in(array_filter([$this->route('space')?->quiz_id]))],
             'category_ids' => 'sometimes|array',
             'category_ids.*' => 'integer|distinct|exists:categories,id',
             'new_category' => 'nullable|string|max:255|unique:categories,name',

@@ -42,6 +42,9 @@ export default function CourseEditorItemForm({
         selection?.kind === 'content'
             ? lesson?.contents.find((item) => item.id === selection.contentId)
             : undefined;
+    if (content?.type === 'quiz') {
+        return null;
+    }
     if (content && overview.permissions.update_structure) {
         return (
             <CourseEditorContentForm

@@ -25,6 +25,7 @@ import { index as transactions } from '@/routes/admin/transaction';
 import { index as users } from '@/routes/admin/user';
 import { index as wallets } from '@/routes/admin/wallet';
 import { index as studying_courses } from '@/routes/student/enrollment';
+import { index as student_certificates } from '@/routes/student/certificate';
 import { index as teaching_courses } from '@/routes/teacher/course';
 import { SharedData, type NavItem } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
@@ -58,6 +59,12 @@ const mainNavItems: NavItem[] = [
         can: {
             role: 'student',
         },
+    },
+    {
+        title: 'گواهی‌های من',
+        href: student_certificates(),
+        icon: GraduationCap,
+        can: { role: 'student' },
     },
     {
         title: 'Teaching Courses',

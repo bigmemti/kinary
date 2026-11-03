@@ -170,3 +170,24 @@
 .storefront-input {
     @apply h-12 rounded-xl border-current/20 bg-transparent px-4 text-sm shadow-none placeholder:text-current/45 focus-visible:border-[#8b9b5a] focus-visible:ring-[#8b9b5a]/25;
 }
+
+.rich-text-editor { border: 1px solid var(--input); border-radius: 0.75rem; overflow: hidden; }
+.rich-text-editor:focus-within { outline: 2px solid #8b9b5a; outline-offset: 2px; }
+.rich-text-editor .mdxeditor-toolbar { flex-wrap: wrap; border-bottom: 1px solid var(--input); }
+.rich-text-content { min-height: 8rem; padding: 1rem; line-height: 2; overflow-wrap: anywhere; text-align: start; }
+.rich-text-content :is(pre, code), .markdown-content :is(pre, code) { direction: ltr; unicode-bidi: plaintext; }
+.rich-text-content pre, .markdown-content pre { overflow-x: auto; padding: 1rem; border-radius: 0.75rem; background: rgb(128 128 128 / 0.12); }
+.rich-text-content :is(ul, ol), .markdown-content :is(ul, ol) { padding-inline-start: 1.75rem; }
+.rich-text-content ul, .markdown-content ul { list-style: disc; }
+.rich-text-content ol, .markdown-content ol { list-style: decimal; }
+.rich-text-content blockquote, .markdown-content blockquote { border-inline-start: 3px solid #8b9b5a; padding-inline-start: 1rem; }
+.rich-text-content table, .markdown-content table { border-collapse: collapse; max-width: 100%; }
+.rich-text-content :is(th, td), .markdown-content :is(th, td) { border: 1px solid currentColor; padding: 0.4rem; }
+.markdown-content { overflow-wrap: anywhere; }
+.markdown-content p { white-space: pre-line; }
+.markdown-content > * + * { margin-block-start: 0.75rem; }
+.markdown-content :is(h1, h2, h3, h4, h5, h6), .rich-text-content :is(h1, h2, h3, h4, h5, h6) { font-weight: 700; line-height: 1.6; }
+.markdown-content h1, .rich-text-content h1 { font-size: 1.75em; }
+.markdown-content h2, .rich-text-content h2 { font-size: 1.5em; }
+.markdown-content h3, .rich-text-content h3 { font-size: 1.25em; }
+.markdown-content a { text-decoration: underline; }

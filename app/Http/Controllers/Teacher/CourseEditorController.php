@@ -45,6 +45,7 @@ class CourseEditorController extends Controller
             ],
             'overview' => Inertia::defer(fn (): array => $this->overview($course)),
             'createdItem' => session('editor_created'),
+            'returnTo' => session('editor_return'),
         ]);
     }
 
@@ -110,7 +111,7 @@ class CourseEditorController extends Controller
             ->get(['id', 'course_id', 'parent_id', 'name', 'order']);
 
         $contents = new Collection($sections->flatMap(fn (Section $section) => $section->lessons->flatMap(fn (Lesson $lesson) => $lesson->contents))->all());
-        $supportedTypes = [TextContent::class, ImageContent::class, VideoContent::class, FileContent::class, TableContent::class, RemindContent::class];
+        $supportedTypes = [TextContent::class, ImageContent::class, VideoContent::class, FileContent::class, TableContent::class, RemindContent::class, Quiz::class];
         $contents->reject(fn (Content $content): bool => in_array($content->contentable_type, $supportedTypes, true))
             ->each(fn (Content $content) => $content->setRelation('contentable', null));
         $contents->filter(fn (Content $content): bool => in_array($content->contentable_type, $supportedTypes, true))->load('contentable');
@@ -171,6 +172,7 @@ class CourseEditorController extends Controller
                             FileContent::class => 'file',
                             TableContent::class => 'table',
                             RemindContent::class => 'remind',
+                            Quiz::class => 'quiz',
                             default => 'unknown',
                         },
                         'body' => $content->contentable instanceof TextContent ? $content->contentable->body : null,
@@ -183,6 +185,7 @@ class CourseEditorController extends Controller
                         },
                         'table' => $content->contentable instanceof TableContent ? $content->contentable->table : null,
                         'remind_content_id' => $content->contentable instanceof RemindContent ? $content->contentable->content_id : null,
+                        'quiz_space_id' => $content->contentable instanceof Quiz ? $content->contentable->space_id : null,
                         'accesses' => $content->accesses->map(fn ($access): array => [
                             'plan_id' => $access->plan_id,
                             'requirements' => $access->requirements->map(fn ($requirement): array => ['space_id' => $requirement->space_id, 'score' => $requirement->score])->values()->all(),
@@ -203,13 +206,13 @@ class CourseEditorController extends Controller
                 'categories' => $space->categories->map(fn (Category $category): array => ['id' => $category->id, 'name' => $category->name])->all(),
                 'delete_block_reason' => $space->deletionBlockReason(),
                 'plans' => $space->plans->map(fn (Plan $plan): array => [
-                    'id' => $plan->id, 'name' => $plan->name, 'price' => $plan->price, 'order' => $plan->order,
+                    'id' => $plan->id, 'name' => $plan->name, 'description' => $plan->description, 'price' => $plan->price, 'order' => $plan->order,
                     'enrollments_count' => $plan->enrollments_count, 'orders_count' => $plan->orders_count,
                     'delete_block_reason' => $plan->deletionBlockReason(),
                 ])->all(),
             ])->all(),
             'available_quizzes' => Gate::allows('manageEditorCommerce', $course)
-                ? Quiz::query()->orderBy('id')->get(['id', 'score', 'time'])->toArray() : [],
+                ? Quiz::query()->whereIn('id', $spaces->pluck('quiz_id')->filter())->orderBy('id')->get(['id', 'score', 'time'])->toArray() : [],
         ];
     }
 }

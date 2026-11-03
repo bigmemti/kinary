@@ -27,6 +27,11 @@ class Space extends Model
         return $this->hasMany(Plan::class);
     }
 
+    public function questions(): HasMany
+    {
+        return $this->hasMany(Question::class);
+    }
+
     public function course(): BelongsTo
     {
         return $this->belongsTo(Course::class);
@@ -36,6 +41,10 @@ class Space extends Model
     {
         if ($this->plans()->exists()) {
             return 'ابتدا پلن‌های این اسپیس را حذف کنید.';
+        }
+
+        if (Quiz::query()->where('space_id', $this->id)->exists()) {
+            return 'این اسپیس دارای آزمون است و قابل حذف نیست.';
         }
 
         foreach (['requirements', 'category_space', 'grades', 'learning_nodes', 'questions'] as $table) {

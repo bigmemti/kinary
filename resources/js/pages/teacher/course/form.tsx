@@ -15,7 +15,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
+import { RichTextEditor as Textarea } from '@/components/rich-text-editor';
 import course_links from '@/routes/teacher/course';
 import { Course, WithType } from '@/types';
 import { Form, router } from '@inertiajs/react';

@@ -52,7 +52,7 @@ import {
     SelectValue,
 } from './ui/select';
 import { Spinner } from './ui/spinner';
-import { Textarea } from './ui/textarea';
+import { RichTextEditor as Textarea } from './rich-text-editor';
 
 export function TransactionForm({
     type,

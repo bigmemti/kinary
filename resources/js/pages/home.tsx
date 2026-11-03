@@ -83,7 +83,7 @@ export default function Home({ courses, categories, teachers }: HomeProps) {
                             </Link>
                             <a
                                 href="#approach"
-                                className="flex items-center gap-2 text-sm"
+                                className="flex items-center gap-2 text-sm border border-[#6a7d3c]/40 px-4 py-3 rounded-2xl"
                             >
                                 آشنایی با مسیر ما
                                 <ArrowDown className="size-4" />

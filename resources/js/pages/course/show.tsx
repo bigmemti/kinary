@@ -1,3 +1,4 @@
+import { MarkdownContent } from '@/components/markdown-content';
 import { DashboardContainer } from '@/components/dashboard';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
@@ -44,7 +45,7 @@ export default function Show({ course }: { course: Course }) {
                     <div>{course.id}</div>
                     <div>{course.title}</div>
                     <div>{course.slug}</div>
-                    <div>{course.description}</div>
+                    <MarkdownContent>{course.description ?? ''}</MarkdownContent>
                     <div>{course.thumbnail}</div>
                     <div>{course.intro_video_url}</div>
                     <div>{course.status}</div>

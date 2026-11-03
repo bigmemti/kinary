@@ -8,6 +8,7 @@ use App\Models\FileContent;
 use App\Models\ImageContent;
 use App\Models\Lesson;
 use App\Models\Progress;
+use App\Models\Quiz;
 use App\Models\RemindContent;
 use App\Models\Space;
 use App\Models\TableContent;
@@ -34,6 +35,25 @@ class StudyService
                 $lessons = collect($sections)->flatMap(fn (array $section): array => $section['lessons']);
                 $firstUnreadLesson = $lessons->first(fn (array $lesson): bool => $lesson['readCount'] < $lesson['totalCount']);
                 $lastLessonId = $lessons->contains('id', $latest->last_lesson_id) ? $latest->last_lesson_id : null;
+                $quizService = app(QuizService::class);
+                $quizContents = $contents->where('contentable_type', Quiz::class);
+                $quizzes = Quiz::query()->where('space_id', $space->id)
+                    ->whereIn('id', $quizContents->pluck('contentable_id')->push($space->quiz_id)->filter())->get();
+                $examData = $quizzes->map(function ($quiz) use ($quizContents, $space, $user, $quizService): array {
+                    $content = $quizContents->firstWhere('contentable_id', $quiz->id);
+                    $attempts = $quiz->attempts()->where('student_id', $user->student->id)->orderByDesc('id')->get();
+                    $limit = $quizService->attemptLimit($user->student, $space, $quiz, $content);
+
+                    return [
+                        'id' => $quiz->id, 'title' => $quiz->title, 'contentId' => $content?->id,
+                        'final' => $space->quiz_id === $quiz->id, 'limit' => $limit,
+                        'canStart' => ($limit === null || $attempts->count() < $limit) && $quiz->questions()->exists() && ($content || $space->course->is_published),
+                        'attempts' => $attempts->map(fn ($attempt) => [
+                            'id' => $attempt->id, 'startedAt' => $attempt->started_at?->toISOString(),
+                            'finished' => (bool) $attempt->finished_at, 'score' => $attempt->finished_at ? $attempt->score : null,
+                        ])->all(),
+                    ];
+                })->values()->all();
 
                 return [
                     'id' => $space->id,
@@ -43,6 +63,7 @@ class StudyService
                     'lastVisitedAt' => $latest->last_visited_at,
                     'resumeLessonId' => $firstUnreadLesson['id'] ?? $lastLessonId ?? $lessons->first()['id'] ?? null,
                     'sections' => $sections,
+                    'quizzes' => $examData,
                     ...$this->progress($contents, $readIds),
                 ];
             })->sortByDesc('lastVisitedAt')->values()->all();
@@ -55,7 +76,12 @@ class StudyService
             ->whereHas('plan', fn (Builder $query): Builder => $query->where('space_id', $space->id))->pluck('plan_id');
 
         return Content::query()->whereHas('lesson.section', fn (Builder $query): Builder => $query->where('course_id', $space->course_id))
-            ->whereHas('accesses', fn (Builder $query): Builder => $query->whereIn('plan_id', $planIds))
+            ->whereHas('accesses', fn (Builder $query): Builder => $query->whereIn('plan_id', $planIds)
+                ->whereDoesntHave('requirements', fn (Builder $requirements): Builder => $requirements->whereNotExists(
+                    fn ($grades) => $grades->selectRaw('1')->from('grades')->join('attempts', 'attempts.id', '=', 'grades.attempt_id')
+                        ->whereColumn('grades.space_id', 'requirements.space_id')->where('grades.student_id', $user->student->id)
+                        ->whereColumn('attempts.score', '>=', 'requirements.score')
+                )))
             ->with('lesson.section')->orderBy('order')->orderBy('id');
     }
 
@@ -132,7 +158,7 @@ class StudyService
             'space' => ['id' => $space->id, 'name' => $space->name, 'courseTitle' => $space->course->title, ...$this->progress($contents, $readIds)],
             'sections' => $sections,
             'lesson' => ['id' => $lesson->id, 'name' => $lesson->name, 'sectionName' => $lesson->section->name],
-            'contents' => $lessonContents->map(fn (Content $content): array => $this->contentData($content, $space, $contents))->all(),
+            'contents' => $lessonContents->map(fn (Content $content): array => $this->contentData($content, $space, $contents, $user))->all(),
             'previousLesson' => $lessons->get($position - 1),
             'nextLesson' => $lessons->get($position + 1),
         ];
@@ -148,6 +174,9 @@ class StudyService
             abort_if($contents->isEmpty(), 404);
             $now = now();
             foreach ($contents as $content) {
+                if ($content->contentable_type === Quiz::class) {
+                    continue;
+                }
                 $enrollment = $enrollments->first(fn (Enrollment $item): bool => $content->accesses->contains('plan_id', $item->plan_id));
                 Progress::query()->firstOrCreate(['content_id' => $content->id, 'enrollment_id' => $enrollment->id])
                     ->update(['status' => 'read', 'read_at' => $now]);
@@ -160,16 +189,20 @@ class StudyService
     /** @param list<int> $visited
      * @return array<string, mixed>
      */
-    private function contentData(Content $content, Space $space, Collection $allowed, array $visited = []): array
+    private function contentData(Content $content, Space $space, Collection $allowed, User $user, array $visited = []): array
     {
-        $types = [TextContent::class, ImageContent::class, VideoContent::class, FileContent::class, TableContent::class, RemindContent::class];
+        $types = [TextContent::class, ImageContent::class, VideoContent::class, FileContent::class, TableContent::class, RemindContent::class, Quiz::class];
         $record = in_array($content->contentable_type, $types, true) ? $content->contentable : null;
         $data = ['id' => $content->id, 'description' => $content->description, 'type' => 'unavailable'];
 
-        if ($record instanceof RemindContent) {
+        if ($record instanceof Quiz && $record->space_id === $space->id) {
+            $latest = $record->attempts()->where('student_id', $user->student->id)->whereNotNull('finished_at')->latest('finished_at')->first();
+
+            return [...$data, 'type' => 'quiz', 'name' => $record->title, 'quizId' => $record->id, 'body' => $record->description, 'latestScore' => $latest?->score];
+        } elseif ($record instanceof RemindContent) {
             $target = $allowed->firstWhere('id', $record->content_id);
             if ($target && ! in_array($target->id, [...$visited, $content->id], true)) {
-                return [...$data, 'type' => 'remind', 'target' => $this->contentData($target, $space, $allowed, [...$visited, $content->id])];
+                return [...$data, 'type' => 'remind', 'target' => $this->contentData($target, $space, $allowed, $user, [...$visited, $content->id])];
             }
         } elseif ($record instanceof TextContent) {
             return [...$data, 'type' => 'text', 'body' => $record->body];

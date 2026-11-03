@@ -20,6 +20,7 @@ class Plan extends Model
     protected $fillable = [
         'space_id',
         'name',
+        'description',
         'price',
         'order',
     ];

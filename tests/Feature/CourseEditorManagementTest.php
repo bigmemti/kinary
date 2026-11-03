@@ -50,14 +50,13 @@ test('structure and commerce permissions match each course role', function (Teac
     'reviewer' => [TeacherRole::Reviewer, false, false, false],
 ]);
 
-test('owner creates edits and deletes an unused space with its quiz setting', function () {
+test('owner creates edits and deletes an unused space', function () {
     [$course, $teacher] = editorManagementData();
-    $quizId = DB::table('quizzes')->insertGetId(['time' => '00:10:00', 'score' => 20]);
     $this->actingAs($teacher->user);
 
-    $this->post(route('teacher.course.space.store', $course), ['name' => 'New space', 'quiz_id' => $quizId, 'course_id' => 999])->assertRedirect(route('teacher.course.editor', $course));
+    $this->post(route('teacher.course.space.store', $course), ['name' => 'New space', 'course_id' => 999])->assertRedirect(route('teacher.course.editor', $course));
     $space = $course->spaces()->where('name', 'New space')->firstOrFail();
-    $this->assertDatabaseHas('spaces', ['id' => $space->id, 'course_id' => $course->id, 'quiz_id' => $quizId]);
+    $this->assertDatabaseHas('spaces', ['id' => $space->id, 'course_id' => $course->id, 'quiz_id' => null]);
     $this->put(route('teacher.space.update', $space), ['name' => 'Edited space', 'quiz_id' => null])->assertSessionHasNoErrors();
     $this->assertDatabaseHas('spaces', ['id' => $space->id, 'name' => 'Edited space', 'quiz_id' => null]);
     $this->delete(route('teacher.space.destroy', $space))->assertRedirect(route('teacher.course.editor', $course));
@@ -103,13 +102,24 @@ test('owner manages plans in their actual space with server assigned creation or
     [$course, $teacher, $space] = editorManagementData();
     $this->actingAs($teacher->user);
 
-    $this->post(route('teacher.space.plan.store', $space), ['name' => 'New plan', 'price' => 0, 'order' => 1, 'space_id' => 999])->assertRedirect(route('teacher.course.editor', $course));
+    $this->post(route('teacher.space.plan.store', $space), ['name' => 'New plan', 'description' => 'Initial description', 'price' => 0, 'order' => 1, 'space_id' => 999])->assertRedirect(route('teacher.course.editor', $course));
     $plan = $space->plans()->where('name', 'New plan')->firstOrFail();
-    $this->assertDatabaseHas('plans', ['id' => $plan->id, 'space_id' => $space->id, 'order' => 10, 'price' => 0]);
-    $this->put(route('teacher.plan.update', $plan), ['name' => 'Edited plan', 'price' => 25000, 'order' => 2])->assertSessionHasNoErrors();
-    $this->assertDatabaseHas('plans', ['id' => $plan->id, 'name' => 'Edited plan', 'price' => 25000, 'order' => 2]);
+    $this->assertDatabaseHas('plans', ['id' => $plan->id, 'space_id' => $space->id, 'description' => 'Initial description', 'order' => 10, 'price' => 0]);
+    $this->put(route('teacher.plan.update', $plan), ['name' => 'Edited plan', 'description' => 'Edited description', 'price' => 25000, 'order' => 2])->assertSessionHasNoErrors();
+    $this->assertDatabaseHas('plans', ['id' => $plan->id, 'name' => 'Edited plan', 'description' => 'Edited description', 'price' => 25000, 'order' => 2]);
+    $this->get(route('teacher.course.editor', $course))->assertInertia(fn (Assert $page) => $page->loadDeferredProps(fn (Assert $reload) => $reload
+        ->where('overview.spaces.0.plans.0.description', 'Edited description')));
     $this->delete(route('teacher.plan.destroy', $plan))->assertRedirect(route('teacher.course.editor', $course));
     $this->assertModelMissing($plan);
+});
+
+test('plan rejects invalid descriptions without changing persisted values', function () {
+    [$course, $teacher, , , , $plan] = editorManagementData();
+    $plan->update(['description' => 'Original']);
+
+    $this->actingAs($teacher->user)->put(route('teacher.plan.update', $plan), ['name' => $plan->name, 'price' => $plan->price, 'description' => str_repeat('a', 4097)])->assertSessionHasErrors('description');
+
+    $this->assertDatabaseHas('plans', ['id' => $plan->id, 'description' => 'Original']);
 });
 
 test('structure creation appends after maximum order and returns the exact new selection', function () {

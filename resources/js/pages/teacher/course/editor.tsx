@@ -12,6 +12,7 @@ import CourseEditorLayout from '@/layouts/course-editor-layout';
 import { cn } from '@/lib/utils';
 import course_link, { editor } from '@/routes/teacher/course';
 import lessonRoutes from '@/routes/teacher/lesson';
+import { editor as quizEditor } from '@/routes/teacher/quiz';
 import section_link from '@/routes/teacher/section';
 import type {
     CourseEditorCourse,
@@ -20,7 +21,7 @@ import type {
     CourseEditorSelection,
     CourseEditorTab,
 } from '@/types/course-editor';
-import { Deferred, Head, router } from '@inertiajs/react';
+import { Deferred, Head, Link, router } from '@inertiajs/react';
 import {
     AlertCircle,
     Cloud,
@@ -40,6 +41,7 @@ const tabs = [
 export default function Editor(props: {
     course: CourseEditorCourse;
     overview?: CourseEditorOverview;
+    returnTo?: { tab: 'content' | 'spaces'; sectionId?: number; lessonId?: number; contentId?: number } | null;
 }) {
     return (
         <CourseEditorState key={props.course.id}>
@@ -51,14 +53,16 @@ export default function Editor(props: {
 function EditorWorkspace({
     course,
     overview,
+    returnTo,
 }: {
     course: CourseEditorCourse;
     overview?: CourseEditorOverview;
+    returnTo?: { tab: 'content' | 'spaces'; sectionId?: number; lessonId?: number; contentId?: number } | null;
 }) {
     const editorState = useCourseEditorState();
-    const [activeTab, setActiveTab] = useState<CourseEditorTab>('information');
+    const [activeTab, setActiveTab] = useState<CourseEditorTab>(returnTo?.tab ?? 'information');
     const [selection, setSelection] = useState<CourseEditorSelection | null>(
-        null,
+        returnTo?.sectionId && returnTo.lessonId && returnTo.contentId ? { kind: 'content', sectionId: returnTo.sectionId, lessonId: returnTo.lessonId, contentId: returnTo.contentId } : null,
     );
     const [loadFailed, setLoadFailed] = useState(false);
     const [saveStatus, setSaveStatus] =
@@ -549,6 +553,8 @@ function SidebarPanel({
                 />
             </div>
             <div hidden={activeTab !== 'content'}>
+                {selection?.kind === 'lesson' && overview.permissions.manage_commerce && <div className="space-y-2 rounded border p-3"><p>ساخت آزمونک برای این درس:</p>{overview.spaces.map((space) => <Link key={space.id} className="block underline" href={quizEditor(space.id, { query: { lesson: selection.lessonId } })}>{space.name}</Link>)}</div>}
+                {selection?.kind === 'content' && overview.permissions.manage_commerce && overview.sections.flatMap((section) => section.lessons).flatMap((lesson) => lesson.contents).filter((content) => content.id === selection.contentId && content.type === 'quiz').map((content) => overview.spaces.filter((space) => space.id === content.quiz_space_id).map((space) => <Link key={space.id} className="block rounded border p-3 underline" href={quizEditor(space.id, { query: { lesson: selection.lessonId, content: content.id } })}>ویرایش آزمونک</Link>))}
                 <CourseEditorItemForm
                     overview={overview}
                     selection={selection}

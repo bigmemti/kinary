@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth', 'verified', 'role:teacher'])->prefix('teacher')->name('teacher.')->group(function () {
     Route::get('course/{course}/editor', Teacher\CourseEditorController::class)->name('course.editor');
+    Route::get('space/{space}/quiz/editor', [Teacher\QuizEditorController::class, 'edit'])->name('quiz.editor');
+    Route::post('space/{space}/quiz/editor', [Teacher\QuizEditorController::class, 'save'])->name('quiz.save');
     Route::patch('course/{course}/editor/information', [Teacher\CourseEditorController::class, 'updateInformation'])->name('course.editor.information');
     Route::put('course/{course}/editor/teachers', [Teacher\CourseEditorController::class, 'updateTeachers'])->name('course.editor.teachers');
     Route::patch('lesson/{lesson}/editor', [Teacher\EditorLessonController::class, 'update'])->name('lesson.editor.update');

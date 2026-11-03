@@ -2,6 +2,7 @@
 
 use App\Enums\TeacherRole;
 use App\Models\Access;
+use App\Models\Category;
 use App\Models\Content;
 use App\Models\Course;
 use App\Models\Lesson;
@@ -23,7 +24,11 @@ test('each space includes only its related lessons and counts each accessible co
     $course = Course::factory()->create(['is_published' => true]);
     $firstSpace = Space::factory()->for($course)->create();
     $secondSpace = Space::factory()->for($course)->create();
-    $basic = Plan::factory()->for($firstSpace)->create(['name' => 'پایه', 'order' => 1, 'price' => 250000]);
+    $firstCategory = Category::create(['name' => 'First category']);
+    $secondCategory = Category::create(['name' => 'Second category']);
+    $firstSpace->categories()->attach($firstCategory);
+    $secondSpace->categories()->attach($secondCategory);
+    $basic = Plan::factory()->for($firstSpace)->create(['name' => 'پایه', 'description' => 'توضیح پلن پایه', 'order' => 1, 'price' => 250000]);
     $complete = Plan::factory()->for($firstSpace)->create(['name' => 'کامل', 'order' => 2]);
     $empty = Plan::factory()->for($firstSpace)->create(['name' => 'بدون محتوا', 'order' => 3]);
     $other = Plan::factory()->for($secondSpace)->create();
@@ -41,6 +46,9 @@ test('each space includes only its related lessons and counts each accessible co
 
     $this->get(route('course.show', $course->slug))->assertInertia(fn (Assert $page) => $page
         ->has('spaces', 2)->has('spaces.0.sections', 1)->has('spaces.0.sections.0.lessons', 1)
+        ->where('spaces.0.categories.0.slug', $firstCategory->slug)
+        ->where('spaces.1.categories.0.slug', $secondCategory->slug)
+        ->has('spaces.0.categories', 1)->has('spaces.1.categories', 1)
         ->where('spaces.0.sections.0.lessons.0.id', $sharedLesson->id)
         ->where('spaces.0.sections.0.lessons.0.contentsCount', 2)
         ->where('spaces.0.sections.0.lessons.0.planAccess', [
@@ -49,6 +57,7 @@ test('each space includes only its related lessons and counts each accessible co
             ['planId' => $empty->id, 'planName' => 'بدون محتوا', 'contentsCount' => 0],
         ])
         ->where('spaces.0.plans.0.price', 250000)
+        ->where('spaces.0.plans.0.description', 'توضیح پلن پایه')
         ->where('spaces.0.plans.0.contentsCount', 1)->where('spaces.0.plans.0.lessonsCount', 1)
         ->where('spaces.0.plans.1.contentsCount', 2)->where('spaces.0.plans.1.lessonsCount', 1)
         ->has('spaces.1.sections.0.lessons', 2)

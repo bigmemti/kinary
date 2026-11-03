@@ -1,3 +1,4 @@
+import { MarkdownContent } from '@/components/markdown-content';
 import {
     CourseCard,
     EmptyState,
@@ -41,9 +42,7 @@ export default function CategoryPage({
                 <p className="storefront-eyebrow">دسته‌بندی آموزش‌ها</p>
                 <h1 className="storefront-heading">دوره‌های {category.name}</h1>
                 {category.description && (
-                    <p className="mt-5 max-w-3xl leading-8 whitespace-pre-line opacity-80">
-                        {category.description}
-                    </p>
+                    <MarkdownContent className="mt-5 max-w-3xl leading-8 opacity-80">{category.description}</MarkdownContent>
                 )}
                 <Form
                     action={show(category.slug).url}

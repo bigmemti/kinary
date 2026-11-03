@@ -29,7 +29,7 @@ class StoreSpaceRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
-            'quiz_id' => 'nullable|integer|exists:quizzes,id',
+            'quiz_id' => 'nullable|prohibited',
             'category_ids' => 'sometimes|array',
             'category_ids.*' => 'integer|distinct|exists:categories,id',
             'new_category' => 'nullable|string|max:255|unique:categories,name',

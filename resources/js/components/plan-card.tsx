@@ -1,3 +1,4 @@
+import { MarkdownContent } from '@/components/markdown-content';
 import { persianNumber } from '@/components/storefront';
 import { login } from '@/routes';
 import { destroy } from '@/routes/cart';
@@ -8,6 +9,7 @@ import { ArrowLeft, BookOpen, Layers3 } from 'lucide-react';
 export interface PublicPlan {
     id: number;
     name: string;
+    description: string | null;
     price: number;
     payablePrice: number;
     action:
@@ -49,6 +51,9 @@ export default function PlanCard({ plan }: { plan: PublicPlan }) {
                     <span className="text-sm opacity-65">تومان</span>
                 )}
             </p>
+            {plan.description && (
+                <MarkdownContent className="mb-6 text-sm leading-8 opacity-80">{plan.description}</MarkdownContent>
+            )}
             {plan.upgradeFrom && !disabled && (
                 <p className="mb-6 text-sm leading-8">
                     ارتقا از {plan.upgradeFrom}؛ مبلغ قابل پرداخت:{' '}

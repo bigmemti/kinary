@@ -1,9 +1,12 @@
+import { MarkdownContent } from '@/components/markdown-content';
 import PlanCard, { type PublicPlan } from '@/components/plan-card';
 import { EmptyState, persianNumber, Storefront } from '@/components/storefront';
 import { nestedSections, type NestedSection } from '@/lib/section-tree';
 import { home } from '@/routes';
+import { show as categoryShow } from '@/routes/category';
 import { index } from '@/routes/course';
 import { show as teacherShow } from '@/routes/teacher';
+import { start as startQuiz } from '@/routes/student/quiz';
 import { Link } from '@inertiajs/react';
 import {
     ArrowDown,
@@ -32,6 +35,8 @@ interface PublicSection {
 interface PublicSpace {
     id: number;
     name: string;
+    quizId: number | null;
+    categories: { id: number; name: string; slug: string }[];
     plans: PublicPlan[];
     sections: PublicSection[];
 }
@@ -105,10 +110,10 @@ export default function CourseDetails({ course, spaces }: CoursePageProps) {
                             <h1 className="text-3xl leading-[1.7] font-bold sm:text-4xl">
                                 {course.title}
                             </h1>
-                            <p className="mt-5 text-sm leading-9 whitespace-pre-line opacity-80">
+                            <MarkdownContent className="mt-5 text-sm leading-9 opacity-80">
                                 {course.description ||
                                     'توضیحات این دوره هنوز ثبت نشده است.'}
-                            </p>
+                            </MarkdownContent>
                             <div className="mt-7 flex items-start gap-3 rounded-2xl border border-current/10 p-4">
                                 <GraduationCap
                                     className="size-6 shrink-0 text-[#687943] dark:text-[#d9e3ad]"
@@ -240,6 +245,33 @@ export default function CourseDetails({ course, spaces }: CoursePageProps) {
                         }
                         tabIndex={spaces.length > 1 ? 0 : undefined}
                     >
+                        {selectedSpace.quizId && <div className="mb-8 space-y-3"><h2 className="font-bold">آزمون پایانی</h2><Link method="post" as="button" className="storefront-button" href={startQuiz({ space: selectedSpace.id, quiz: selectedSpace.quizId })}>شرکت در آزمون پایانی</Link></div>}
+                        {selectedSpace.categories.length > 0 && (
+                            <nav
+                                aria-label="دسته‌بندی‌های فضای آموزشی"
+                                className="mb-8"
+                            >
+                                <p className="mb-3 text-sm font-bold">
+                                    دسته‌بندی‌های این فضای آموزشی
+                                </p>
+                                <ul className="flex flex-wrap gap-2">
+                                    {selectedSpace.categories.map(
+                                        (category) => (
+                                            <li key={category.id}>
+                                                <Link
+                                                    href={categoryShow(
+                                                        category.slug,
+                                                    )}
+                                                    className="inline-block rounded-xl border border-current/20 px-4 py-2 text-sm leading-7 hover:bg-black/5 dark:hover:bg-white/5"
+                                                >
+                                                    {category.name}
+                                                </Link>
+                                            </li>
+                                        ),
+                                    )}
+                                </ul>
+                            </nav>
+                        )}
                         <div className="mb-8 flex items-start gap-3">
                             <BookOpen
                                 className="mt-2 size-6 shrink-0 opacity-65"

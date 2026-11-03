@@ -1,7 +1,9 @@
+import { MarkdownContent } from '@/components/markdown-content';
 import { StudyOutline, StudyProgressBar } from '@/components/study-outline';
 import AppLayout from '@/layouts/app-layout';
 import { index } from '@/routes/student/enrollment';
 import { lesson as lessonRoute, visit } from '@/routes/student/study';
+import { start as startQuiz } from '@/routes/student/quiz';
 import type {
     StudyContent,
     StudyLesson,
@@ -34,11 +36,24 @@ function Reader({
     nextLesson,
 }: Props) {
     const visitStarted = useRef(false);
+    const quizStarted = useRef(false);
     const [saveStatus, setSaveStatus] = useState<'saving' | 'saved' | 'error'>(
         'saving',
     );
+    const isQuizOnly = contents.length === 1 && contents[0].type === 'quiz';
+    const displayedSaveStatus = isQuizOnly ? 'saved' : saveStatus;
 
     useEffect(() => {
+        const only = contents.length === 1 ? contents[0] : null;
+        if (quizStarted.current || only?.type !== 'quiz' || !only.quizId || only.latestScore != null) return;
+        quizStarted.current = true;
+        router.post(startQuiz.url({ space: space.id, quiz: only.quizId }), { content: only.id });
+    }, [contents, space.id]);
+
+    useEffect(() => {
+        if (isQuizOnly) {
+            return;
+        }
         if (visitStarted.current) {
             return;
         }
@@ -56,7 +71,7 @@ function Reader({
                 onCancel: () => setSaveStatus('error'),
             },
         );
-    }, [space.id, lesson.id]);
+    }, [space.id, lesson.id, isQuizOnly]);
 
     function retrySave() {
         setSaveStatus('saving');
@@ -114,13 +129,13 @@ function Reader({
                     </h1>
                     <StudyProgressBar {...space} />
                     <p role="status" className="text-sm leading-7 opacity-70">
-                        {saveStatus === 'saving'
+                        {displayedSaveStatus === 'saving'
                             ? 'در حال ثبت مطالعه…'
-                            : saveStatus === 'saved'
+                            : displayedSaveStatus === 'saved'
                               ? 'مطالعهٔ محتوای این درس ثبت شد.'
                               : 'ثبت مطالعه انجام نشد.'}
                     </p>
-                    {saveStatus === 'error' && (
+                    {displayedSaveStatus === 'error' && (
                         <button
                             type="button"
                             onClick={retrySave}
@@ -137,7 +152,7 @@ function Reader({
                                 key={content.id}
                                 className="min-w-0 space-y-4 rounded-3xl border border-current/10 bg-white/50 p-5 sm:p-8 dark:bg-white/5"
                             >
-                                <ContentBlock content={content} />
+                                <ContentBlock content={content} spaceId={space.id} />
                             </article>
                         ))}
                         <nav
@@ -184,21 +199,15 @@ function Reader({
     );
 }
 
-function ContentBlock({ content }: { content: StudyContent }) {
+function ContentBlock({ content, spaceId }: { content: StudyContent; spaceId: number }) {
     return (
         <>
             {content.description && (
-                <h2 className="text-lg leading-8 font-semibold">
-                    {content.description}
-                </h2>
+                <MarkdownContent className="text-lg leading-8 font-semibold">{content.description}</MarkdownContent>
             )}
+            {content.type === 'quiz' && content.quizId && <div className="space-y-4"><p>آزمون</p><h3>{content.name}</h3><MarkdownContent>{content.body ?? ''}</MarkdownContent>{content.latestScore !== null && content.latestScore !== undefined && <p>آخرین نتیجه: {Number(content.latestScore).toLocaleString('fa-IR')}</p>}<Link href={startQuiz.url({ space: spaceId, quiz: content.quizId })} method="post" data={{ content: content.id }} as="button" className="storefront-button">شروع آزمونک</Link></div>}
             {content.type === 'text' && (
-                <div
-                    dir="auto"
-                    className="leading-9 wrap-break-word whitespace-pre-wrap"
-                >
-                    {content.body}
-                </div>
+                <MarkdownContent className="leading-9">{content.body ?? ''}</MarkdownContent>
             )}
             {content.type === 'image' && content.url && (
                 <figure className="space-y-3">
@@ -265,7 +274,7 @@ function ContentBlock({ content }: { content: StudyContent }) {
             {content.type === 'remind' && content.target && (
                 <div className="space-y-4 border-r-2 border-[#8b9b5a] pr-4">
                     <p className="text-sm opacity-70">یادآوری</p>
-                    <ContentBlock content={content.target} />
+                    <ContentBlock content={content.target} spaceId={spaceId} />
                 </div>
             )}
             {content.type === 'unavailable' && (

@@ -81,6 +81,7 @@ export interface CourseEditorSpace {
 export interface CourseEditorPlan {
     id: number;
     name: string;
+    description: string | null;
     price: number;
     order: number;
     enrollments_count: number;
@@ -92,7 +93,8 @@ export interface CourseEditorContent {
     id: number;
     description: string | null;
     order: number;
-    type: 'text' | 'image' | 'video' | 'file' | 'table' | 'remind' | 'unknown';
+    type: 'text' | 'image' | 'video' | 'file' | 'table' | 'remind' | 'quiz' | 'unknown';
+    quiz_space_id: number | null;
     body: string | null;
     name: string | null;
     url: string | null;

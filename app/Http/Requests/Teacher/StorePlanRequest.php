@@ -29,6 +29,7 @@ class StorePlanRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
+            'description' => 'nullable|string|max:4096',
             'price' => 'required|integer|min:0|max:4294967295',
             'order' => 'sometimes|integer|min:0|max:32767',
         ];

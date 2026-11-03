@@ -1,6 +1,7 @@
 <?php
 
 use App\Enums\TeacherRole;
+use App\Http\Controllers\CertificateController;
 use App\Http\Controllers\Frontend\CategoryController;
 use App\Http\Controllers\Frontend\CourseController;
 use App\Http\Controllers\Frontend\HomeController;
@@ -16,6 +17,7 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::resource('course', CourseController::class)->only(['index', 'show'])->scoped(['course' => 'slug']);
 Route::get('/categories/{category:slug}', [CategoryController::class, 'show'])->name('category.show');
 Route::get('/teachers/{teacher}', [TeacherController::class, 'show'])->name('teacher.show');
+Route::get('/certificate/{token}', [CertificateController::class, 'show'])->name('certificate.show');
 
 require __DIR__.'/admin.php';
 require __DIR__.'/dashboard.php';

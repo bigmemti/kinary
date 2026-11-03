@@ -22,6 +22,7 @@ class CoursePageService
     {
         $course->load([
             'teachers.user:id,name',
+            'spaces.categories:id,name,slug',
             'spaces.plans' => fn (HasMany $query): HasMany => $query->orderBy('order')->orderBy('id'),
             'sections' => fn (HasMany $query): HasMany => $query->orderBy('order')->orderBy('id'),
             'sections.lessons' => fn (HasMany $query): HasMany => $query->orderBy('order')->orderBy('id'),
@@ -78,6 +79,8 @@ class CoursePageService
         return [
             'id' => $space->id,
             'name' => $space->name,
+            'quizId' => $space->quiz_id,
+            'categories' => $space->categories->map(fn ($category): array => $category->only(['id', 'name', 'slug']))->all(),
             'sections' => app(SectionTree::class)->visible($sections->all()),
             'plans' => $space->plans->map(function (Plan $plan) use ($lessonAccess, $current, $cartPlanId): array {
                 $access = $lessonAccess->where('planId', $plan->id);
@@ -94,6 +97,7 @@ class CoursePageService
                 return [
                     'id' => $plan->id,
                     'name' => $plan->name,
+                    'description' => $plan->description,
                     'price' => $plan->price,
                     'payablePrice' => max(0, $plan->price - ($current?->price ?? 0)),
                     'action' => $action,

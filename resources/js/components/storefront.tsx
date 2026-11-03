@@ -1,4 +1,5 @@
 import AppLogoIcon from '@/components/app-logo-icon';
+import { MarkdownContent } from '@/components/markdown-content';
 import {
     Dialog,
     DialogContent,
@@ -360,9 +361,7 @@ export function CourseCard({ course }: { course: PublicCourse }) {
                     <h3 className="mt-3 text-lg leading-8 font-bold">
                         {course.title}
                     </h3>
-                    <p className="mt-2 line-clamp-2 text-sm leading-7 opacity-70">
-                        {course.description}
-                    </p>
+                    {course.description && <MarkdownContent links={false} className="mt-2 line-clamp-2 text-sm leading-7 opacity-70">{course.description}</MarkdownContent>}
                     <span className="mt-6 flex items-center justify-between border-t border-current/10 pt-4 text-sm font-semibold">
                         مشاهده دوره
                         <ArrowLeft

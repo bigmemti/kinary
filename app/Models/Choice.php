@@ -6,5 +6,5 @@ use Illuminate\Database\Eloquent\Model;
 
 class Choice extends Model
 {
-    //
+    protected $fillable = ['body', 'is_correct'];
 }

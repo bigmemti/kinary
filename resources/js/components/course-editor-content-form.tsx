@@ -3,14 +3,15 @@ import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
+import { RichTextEditor as Textarea } from '@/components/rich-text-editor';
 import { destroy, update } from '@/routes/teacher/content/editor';
+import { editor as quizEditor } from '@/routes/teacher/quiz';
 import type {
     CourseEditorContent,
     CourseEditorOverview,
     CourseEditorSaveStatus,
 } from '@/types/course-editor';
-import { router, useForm } from '@inertiajs/react';
+import { Link, router, useForm } from '@inertiajs/react';
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 
 const labels = {
@@ -20,6 +21,7 @@ const labels = {
     file: 'فایل',
     table: 'جدول',
     remind: 'ارجاع / یادآوری',
+    quiz: 'آزمونک',
 };
 
 function values(content: CourseEditorContent) {
@@ -63,6 +65,7 @@ export default function CourseEditorContentForm({
     const plans = overview.spaces.flatMap((space) =>
         space.plans.map((plan) => ({ ...plan, spaceName: space.name })),
     );
+    const lesson = overview.sections.flatMap((section) => section.lessons).find((item) => item.contents.some((itemContent) => itemContent.id === content.id));
     const targets = overview.sections.flatMap((section) =>
         section.lessons.flatMap((lesson) =>
             lesson.contents
@@ -73,10 +76,15 @@ export default function CourseEditorContentForm({
                 })),
         ),
     );
-    useCourseEditorDirty(form.isDirty);
+    const originalValues = values(content);
+    const isDirty = form.data.type === 'quiz' && content.type !== 'quiz'
+        ? Boolean(form.data.image_file || form.data.content_file) ||
+          JSON.stringify({ ...form.data, type: originalValues.type }) !== JSON.stringify(originalValues)
+        : form.isDirty;
+    useCourseEditorDirty(isDirty);
     useEffect(() => {
-        onDirty(form.isDirty);
-    }, [form.isDirty, onDirty]);
+        onDirty(isDirty);
+    }, [isDirty, onDirty]);
     useEffect(() => () => onDirty(false), [onDirty]);
 
     function submit(event: FormEvent) {
@@ -186,6 +194,15 @@ export default function CourseEditorContentForm({
                     </select>
                     <InputError message={errors.type} />
                 </div>
+                {form.data.type === 'quiz' && (
+                    <div className="space-y-2 rounded-lg border p-3">
+                        <p className="text-sm leading-7">برای ایجاد آزمونک، فضای آموزشی آن را انتخاب کنید.</p>
+                        {overview.permissions.manage_commerce && lesson ? overview.spaces.map((space) => (
+                            <Link key={space.id} className="block rounded-md border p-2 text-sm" href={quizEditor(space.id, { query: { lesson: lesson.id, content: content.id } })}>ایجاد آزمون جدید در {space.name}</Link>
+                        )) : <p className="text-sm">ساخت آزمونک به دسترسی مدیریت پلن‌ها نیاز دارد.</p>}
+                        {overview.spaces.length === 0 && <p className="text-sm">ابتدا یک فضای آموزشی ایجاد کنید.</p>}
+                    </div>
+                )}
                 <div className="space-y-2">
                     <Label htmlFor="content-description">توضیحات</Label>
                     <Textarea
@@ -619,7 +636,7 @@ export default function CourseEditorContentForm({
                         بارگذاری: {form.progress.percentage}٪
                     </p>
                 )}
-                <Button className="w-full" disabled={busy} type="submit">
+                <Button className="w-full" disabled={busy || form.data.type === 'quiz'} type="submit">
                     {form.processing ? 'در حال ذخیره…' : 'ذخیره محتوا'}
                 </Button>
             </fieldset>

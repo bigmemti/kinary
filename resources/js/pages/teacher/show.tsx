@@ -1,3 +1,4 @@
+import { MarkdownContent } from '@/components/markdown-content';
 import {
     CourseCard,
     EmptyState,
@@ -23,9 +24,7 @@ export default function TeacherPage({
                 <p className="storefront-eyebrow">مدرس آکادمی</p>
                 <h1 className="storefront-heading">{teacher.name}</h1>
                 {teacher.description && (
-                    <p className="mt-5 max-w-3xl leading-8 whitespace-pre-line opacity-80">
-                        {teacher.description}
-                    </p>
+                    <MarkdownContent className="mt-5 max-w-3xl leading-8 opacity-80">{teacher.description}</MarkdownContent>
                 )}
                 <h2 className="mt-12 text-2xl font-bold">دوره‌های مدرس</h2>
                 {courses.length ? (

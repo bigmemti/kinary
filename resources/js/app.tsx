@@ -29,7 +29,10 @@ createInertiaApp({
         });
         const app = <StrictMode><App {...props} /></StrictMode>
 
-        const root = (el.hasChildNodes()) ? hydrateRoot(el, app) : createRoot(el).render(app);
+        if(el.hasChildNodes())    
+            hydrateRoot(el, app) 
+        else 
+        createRoot(el).render(app);
     },
     progress: {
         color: '#4B5563',

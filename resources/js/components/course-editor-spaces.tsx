@@ -3,16 +3,18 @@ import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { RichTextEditor as Textarea } from '@/components/rich-text-editor';
 import courseRoutes from '@/routes/teacher/course';
 import planRoutes from '@/routes/teacher/plan';
 import spaceRoutes from '@/routes/teacher/space';
+import { editor as quizEditor } from '@/routes/teacher/quiz';
 import type {
     CourseEditorOverview,
     CourseEditorPlan,
     CourseEditorSaveStatus,
     CourseEditorSpace,
 } from '@/types/course-editor';
-import { router, useForm } from '@inertiajs/react';
+import { Link, router, useForm } from '@inertiajs/react';
 import { Pencil, Plus, Trash2 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
@@ -154,6 +156,7 @@ export default function CourseEditorSpaces({
                         )}
                     </header>
                     <div className="space-y-3 p-3">
+                        {canManage && <Link className="block rounded border p-2 text-sm" href={quizEditor(space.id)}>{space.quiz_id ? 'ویرایش آزمون پایانی' : 'ساخت آزمون پایانی'}</Link>}
                         {space.plans.map((plan) => (
                             <div
                                 key={plan.id}
@@ -292,6 +295,8 @@ function CommerceForm({
 }) {
     const form = useForm({
         name: target.item?.name ?? '',
+        description:
+            target.kind === 'plan' ? (target.item?.description ?? '') : '',
         price: target.kind === 'plan' ? String(target.item?.price ?? '') : '',
         order: target.kind === 'plan' ? String(target.item?.order ?? '') : '',
         quiz_id:
@@ -343,6 +348,7 @@ function CommerceForm({
                   }
                 : {
                       name: data.name,
+                      description: data.description,
                       price: data.price,
                       ...(target.item ? { order: data.order } : {}),
                   },
@@ -396,6 +402,7 @@ function CommerceForm({
                             </Label>
                             <select
                                 id="commerce-quiz"
+                                disabled
                                 className="h-10 w-full rounded-md border bg-background px-3 text-sm"
                                 value={form.data.quiz_id}
                                 onChange={(e) =>
@@ -403,12 +410,14 @@ function CommerceForm({
                                 }
                             >
                                 <option value="">بدون آزمون</option>
-                                {quizzes.map((quiz) => (
+                                {quizzes.filter((quiz) => quiz.id === target.item?.quiz_id).map((quiz) => (
                                     <option key={quiz.id} value={quiz.id}>
                                         آزمون {quiz.id} · نمره {quiz.score}
                                     </option>
                                 ))}
                             </select>
+                            <p className="text-xs text-muted-foreground">برای ساخت یا ویرایش آزمون پایانی از دکمه آزمون در کارت همین فضا استفاده کنید.</p>
+                            {target.item && <Link className="block rounded border p-2 text-sm" href={quizEditor(target.item.id)}>ایجاد یا ویرایش آزمون پایانی</Link>}
                             <InputError message={form.errors.quiz_id} />
                         </div>
                         <div className="space-y-2">
@@ -480,6 +489,25 @@ function CommerceForm({
                     </>
                 ) : (
                     <>
+                        <div className="space-y-2">
+                            <Label htmlFor="commerce-description">
+                                توضیحات پلن (اختیاری)
+                            </Label>
+                            <Textarea
+                                id="commerce-description"
+                                value={form.data.description}
+                                maxLength={4096}
+                                rows={4}
+                                onChange={(event) =>
+                                    form.setData(
+                                        'description',
+                                        event.target.value,
+                                    )
+                                }
+                                aria-invalid={!!form.errors.description}
+                            />
+                            <InputError message={form.errors.description} />
+                        </div>
                         <div className="space-y-2">
                             <Label htmlFor="commerce-price">
                                 قیمت پلن (تومان)

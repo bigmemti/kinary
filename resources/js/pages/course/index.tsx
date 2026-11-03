@@ -22,7 +22,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
+import { RichTextEditor as Textarea } from '@/components/rich-text-editor';
 import AppLayout from '@/layouts/app-layout';
 import { dashboard } from '@/routes';
 import { destroy, index, show, store } from '@/routes/admin/course';

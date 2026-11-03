@@ -6,7 +6,7 @@ import {
 import InputError from '@/components/input-error';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
+import { RichTextEditor as Textarea } from '@/components/rich-text-editor';
 import categoryRoutes from '@/routes/admin/category';
 import { Form } from '@inertiajs/react';
 

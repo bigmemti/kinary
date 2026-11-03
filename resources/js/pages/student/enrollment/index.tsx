@@ -4,6 +4,7 @@ import AppLayout from '@/layouts/app-layout';
 import { dashboard } from '@/routes';
 import { index } from '@/routes/student/enrollment';
 import { lesson } from '@/routes/student/study';
+import { show as showAttempt, start as startQuiz } from '@/routes/student/quiz';
 import { BreadcrumbItem } from '@/types';
 import type { StudySpace } from '@/types/study';
 import { Head, Link, usePage } from '@inertiajs/react';
@@ -66,6 +67,33 @@ export default function Index({ spaces }: { spaces: StudySpace[] }) {
                                 </p>
                             </div>
                             <StudyProgressBar {...space} />
+                            {space.quizzes.length > 0 && (
+                                <details className="border-t border-current/10 pt-4">
+                                    <summary className="cursor-pointer rounded-xl py-2 font-semibold focus-visible:outline-2 focus-visible:outline-[#8b9b5a]">آزمون‌ها و سابقهٔ شرکت</summary>
+                                    <div className="space-y-4 pt-4">
+                                        {space.quizzes.map((quiz) => (
+                                            <section key={quiz.id} className="space-y-3 rounded-2xl border border-current/10 p-4">
+                                                <h3 className="font-semibold">{quiz.final ? 'آزمون پایانی' : 'آزمونک'}: {quiz.title}</h3>
+                                                <p className="text-sm">تعداد شرکت: {persianNumber(quiz.attempts.length)} از {quiz.limit === null ? 'نامحدود' : persianNumber(quiz.limit)}</p>
+                                                {quiz.attempts.length === 0 ? <p className="text-sm opacity-70">هنوز در این آزمون شرکت نکرده‌اید.</p> : (
+                                                    <ul className="space-y-2 text-sm">
+                                                        {quiz.attempts.map((attempt) => (
+                                                            <li key={attempt.id}>
+                                                                <Link className="underline underline-offset-4" href={showAttempt(attempt.id)}>
+                                                                    {attempt.startedAt ? new Date(attempt.startedAt).toLocaleString('fa-IR') : 'شرکت قبلی'} · {attempt.finished ? `نتیجه: ${persianNumber(Number(attempt.score))}` : 'ادامهٔ آزمون'}
+                                                                </Link>
+                                                            </li>
+                                                        ))}
+                                                    </ul>
+                                                )}
+                                                {!quiz.attempts.some((attempt) => !attempt.finished) && quiz.canStart && (
+                                                    <Link as="button" method="post" href={startQuiz.url({ space: space.id, quiz: quiz.id })} data={quiz.contentId ? { content: quiz.contentId } : {}} className="storefront-button">شرکت در آزمون</Link>
+                                                )}
+                                            </section>
+                                        ))}
+                                    </div>
+                                </details>
+                            )}
                             {space.resumeLessonId !== null && (
                                 <Link
                                     href={lesson({
