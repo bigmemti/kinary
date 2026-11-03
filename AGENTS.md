@@ -1,3 +1,11 @@
+## Git commits — mandatory for every agent
+
+- Create commits only when the user explicitly requests them. Inspect the working tree and staged diff before committing, including changes that predate the current task.
+- Split changes into small, independently understandable commits, each covering one coherent purpose. Do not group unrelated features, fixes, refactors, dependency updates, or generated graph files into one commit merely because they were changed together.
+- A commit must touch at most 10 files, counting added, modified, renamed, and deleted files. Never exceed this limit without the user's explicit approval for that specific commit. If a change cannot be split safely within the limit, stop and explain the constraint rather than making a larger commit.
+- Stage specific paths or individual hunks; do not use blanket staging such as `git add .` or `git add -A` for the whole project. Split mixed-purpose files by hunk when necessary, and preserve unrelated changes.
+- Review `git diff --cached --stat` and `git diff --cached` before each commit, verify the file limit and purpose, and use a specific commit message. Keep generated graph updates in a separate commit, subject to the same file limit.
+
 ## Theme — read before UI work
 
 Before creating or editing any user-facing page or component, read [THEME.md](THEME.md) and follow its Persian/RTL design, palette, shared components, and course access presentation rules. Preserve this theme unless the user explicitly requests a change.
