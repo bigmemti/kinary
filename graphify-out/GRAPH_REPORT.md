@@ -1,17 +1,17 @@
-# Graph Report - kinary  (2026-11-03)
+# Graph Report - kinary  (2026-11-04)
 
 ## Corpus Check
-- 611 files · ~133,917 words
+- 611 files · ~134,392 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 24 file(s) not represented in the graph (top: (none) 18, .mdc 1, .example 1)
 
 ## Summary
-- 3828 nodes · 10779 edges · 210 communities (120 shown, 90 thin omitted)
+- 3832 nodes · 10789 edges · 224 communities (133 shown, 91 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS · INFERRED: 40 edges (avg confidence: 0.88)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `bd5a364d`
+- Built from commit: `a56af7f6`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -19,79 +19,83 @@
 - User
 - Illuminate\Database\Eloquent\Model
 - Illuminate\Database\Schema\Blueprint
-- app-layout.tsx
+- @inertiajs/react
 - Illuminate\Foundation\Http\FormRequest
 - Lesson
 - app-header.tsx
-- resources_js_routes_index_dashboard
-- CourseEditorManagementTest.php
+- app-layout.tsx
+- Category
 - ButtonLink
-- course-editor-information.tsx
+- Illuminate\Http\RedirectResponse
 - react
-- @inertiajs/react
-- Button
+- ResponsiveDataList
+- course/editor.tsx
 - DashboardHeader
 - layout.tsx
 - package.json
 - dependencies
-- Space
+- Plan
 - two-factor-recovery-codes.tsx
-- admin/section/show.tsx
+- lucide-react
 - storefront.tsx
 - DashboardContainer
 - pages/course/index.tsx
 - Inertia\Testing\AssertableInertia
-- ResponsiveDataList
+- FormButton
 - category/index.tsx
-- OrderController.php
+- StoreOrderRequest
 - CourseEditorController.php
 - AGENTS.md
 - ui/pagination.tsx
-- Illuminate\Validation\Rule
+- SaveEditorContentRequest.php
 - Transaction
 - StudyService.php
 - UserFactory.php
 - breadcrumbs.tsx
 - Order
 - InputError
-- alert.tsx
+- Quiz
 - forms.tsx
 - Configuration Best Practices
-- StoreTeacherRequest
-- AuthenticationTest.php
+- TeacherController
+- TwoFactorAuthenticationTest.php
 - components/dashboard.tsx
 - Wallet
 - .request
 - Student
-- StoreSectionRequest
+- Controller
 - dropdown-menu.tsx
 - Inertia React Development
-- app-sidebar.tsx
+- Space
+- sidebar.tsx
 - index.d.ts
 - PasswordResetTest.php
+- form-button.tsx
 - components.json
 - Content
 - Enrollment
-- Laravel Fortify Development
+- AppServiceProvider.php
 - compilerOptions
-- CartService
+- CartService.php
 - 2026_07_08_203310_change_foreign_key_in_transactions_table.php
 - UserController.php
-- Error Handling Best Practices
+- Section
 - Illuminate\Database\Migrations\Migration
-- AppServiceProvider.php
+- wallet/show.tsx
 - bootstrap/app.php
 - devDependencies
-- ref_types
-- FortifyServiceProvider.php
-- Illuminate\Contracts\Validation\ValidationRule
+- teacher/course/show.tsx
+- CreateNewUser.php
+- Admin/ContentController.php
+- StudyService
 - CartPaymentTest.php
 - Detection Checklist
 - Architecture Best Practices
 - Security Best Practices
 - Tailwind CSS Development
 - Illuminate\Support\Facades\Schema
-- use-appearance.tsx
+- CourseEditorContentTest.php
+- teacher/plan/show.tsx
 - require-dev
 - scripts
 - Advanced Query Best Practices
@@ -109,11 +113,12 @@
 - Queue and Job Best Practices
 - laravel-best-practices/SKILL.md
 - Blade and View Best Practices
-- pages/dashboard.tsx
+- ref_types
 - Task Scheduling Best Practices
 - Endpoint Tests
 - scripts
 - Illuminate\Database\Eloquent\Factories\HasFactory
+- AdminTransactionTest.php
 - config
 - Collection Best Practices
 - HTTP Client Best Practices
@@ -126,15 +131,17 @@
 - Fakes, Mocks, and Determinism
 - Test Suite Performance
 - Reviewing Tests
-- Controller
-- app.tsx
+- Illuminate\Http\Request
+- Teacher/SpaceController.php
 - 2026_07_08_201813_add_quiz_id_to_spaces_table.php
 - CourseEditorManagementTest.mjs
 - 2026_07_08_202218_add_price_to_order_plan_table.php
 - Naming and Structure
 - 2026_10_26_213920_add_study_visit_to_enrollments_table.php
 - OrderStatus
-- Illuminate\Database\Seeder
+- Pest.php
+- Teacher/LessonController.php
+- use-appearance.tsx
 - psr-4
 - 2026_11_02_212821_add_description_to_plans_table.php
 - Factories and Test Data
@@ -144,12 +151,13 @@
 - cn
 - 2026_07_08_141941_create_choices_table.php
 - 2026_10_31_215610_add_slug_to_categories_table.php
-- UpdateContentRequest
+- Teacher/ContentController.php
 - 0001_01_01_000001_create_cache_table.php
 - 2026_07_08_085839_remove_teacher_id_column_form_courses_table.php
 - 2026_05_08_135021_create_plan_user_table.php
 - 2026_07_08_140918_create_quizzes_table.php
-- UpdateEditorCourseRequest
+- Teacher/CourseController.php
+- Illuminate\Validation\Rule
 - 2026_05_13_104409_create_orders_table.php
 - Course
 - 2026_07_08_091534_add_status_column_to_enrollments_table.php
@@ -157,12 +165,11 @@
 - 2026_07_08_135248_create_learning_paths_table.php
 - 2026_07_08_202046_add_amount_to_orders_table.php
 - 2026_07_08_142444_create_attempts_table.php
-- use-breakpoint.tsx
+- AppLogoIcon
 - 2026_07_09_180421_create_exercises_table.php
 - 2026_07_09_194612_create_cards_table.php
 - rich-text-editor.tsx
 - 2026_05_13_093645_create_contents_table.php
-- optionalDependencies
 - 2026_07_09_200628_create_video_contents_table.php
 - 2026_04_27_170109_create_courses_table.php
 - 2025_08_26_100418_add_two_factor_columns_to_users_table.php
@@ -183,16 +190,18 @@
 - 2026_05_13_104418_create_order_plan_table.php
 - 2026_07_09_193739_create_submissions_table.php
 - AuthenticationLocalizationTest.php
-- StoreContentRequest
+- StoreLessonContentRequest
+- CourseSpaceController.php
 - 2026_07_09_200633_create_table_contents_table.php
 - 2026_07_08_150532_create_grades_table.php
 - 2026_07_09_161634_create_discussions_table.php
 - 2026_07_09_161954_create_replays_table.php
-- UpdateLessonRequest
+- TwoFactorAuthenticationRequest
 - 2026_07_09_200512_create_text_contents_table.php
 - 2026_07_09_200517_create_image_contents_table.php
 - 2026_07_08_092353_create_progress_table.php
 - 2026_07_09_194540_create_decks_table.php
+- StoreCourseRequest
 - 2026_07_09_194717_create_card_student_table.php
 - 2026_07_08_134336_create_pricings_table.php
 - 2026_07_08_134755_create_category_space_table.php
@@ -201,26 +210,30 @@
 - 2026_07_08_141039_create_questions_table.php
 - 2026_07_08_203055_create_ledgers_table.php
 - 2026_07_08_143234_create_answers_table.php
-- UpdateSpaceRequest
+- StoreCourseRequest
+- PageDirectionTest.php
 - SectionTree
+- Error Handling Best Practices
+- optionalDependencies
+- app.tsx
 
 ## God Nodes (most connected - your core abstractions)
 1. `User` - 239 edges
-2. `Course` - 222 edges
+2. `Course` - 224 edges
 3. `DashboardHeader()` - 192 edges
 4. `DashboardContainer()` - 177 edges
 5. `cn()` - 169 edges
 6. `@inertiajs/react` - 152 edges
-7. `Teacher` - 122 edges
+7. `Teacher` - 124 edges
 8. `Space` - 115 edges
 9. `Plan` - 114 edges
 10. `ButtonLink()` - 110 edges
 
 ## Surprising Connections (you probably didn't know these)
-- `Custom Authentication Logic` --references--> `AppServiceProvider`  [INFERRED]
-  .cursor/skills/fortify-development/SKILL.md → app/Providers/AppServiceProvider.php
 - `هویت و زبان` --references--> `persianNumber()`  [INFERRED]
   THEME.md → resources/js/components/storefront.tsx
+- `Custom Authentication Logic` --references--> `AppServiceProvider`  [INFERRED]
+  .cursor/skills/fortify-development/SKILL.md → app/Providers/AppServiceProvider.php
 - `Choose Where to Report and Render Exceptions` --references--> `render()`  [INFERRED]
   .cursor/skills/laravel-best-practices/rules/error-handling.md → tests/Unit/CourseEditorInformationTest.mjs
 - `{closure#1}()` --calls--> `Content`  [EXTRACTED]
@@ -231,195 +244,207 @@
 ## Import Cycles
 - None detected.
 
-## Communities (210 total, 90 thin omitted)
+## Communities (224 total, 91 thin omitted)
 
 ### Community 0 - "User"
 Cohesion: 0.04
-Nodes (28): UserController, User, UserObserver, PlanPolicy, SpacePolicy, {closure#1}(), {closure#2}(), {closure#3}() (+20 more)
+Nodes (34): UserController, User, UserObserver, SpacePolicy, {closure#2}(), {closure#3}(), {closure#4}(), {closure#5}() (+26 more)
 
 ### Community 1 - "Illuminate\Database\Eloquent\Model"
-Cohesion: 0.03
-Nodes (36): FinishExpiredQuizAttempts, ProgressStatus, Cloned, Read, Unread, Answer, Assignment, Attempt (+28 more)
+Cohesion: 0.04
+Nodes (27): ProgressStatus, Cloned, Read, Unread, Answer, Assignment, Card, Choice (+19 more)
 
 ### Community 2 - "Illuminate\Database\Schema\Blueprint"
 Cohesion: 0.06
 Nodes (35): {closure#1}(), {closure#2}(), {closure#3}(), {closure#1}(), {closure#2}(), {closure#3}(), {closure#4}(), {closure#1}() (+27 more)
 
-### Community 3 - "app-layout.tsx"
+### Community 3 - "@inertiajs/react"
 Cohesion: 0.08
-Nodes (18): AppLayoutProps, Edit(), EditContentForm(), Index(), ResponsiveSectionList(), SectionActions(), Create(), ContentActions() (+10 more)
+Nodes (24): @inertiajs/react, Edit(), EditContentForm(), Index(), ResponsiveSectionList(), SectionActions(), ContentActions(), Index() (+16 more)
 
 ### Community 4 - "Illuminate\Foundation\Http\FormRequest"
-Cohesion: 0.05
-Nodes (12): SaveCategoryRequest, StoreCourseSpaceRequest, StoreLessonContentRequest, StoreSectionLessonRequest, StoreTeacherCourseRequest, StoreWalletOrderRequest, ProfileUpdateRequest, StoreContentRequest (+4 more)
+Cohesion: 0.06
+Nodes (12): StoreCourseSpaceRequest, StoreLessonRequest, StoreSectionLessonRequest, StoreSpacePlanRequest, StoreTeacherCourseRequest, StoreWalletOrderRequest, UpdateLessonRequest, UpdateOrderRequest (+4 more)
 
 ### Community 5 - "Lesson"
-Cohesion: 0.04
-Nodes (25): LessonContentController, LessonController, SectionController, SectionLessonController, ContentController, {closure#2}(), {closure#3}(), {closure#4}() (+17 more)
+Cohesion: 0.05
+Nodes (20): LessonController, ContentController, {closure#17}(), {closure#8}(), Lesson, {closure#8}(), AdminSeeder, {closure#1}() (+12 more)
 
 ### Community 6 - "app-header.tsx"
-Cohesion: 0.15
+Cohesion: 0.16
 Nodes (25): @radix-ui/react-avatar, AppHeader(), AppHeaderProps, mainNavItems, rightNavItems, Avatar(), AvatarFallback(), AvatarImage() (+17 more)
 
-### Community 7 - "resources_js_routes_index_dashboard"
-Cohesion: 0.10
-Nodes (16): breadcrumbs, Create(), CreateCourseForm(), Edit(), EditCourseForm(), breadcrumbs, CourseActions(), Index() (+8 more)
+### Community 7 - "app-layout.tsx"
+Cohesion: 0.08
+Nodes (19): AppLayoutProps, breadcrumbs, Create(), CreateCourseForm(), Edit(), EditCourseForm(), breadcrumbs, CourseActions() (+11 more)
 
-### Community 8 - "CourseEditorManagementTest.php"
-Cohesion: 0.14
-Nodes (26): {closure#1}(), {closure#10}(), {closure#11}(), {closure#12}(), {closure#13}(), {closure#14}(), {closure#15}(), {closure#16}() (+18 more)
+### Community 8 - "Category"
+Cohesion: 0.07
+Nodes (44): {closure#25}(), Category, {closure#1}(), {closure#10}(), {closure#11}(), {closure#12}(), {closure#14}(), {closure#15}() (+36 more)
 
 ### Community 9 - "ButtonLink"
-Cohesion: 0.05
-Nodes (83): ButtonLink(), ActionButtonContainer(), DataContainer(), InfoBlock(), orderedSections(), visit(), CourseActions(), CourseMeta() (+75 more)
+Cohesion: 0.11
+Nodes (44): ButtonLink(), CheckX(), ActionButtonContainer(), DataContainer(), InfoBlock(), ContentActions(), ContentMeta(), Show() (+36 more)
 
-### Community 10 - "course-editor-information.tsx"
-Cohesion: 0.22
-Nodes (21): CourseEditorInformation(), submit(), Field(), FormFeedback(), informationValues(), roleLabels, TeacherSettings(), useCourseEditorDirty() (+13 more)
+### Community 10 - "Illuminate\Http\RedirectResponse"
+Cohesion: 0.07
+Nodes (11): CourseEditorController, {closure#1}(), EditorLessonController, {closure#2}(), {closure#3}(), PlanController, {closure#3}(), QuizEditorController (+3 more)
 
 ### Community 11 - "react"
-Cohesion: 0.09
-Nodes (21): input-otp, react, GridScanIcon(), TwoFactorSetupModalProps, TwoFactorSetupStep(), TwoFactorVerificationStep(), InputOTP, InputOTPGroup (+13 more)
+Cohesion: 0.13
+Nodes (29): input-otp, react, DeleteUser(), GridScanIcon(), TwoFactorSetupModal(), TwoFactorSetupModalProps, TwoFactorVerificationStep(), buttonVariants (+21 more)
 
-### Community 12 - "@inertiajs/react"
-Cohesion: 0.07
-Nodes (28): @inertiajs/react, lucide-react, Column, Props, breadcrumbs, Create(), CreateEnrollmentForm(), Edit() (+20 more)
+### Community 12 - "ResponsiveDataList"
+Cohesion: 0.08
+Nodes (35): Column, DataCard(), DataTable(), Props, ResponsiveDataList(), useIsLarge, Index(), PlanActions() (+27 more)
 
-### Community 13 - "Button"
+### Community 13 - "course/editor.tsx"
 Cohesion: 0.06
-Nodes (45): @radix-ui/react-collapsible, CourseEditorContentForm(), submit(), labels, values(), CourseEditorItemForm(), ItemForm(), CourseEditorSpaces() (+37 more)
+Nodes (42): @radix-ui/react-collapsible, CourseEditorContentForm(), submit(), labels, values(), CourseEditorItemForm(), ItemForm(), CourseEditorSpaces() (+34 more)
 
 ### Community 14 - "DashboardHeader"
-Cohesion: 0.11
-Nodes (21): DashboardHeader(), breadcrumbs, Create(), CreateOrderForm(), breadcrumbs, Create(), CreateStudentForm(), Edit() (+13 more)
+Cohesion: 0.08
+Nodes (33): DashboardHeader(), breadcrumbs, Create(), CreateEnrollmentForm(), Edit(), EditEnrollmentForm(), breadcrumbs, EnrollmentActions() (+25 more)
 
 ### Community 15 - "layout.tsx"
-Cohesion: 0.12
-Nodes (13): @headlessui/react, Heading(), HeadingSmall(), LinkProps, TextLink(), SettingsLayout(), sidebarNavItems, VerifyEmail() (+5 more)
+Cohesion: 0.08
+Nodes (17): @headlessui/react, Heading(), HeadingSmall(), TwoFactorSecretKey, TwoFactorSetupData, useTwoFactorAuth(), SettingsLayout(), sidebarNavItems (+9 more)
 
 ### Community 16 - "package.json"
 Cohesion: 0.05
-Nodes (42): private, $schema, type, alpinejs, babel-plugin-react-compiler, @base-ui/react, clsx, concurrently (+34 more)
+Nodes (46): private, $schema, type, alpinejs, babel-plugin-react-compiler, @base-ui/react, clsx, concurrently (+38 more)
 
 ### Community 17 - "dependencies"
 Cohesion: 0.05
 Nodes (42): dependencies, alpinejs, @base-ui/react, class-variance-authority, clsx, concurrently, globals, @headlessui/react (+34 more)
 
-### Community 18 - "Space"
-Cohesion: 0.04
-Nodes (29): PlanController, PlanOrderController, SpaceController, SpacePlanController, EnrollmentController, {closure#2}(), {closure#3}(), {closure#4}() (+21 more)
+### Community 18 - "Plan"
+Cohesion: 0.06
+Nodes (14): PlanController, PlanEnrollmentController, PlanOrderController, EnrollmentController, StorePlanRequest, Plan, PlanPolicy, {closure#1}() (+6 more)
 
 ### Community 19 - "two-factor-recovery-codes.tsx"
-Cohesion: 0.19
-Nodes (15): AppLogo(), AppLogoIcon(), TwoFactorRecoveryCodes(), TwoFactorRecoveryCodesProps, Card(), CardContent(), CardDescription(), CardFooter() (+7 more)
+Cohesion: 0.25
+Nodes (14): AlertError(), TwoFactorRecoveryCodes(), TwoFactorRecoveryCodesProps, Alert(), AlertDescription(), AlertTitle(), alertVariants, Card() (+6 more)
 
-### Community 20 - "admin/section/show.tsx"
-Cohesion: 0.12
-Nodes (17): breadcrumbs, Create(), CreateSectionForm(), Edit(), EditSectionForm(), breadcrumbs, Index(), ResponsiveSectionList() (+9 more)
+### Community 20 - "lucide-react"
+Cohesion: 0.11
+Nodes (25): lucide-react, orderedSections(), visit(), Index(), ResponsiveSectionList(), SectionActions(), breadcrumbs, Create() (+17 more)
 
 ### Community 21 - "storefront.tsx"
-Cohesion: 0.05
-Nodes (51): react-markdown, rehype-raw, rehype-sanitize, remark-gfm, MarkdownContent(), textSchema, PlanCard(), PublicPlan (+43 more)
+Cohesion: 0.06
+Nodes (47): MarkdownContent(), textSchema, PlanCard(), PublicPlan, academyName, CartItem, CourseCard(), EmptyState() (+39 more)
 
 ### Community 22 - "DashboardContainer"
-Cohesion: 0.08
-Nodes (34): DashboardContainer(), FormButton(), Show(), breadcrumbs, Create(), CreateContentForm(), Edit(), EditContentForm() (+26 more)
+Cohesion: 0.12
+Nodes (20): DashboardContainer(), Create(), breadcrumbs, Create(), CreateLessonForm(), Edit(), EditLessonForm(), breadcrumbs (+12 more)
 
 ### Community 23 - "pages/course/index.tsx"
-Cohesion: 0.19
-Nodes (23): DeleteUser(), TwoFactorSetupModal(), Dialog(), DialogClose(), DialogContent(), DialogDescription(), DialogFooter(), DialogHeader() (+15 more)
+Cohesion: 0.15
+Nodes (31): CourseEditorInformation(), submit(), Field(), FormFeedback(), informationValues(), roleLabels, TeacherSettings(), useCourseEditorDirty() (+23 more)
 
 ### Community 24 - "Inertia\Testing\AssertableInertia"
-Cohesion: 0.03
-Nodes (83): {closure#1}(), {closure#2}(), {closure#3}(), {closure#4}(), {closure#5}(), {closure#6}(), {closure#7}(), {closure#8}() (+75 more)
+Cohesion: 0.05
+Nodes (52): {closure#1}(), {closure#10}(), {closure#11}(), {closure#2}(), {closure#3}(), {closure#4}(), {closure#6}(), {closure#7}() (+44 more)
 
-### Community 25 - "ResponsiveDataList"
-Cohesion: 0.06
-Nodes (41): CreateHeaderButton(), DataCard(), DataTable(), ResponsiveDataList(), useIsLarge, EnrollmentActions(), Index(), ResponsiveEnrollmentList() (+33 more)
+### Community 25 - "FormButton"
+Cohesion: 0.15
+Nodes (14): CreateHeaderButton(), FormButton(), breadcrumbs, Create(), CreateTransactionForm(), Edit(), EditTransactionForm(), breadcrumbs (+6 more)
 
 ### Community 26 - "category/index.tsx"
 Cohesion: 0.19
-Nodes (8): CreateLayout(), EditLayout(), Create(), Edit(), Category, Create(), Edit(), breadcrumbBuilder()
+Nodes (10): CreateLayout(), EditLayout(), Create(), Edit(), Category, Index(), Show(), Create() (+2 more)
 
 ### Community 28 - "CourseEditorController.php"
-Cohesion: 0.04
-Nodes (30): {closure#10}(), {closure#11}(), {closure#13}(), {closure#14}(), {closure#15}(), {closure#16}(), {closure#17}(), {closure#2}() (+22 more)
+Cohesion: 0.05
+Nodes (27): {closure#1}(), {closure#10}(), {closure#11}(), {closure#13}(), {closure#14}(), {closure#15}(), {closure#16}(), {closure#2}() (+19 more)
 
 ### Community 29 - "AGENTS.md"
 Cohesion: 0.05
-Nodes (38): APIs & Eloquent Resources, Application Structure & Architecture, Artisan, Conventions, Deployment, Do Things the Laravel Way, Documentation Files, Foundational Context (+30 more)
+Nodes (39): APIs & Eloquent Resources, Application Structure & Architecture, Artisan, Conventions, Deployment, Do Things the Laravel Way, Documentation Files, Foundational Context (+31 more)
 
 ### Community 30 - "ui/pagination.tsx"
 Cohesion: 0.42
 Nodes (9): Pagination(), Pagination(), PaginationContent(), PaginationEllipsis(), PaginationItem(), PaginationLink(), PaginationLinkProps, PaginationNext() (+1 more)
 
-### Community 31 - "Illuminate\Validation\Rule"
-Cohesion: 0.07
-Nodes (11): HandleAppearance, LocalizeAuthentication, StoreCourseSectionRequest, StoreSectionRequest, {closure#1}(), {closure#2}(), UpdateSectionRequest, {closure#3}() (+3 more)
+### Community 31 - "SaveEditorContentRequest.php"
+Cohesion: 0.15
+Nodes (6): {closure#1}(), {closure#2}(), UpdateSectionRequest, {closure#3}(), {closure#1}(), UpdateSectionRequest
 
 ### Community 32 - "Transaction"
-Cohesion: 0.08
-Nodes (9): TransactionGateway, Zarinpal, TransactionController, {closure#2}(), StoreTransactionRequest, UpdateTransactionRequest, Transaction, TransactionPolicy (+1 more)
+Cohesion: 0.10
+Nodes (6): TransactionController, {closure#2}(), StoreTransactionRequest, UpdateTransactionRequest, Transaction, TransactionPolicy
 
 ### Community 33 - "StudyService.php"
-Cohesion: 0.08
-Nodes (21): {closure#1}(), {closure#2}(), {closure#3}(), {closure#1}(), {closure#2}(), CourseController, {closure#12}(), CoursePageService (+13 more)
+Cohesion: 0.10
+Nodes (16): {closure#1}(), {closure#2}(), {closure#3}(), {closure#1}(), {closure#2}(), {closure#12}(), {closure#1}(), {closure#11}() (+8 more)
 
 ### Community 35 - "breadcrumbs.tsx"
 Cohesion: 0.47
 Nodes (8): Breadcrumbs(), Breadcrumb(), BreadcrumbEllipsis(), BreadcrumbItem(), BreadcrumbLink(), BreadcrumbList(), BreadcrumbPage(), BreadcrumbSeparator()
 
 ### Community 36 - "Order"
-Cohesion: 0.10
-Nodes (19): OrderController, OrderPlanController, Order, OrderFactory, {closure#1}(), {closure#10}(), {closure#11}(), {closure#12}() (+11 more)
+Cohesion: 0.09
+Nodes (20): OrderController, OrderPlanController, Order, {closure#1}(), OrderPlanSeeder, {closure#1}(), {closure#10}(), {closure#11}() (+12 more)
 
 ### Community 37 - "InputError"
-Cohesion: 0.13
-Nodes (26): CommerceForm(), CourseSectionForm(), FieldContainer(), FormContainer(), SectionLessonForm(), SubmitButton(), InputError(), StorefrontAuth() (+18 more)
+Cohesion: 0.12
+Nodes (26): CommerceForm(), FieldContainer(), FormContainer(), SubmitButton(), InputError(), StorefrontAuth(), LinkProps, TextLink() (+18 more)
 
-### Community 38 - "alert.tsx"
-Cohesion: 0.62
-Nodes (5): AlertError(), Alert(), AlertDescription(), AlertTitle(), alertVariants
+### Community 38 - "Quiz"
+Cohesion: 0.10
+Nodes (12): FinishExpiredQuizAttempts, QuizController, Attempt, Quiz, {closure#1}(), {closure#11}(), {closure#4}(), {closure#5}() (+4 more)
 
 ### Community 39 - "forms.tsx"
-Cohesion: 0.19
-Nodes (32): ContentForm(), EnrollmentForm(), LessonContentForm(), LessonForm(), OrderForm(), PlanForm(), SectionForm(), StudentEnrollmentForm() (+24 more)
+Cohesion: 0.17
+Nodes (38): ContentForm(), CoursePlanForm(), CourseSectionForm(), EnrollmentForm(), LessonContentForm(), LessonForm(), OrderForm(), PlanForm() (+30 more)
 
 ### Community 40 - "Configuration Best Practices"
 Cohesion: 0.33
 Nodes (5): Configuration Best Practices, Name Repeated Domain Values, Protect Production Secrets, Read Environment Variables in Configuration Files, Use `App::environment()` for Environment Checks
 
-### Community 42 - "AuthenticationTest.php"
-Cohesion: 0.10
-Nodes (13): {closure#2}(), {closure#3}(), {closure#4}(), {closure#5}(), {closure#6}(), {closure#2}(), {closure#3}(), {closure#1}() (+5 more)
+### Community 41 - "TeacherController"
+Cohesion: 0.13
+Nodes (3): TeacherController, StoreTeacherRequest, UpdateTeacherRequest
+
+### Community 42 - "TwoFactorAuthenticationTest.php"
+Cohesion: 0.15
+Nodes (8): {closure#2}(), {closure#3}(), {closure#1}(), {closure#2}(), {closure#3}(), {closure#4}(), {closure#5}(), {closure#6}()
 
 ### Community 43 - "components/dashboard.tsx"
-Cohesion: 0.06
-Nodes (44): CheckX(), ActionButton(), ActionsHeader(), DeleteButton(), EssentialActions(), IndexLayout(), Index(), Create() (+36 more)
+Cohesion: 0.09
+Nodes (24): ActionButton(), ActionsHeader(), DeleteButton(), EssentialActions(), IndexLayout(), Create(), breadcrumbs, Create() (+16 more)
 
 ### Community 44 - "Wallet"
-Cohesion: 0.08
-Nodes (11): TransactionStatus, Failed, Paid, Pending, WalletController, WalletOrderController, StoreWalletRequest, Wallet (+3 more)
+Cohesion: 0.07
+Nodes (13): TransactionStatus, Failed, Paid, Pending, WalletController, WalletOrderController, StoreWalletRequest, Wallet (+5 more)
 
 ### Community 45 - ".request"
-Cohesion: 0.08
-Nodes (5): StoreStudentEnrollmentRequest, UpdateCourseRequest, UpdatePlanRequest, UpdateTeacherRequest, UpdateWalletRequest
+Cohesion: 0.11
+Nodes (3): UpdateCourseRequest, UpdatePlanRequest, UpdateWalletRequest
 
 ### Community 46 - "Student"
-Cohesion: 0.09
-Nodes (6): StudentController, StudentEnrollmentController, StoreStudentRequest, UpdateStudentRequest, Student, StudentObserver
+Cohesion: 0.08
+Nodes (7): StudentController, StudentEnrollmentController, StoreStudentEnrollmentRequest, StoreStudentRequest, UpdateStudentRequest, Student, StudentObserver
+
+### Community 47 - "Controller"
+Cohesion: 0.08
+Nodes (11): CategoryController, CertificateController, Controller, CategoryController, CourseController, TeacherController, TwoFactorAuthenticationController, EnrollmentController (+3 more)
 
 ### Community 48 - "dropdown-menu.tsx"
-Cohesion: 0.13
-Nodes (21): @radix-ui/react-dropdown-menu, AppearanceToggleDropdown(), NavUser(), DropdownMenu(), DropdownMenuCheckboxItem(), DropdownMenuContent(), DropdownMenuGroup(), DropdownMenuItem() (+13 more)
+Cohesion: 0.10
+Nodes (24): @radix-ui/react-dropdown-menu, AppearanceToggleDropdown(), NavUser(), DropdownMenu(), DropdownMenuCheckboxItem(), DropdownMenuContent(), DropdownMenuGroup(), DropdownMenuItem() (+16 more)
 
 ### Community 49 - "Inertia React Development"
 Cohesion: 0.09
 Nodes (22): Basic Link Component, Basic Usage, Client-Side Navigation, Common Pitfalls, Deferred Props, Documentation, Form Component (Recommended), Form Component Reset Props (+14 more)
 
-### Community 51 - "app-sidebar.tsx"
-Cohesion: 0.18
-Nodes (20): adminNavItems, AppSidebar(), footerNavItems, mainNavItems, Icon(), IconProps, NavFooter(), NavMain() (+12 more)
+### Community 50 - "Space"
+Cohesion: 0.08
+Nodes (18): SpaceController, SpacePlanController, Space, {closure#6}(), {closure#1}(), {closure#10}(), {closure#11}(), {closure#12}() (+10 more)
+
+### Community 51 - "sidebar.tsx"
+Cohesion: 0.13
+Nodes (28): adminNavItems, AppSidebar(), footerNavItems, mainNavItems, Icon(), IconProps, NavFooter(), NavMain() (+20 more)
 
 ### Community 52 - "index.d.ts"
 Cohesion: 0.10
@@ -429,37 +454,45 @@ Nodes (20): Auth, BreadcrumbItem, Can, Content, Course, Enrollment, Lesson, NavG
 Cohesion: 0.14
 Nodes (6): {closure#2}(), {closure#3}(), {closure#5}(), {closure#7}(), {closure#1}(), {closure#2}()
 
+### Community 54 - "form-button.tsx"
+Cohesion: 0.11
+Nodes (19): breadcrumbs, Create(), CreateOrderForm(), Edit(), EditOrderForm(), breadcrumbs, Index(), OrderActions() (+11 more)
+
 ### Community 55 - "components.json"
 Cohesion: 0.11
 Nodes (17): aliases, components, hooks, lib, ui, utils, iconLibrary, rsc (+9 more)
 
 ### Community 56 - "Content"
-Cohesion: 0.05
-Nodes (48): ContentController, {closure#1}(), {closure#2}(), {closure#3}(), EditorContentController, SaveEditorContentRequest, Access, Content (+40 more)
+Cohesion: 0.08
+Nodes (27): ContentController, {closure#1}(), {closure#2}(), {closure#3}(), EditorContentController, SaveEditorContentRequest, Access, Content (+19 more)
 
 ### Community 57 - "Enrollment"
-Cohesion: 0.12
+Cohesion: 0.14
 Nodes (5): EnrollmentController, StoreEnrollmentRequest, UpdateEnrollmentRequest, Enrollment, {closure#21}()
 
-### Community 58 - "Laravel Fortify Development"
-Cohesion: 0.12
-Nodes (16): Available Features, Best Practices, Custom Authentication Logic, Documentation, Email Verification Setup, Key Endpoints, Laravel Fortify Development, Passkeys Setup (+8 more)
+### Community 58 - "AppServiceProvider.php"
+Cohesion: 0.08
+Nodes (18): AppServiceProvider, FortifyServiceProvider, Available Features, Best Practices, Custom Authentication Logic, Documentation, Email Verification Setup, Key Endpoints (+10 more)
 
 ### Community 59 - "compilerOptions"
 Cohesion: 0.12
 Nodes (16): compilerOptions, allowJs, baseUrl, esModuleInterop, forceConsistentCasingInFileNames, isolatedModules, jsx, module (+8 more)
 
-### Community 60 - "CartService"
-Cohesion: 0.14
-Nodes (11): LedgerType, Bonus, Deposit, Payment, Refund, Withdraw, CartService, {closure#1}() (+3 more)
-
-### Community 63 - "Error Handling Best Practices"
+### Community 60 - "CartService.php"
 Cohesion: 0.22
-Nodes (8): Add Context to Exception Classes, Choose Where to Report and Render Exceptions, Define JSON Rendering for API Routes, Error Handling Best Practices, Mark Exceptions the Handler Should Not Report, Prevent Duplicate Reports of One Exception Instance, Throttle High-Volume Exception Reports, render()
+Nodes (4): {closure#1}(), {closure#2}(), {closure#3}(), {closure#4}()
+
+### Community 63 - "Section"
+Cohesion: 0.09
+Nodes (15): SectionController, SectionLessonController, Section, {closure#10}(), {closure#12}(), {closure#13}(), {closure#14}(), {closure#2}() (+7 more)
 
 ### Community 64 - "Illuminate\Database\Migrations\Migration"
 Cohesion: 0.09
 Nodes (6): {closure#1}(), {closure#1}(), {closure#1}(), {closure#2}(), {closure#1}(), {closure#1}()
+
+### Community 65 - "wallet/show.tsx"
+Cohesion: 0.12
+Nodes (17): breadcrumbs, Create(), CreateWalletForm(), Edit(), EditWalletForm(), breadcrumbs, Index(), ResponsiveWalletList() (+9 more)
 
 ### Community 66 - "bootstrap/app.php"
 Cohesion: 0.08
@@ -469,20 +502,20 @@ Nodes (3): HandleInertiaRequests, {closure#1}(), {closure#2}()
 Cohesion: 0.15
 Nodes (13): devDependencies, babel-plugin-react-compiler, eslint, eslint-config-prettier, @eslint/js, eslint-plugin-react, eslint-plugin-react-hooks, @laravel/vite-plugin-wayfinder (+5 more)
 
-### Community 68 - "ref_types"
-Cohesion: 0.08
-Nodes (23): breadcrumbs, Create(), CreateCourseForm(), Edit(), EditCourseForm(), breadcrumbs, CourseActions(), Index() (+15 more)
+### Community 68 - "teacher/course/show.tsx"
+Cohesion: 0.10
+Nodes (22): breadcrumbs, Create(), CreateCourseForm(), Edit(), EditCourseForm(), breadcrumbs, CourseActions(), Index() (+14 more)
 
-### Community 69 - "FortifyServiceProvider.php"
-Cohesion: 0.09
-Nodes (9): CreateNewUser, PasswordValidationRules, ResetUserPassword, {closure#1}(), {closure#2}(), {closure#3}(), {closure#4}(), {closure#8}() (+1 more)
+### Community 69 - "CreateNewUser.php"
+Cohesion: 0.18
+Nodes (3): CreateNewUser, PasswordValidationRules, ResetUserPassword
 
-### Community 70 - "Illuminate\Contracts\Validation\ValidationRule"
-Cohesion: 0.07
-Nodes (5): StoreLessonRequest, UpdateContentRequest, TwoFactorAuthenticationRequest, StoreCourseRequest, StoreSpaceRequest
+### Community 71 - "StudyService"
+Cohesion: 0.12
+Nodes (11): StudyController, {closure#1}(), {closure#14}(), StudyService, {closure#2}(), {closure#3}(), {closure#4}(), {closure#5}() (+3 more)
 
 ### Community 72 - "CartPaymentTest.php"
-Cohesion: 0.22
+Cohesion: 0.24
 Nodes (13): {closure#1}(), {closure#10}(), {closure#11}(), {closure#2}(), {closure#3}(), {closure#4}(), {closure#5}(), {closure#6}() (+5 more)
 
 ### Community 73 - "Detection Checklist"
@@ -505,9 +538,13 @@ Nodes (10): Basic Usage, Common Pitfalls, CSS-First Configuration, Dark Mode, Do
 Cohesion: 0.08
 Nodes (6): {closure#1}(), {closure#1}(), {closure#1}(), {closure#1}(), {closure#1}(), {closure#1}()
 
-### Community 78 - "use-appearance.tsx"
-Cohesion: 0.40
-Nodes (9): AppearanceToggleTab(), Appearance, applyTheme(), handleSystemThemeChange(), initializeTheme(), mediaQuery(), prefersDark(), setCookie() (+1 more)
+### Community 78 - "CourseEditorContentTest.php"
+Cohesion: 0.14
+Nodes (23): {closure#10}(), {closure#11}(), {closure#12}(), {closure#13}(), {closure#14}(), {closure#15}(), {closure#16}(), {closure#17}() (+15 more)
+
+### Community 79 - "teacher/plan/show.tsx"
+Cohesion: 0.15
+Nodes (15): Index(), PlanActions(), ResponsivePlanList(), Edit(), EditPlanForm(), EnrollmentActions(), Index(), ResponsiveEnrollmentList() (+7 more)
 
 ### Community 80 - "require-dev"
 Cohesion: 0.20
@@ -573,9 +610,9 @@ Nodes (5): Consistency First, Decision Rules, How to Apply, Laravel Best Practic
 Cohesion: 0.25
 Nodes (7): Blade and View Best Practices, Prefer Components for Explicit Interfaces, Return Blade Fragments for Partial Rendering, Share Compatible View Data with a View Composer, Share Parent Component Props with `@aware`, Use `$attributes->merge()` in Component Templates, Use `@pushOnce` for Per-Component Scripts
 
-### Community 97 - "pages/dashboard.tsx"
-Cohesion: 0.47
-Nodes (4): PlaceholderPattern(), PlaceholderPatternProps, breadcrumbs, Dashboard()
+### Community 97 - "ref_types"
+Cohesion: 0.13
+Nodes (16): PlaceholderPattern(), PlaceholderPatternProps, breadcrumbs, Create(), CreateContentForm(), Edit(), EditContentForm(), breadcrumbs (+8 more)
 
 ### Community 98 - "Task Scheduling Best Practices"
 Cohesion: 0.25
@@ -590,8 +627,12 @@ Cohesion: 0.22
 Nodes (9): scripts, build, build:ssr, dev, format, format:check, lint, start (+1 more)
 
 ### Community 101 - "Illuminate\Database\Eloquent\Factories\HasFactory"
-Cohesion: 0.07
-Nodes (9): SlugFormatter, {closure#1}(), ContentFactory, CourseFactory, LessonFactory, PlanFactory, SectionFactory, SpaceFactory (+1 more)
+Cohesion: 0.04
+Nodes (13): TransactionGateway, Zarinpal, Ledger, Question, SlugFormatter, CourseFactory, LessonFactory, OrderFactory (+5 more)
+
+### Community 102 - "AdminTransactionTest.php"
+Cohesion: 0.09
+Nodes (15): LedgerType, Bonus, Deposit, Payment, Refund, Withdraw, RoleAndPermissionSeeder, {closure#1}() (+7 more)
 
 ### Community 103 - "config"
 Cohesion: 0.29
@@ -641,13 +682,13 @@ Nodes (6): Common Errors, Global Fakes, How to Find a Slow Test, How to Run the 
 Cohesion: 0.29
 Nodes (6): Assertions, Coverage, Data and Determinism, Names and Structure, Reviewing Tests, Test Value
 
-### Community 115 - "Controller"
-Cohesion: 0.03
-Nodes (50): PHP, CategoryController, PlanEnrollmentController, CertificateController, Controller, CartController, CategoryController, {closure#1}() (+42 more)
+### Community 115 - "Illuminate\Http\Request"
+Cohesion: 0.06
+Nodes (15): PHP, CartController, PasswordController, ProfileController, PaymentController, HandleAppearance, LocalizeAuthentication, {closure#1}() (+7 more)
 
-### Community 116 - "app.tsx"
-Cohesion: 0.33
-Nodes (3): laravel-vite-plugin, react-dom, port
+### Community 116 - "Teacher/SpaceController.php"
+Cohesion: 0.15
+Nodes (4): {closure#2}(), {closure#3}(), SpaceController, StoreSpaceRequest
 
 ### Community 118 - "CourseEditorManagementTest.mjs"
 Cohesion: 0.13
@@ -661,9 +702,13 @@ Nodes (5): File Layout, Grouping, Naming and Structure, Naming Tests, Test Funct
 Cohesion: 0.40
 Nodes (4): OrderStatus, Expired, Paid, Pending
 
-### Community 123 - "Illuminate\Database\Seeder"
-Cohesion: 0.08
-Nodes (11): AdminSeeder, DatabaseSeeder, {closure#1}(), EnrollmentSeeder, {closure#1}(), OrderPlanSeeder, {closure#1}(), OrderSeeder (+3 more)
+### Community 124 - "Teacher/LessonController.php"
+Cohesion: 0.15
+Nodes (4): {closure#2}(), {closure#3}(), LessonController, StoreLessonRequest
+
+### Community 125 - "use-appearance.tsx"
+Cohesion: 0.40
+Nodes (9): AppearanceToggleTab(), Appearance, applyTheme(), handleSystemThemeChange(), initializeTheme(), mediaQuery(), prefersDark(), setCookie() (+1 more)
 
 ### Community 126 - "psr-4"
 Cohesion: 0.40
@@ -678,28 +723,32 @@ Cohesion: 0.40
 Nodes (5): Consistency First, How to Apply, Rule Index, Testing Best Practices, What to Test
 
 ### Community 133 - "cn"
-Cohesion: 0.08
-Nodes (39): class-variance-authority, @radix-ui/react-checkbox, @radix-ui/react-slot, @radix-ui/react-toggle, @radix-ui/react-toggle-group, Badge(), badgeVariants, Checkbox() (+31 more)
+Cohesion: 0.09
+Nodes (31): class-variance-authority, @radix-ui/react-checkbox, @radix-ui/react-slot, @radix-ui/react-toggle, @radix-ui/react-toggle-group, Badge(), badgeVariants, Checkbox() (+23 more)
 
 ### Community 135 - "2026_10_31_215610_add_slug_to_categories_table.php"
 Cohesion: 0.29
 Nodes (3): {closure#1}(), {closure#3}(), {closure#4}()
 
-### Community 144 - "Course"
-Cohesion: 0.03
-Nodes (73): TeacherRole, Assistant, Editor, Instructor, Owner, Reviewer, CourseController, CourseSectionController (+65 more)
-
-### Community 151 - "use-breakpoint.tsx"
+### Community 141 - "Teacher/CourseController.php"
 Cohesion: 0.22
-Nodes (5): createBreakpointHook(), useIsAboveDesktop, useIsAboveTablet, useIsDesktop, useIsTablet
+Nodes (3): {closure#2}(), CourseController, UpdateCourseRequest
+
+### Community 142 - "Illuminate\Validation\Rule"
+Cohesion: 0.08
+Nodes (5): StoreCourseSectionRequest, StoreSectionRequest, StoreSectionRequest, UpdateEditorCourseRequest, UpdateSpaceRequest
+
+### Community 144 - "Course"
+Cohesion: 0.04
+Nodes (68): TeacherRole, Assistant, Editor, Instructor, Owner, Reviewer, CourseController, CourseSectionController (+60 more)
+
+### Community 151 - "AppLogoIcon"
+Cohesion: 0.33
+Nodes (6): AppLogo(), AppLogoIcon(), AuthLayoutProps, AuthSimpleLayout(), AuthLayoutProps, AuthSplitLayout()
 
 ### Community 154 - "rich-text-editor.tsx"
 Cohesion: 0.12
 Nodes (15): @mdxeditor/editor, Props, translations, clientSnapshot(), Editor, Props, RichTextEditor(), serverSnapshot() (+7 more)
-
-### Community 156 - "optionalDependencies"
-Cohesion: 0.29
-Nodes (7): optionalDependencies, lightningcss-linux-x64-gnu, lightningcss-win32-x64-msvc, @rollup/rollup-linux-x64-gnu, @rollup/rollup-win32-x64-msvc, @tailwindcss/oxide-linux-x64-gnu, @tailwindcss/oxide-win32-x64-msvc
 
 ### Community 172 - "autoload-dev"
 Cohesion: 0.67
@@ -713,25 +762,41 @@ Nodes (3): extra, laravel, dont-discover
 Cohesion: 0.29
 Nodes (3): {closure#2}(), {closure#3}(), {closure#6}()
 
+### Community 219 - "PageDirectionTest.php"
+Cohesion: 0.40
+Nodes (3): {closure#2}(), {closure#3}(), {closure#4}()
+
+### Community 221 - "Error Handling Best Practices"
+Cohesion: 0.22
+Nodes (8): Add Context to Exception Classes, Choose Where to Report and Render Exceptions, Define JSON Rendering for API Routes, Error Handling Best Practices, Mark Exceptions the Handler Should Not Report, Prevent Duplicate Reports of One Exception Instance, Throttle High-Volume Exception Reports, render()
+
+### Community 222 - "optionalDependencies"
+Cohesion: 0.29
+Nodes (7): optionalDependencies, lightningcss-linux-x64-gnu, lightningcss-win32-x64-msvc, @rollup/rollup-linux-x64-gnu, @rollup/rollup-win32-x64-msvc, @tailwindcss/oxide-linux-x64-gnu, @tailwindcss/oxide-win32-x64-msvc
+
+### Community 223 - "app.tsx"
+Cohesion: 0.33
+Nodes (3): laravel-vite-plugin, react-dom, port
+
 ## Knowledge Gaps
-- **547 isolated node(s):** `php`, `Deposit`, `Withdraw`, `Payment`, `Refund` (+542 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 1127 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
-- **90 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **548 isolated node(s):** `php`, `Deposit`, `Withdraw`, `Payment`, `Refund` (+543 more)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 1130 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **91 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `PHP` connect `Controller` to `AGENTS.md`?**
-  _High betweenness centrality (0.369) - this node is a cross-community bridge._
+- **Why does `PHP` connect `Illuminate\Http\Request` to `AGENTS.md`?**
+  _High betweenness centrality (0.359) - this node is a cross-community bridge._
 - **What connects `php`, `Deposit`, `Withdraw` to the rest of the system?**
-  _547 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _548 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `User` be split into smaller, more focused modules?**
-  _Cohesion score 0.04025859535703791 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.03742314889067094 - nodes in this community are weakly interconnected._
 - **Why does `persianNumber()` connect `storefront.tsx` to `AGENTS.md`?**
-  _High betweenness centrality (0.364) - this node is a cross-community bridge._
+  _High betweenness centrality (0.355) - this node is a cross-community bridge._
 - **Should `Illuminate\Database\Eloquent\Model` be split into smaller, more focused modules?**
-  _Cohesion score 0.02822273073989321 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.044420941300899 - nodes in this community are weakly interconnected._
 - **Should `Illuminate\Database\Schema\Blueprint` be split into smaller, more focused modules?**
   _Cohesion score 0.061495457721872815 - nodes in this community are weakly interconnected._
-- **Should `app-layout.tsx` be split into smaller, more focused modules?**
-  _Cohesion score 0.0815686274509804 - nodes in this community are weakly interconnected._
+- **Should `@inertiajs/react` be split into smaller, more focused modules?**
+  _Cohesion score 0.08176100628930817 - nodes in this community are weakly interconnected._
