@@ -1,5 +1,6 @@
 import { useCourseEditorDirty } from '@/components/course-editor-state';
 import InputError from '@/components/input-error';
+import { RichTextEditor as Textarea } from '@/components/rich-text-editor';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -10,7 +11,6 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import { RichTextEditor as Textarea } from '@/components/rich-text-editor';
 import { information, teachers } from '@/routes/teacher/course/editor';
 import type {
     CourseEditorCourse,
@@ -20,7 +20,7 @@ import type {
 } from '@/types/course-editor';
 import { useForm } from '@inertiajs/react';
 import { LoaderCircle, Plus, Save, Trash2, Users } from 'lucide-react';
-import { useState, type FormEvent, type ReactNode } from 'react';
+import { useEffect, useState, type FormEvent, type ReactNode } from 'react';
 
 const roleLabels: Record<CourseTeacherRole, string> = {
     owner: 'مالک دوره',
@@ -39,6 +39,7 @@ function informationValues(
         slug: overview.slug,
         description: overview.description ?? '',
         thumbnail: overview.thumbnail ?? '',
+        thumbnail_file: null as File | null,
         intro_video_url: overview.intro_video_url ?? '',
         is_published: course.is_published,
     };
@@ -56,6 +57,22 @@ export default function CourseEditorInformation({
     const form = useForm(informationValues(course, overview));
     useCourseEditorDirty(form.isDirty);
     const canEdit = overview.permissions.update_information;
+    const [filePreview, setFilePreview] = useState<string | null>(null);
+    useEffect(
+        () => () => {
+            if (filePreview) {
+                URL.revokeObjectURL(filePreview);
+            }
+        },
+        [filePreview],
+    );
+    const preview =
+        filePreview ??
+        (form.data.thumbnail
+            ? /^(https?:\/\/|\/)/i.test(form.data.thumbnail)
+                ? form.data.thumbnail
+                : `/storage/${form.data.thumbnail}`
+            : null);
 
     function submit(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
@@ -63,18 +80,13 @@ export default function CourseEditorInformation({
             return;
         }
         form.transform((data) => {
-            if (overview.permissions.publish) {
-                return data;
-            }
-            return {
-                title: data.title,
-                slug: data.slug,
-                description: data.description,
-                thumbnail: data.thumbnail,
-                intro_video_url: data.intro_video_url,
-            };
+            const { is_published, ...rest } = data;
+            return overview.permissions.publish
+                ? { ...rest, is_published, _method: 'patch' }
+                : { ...rest, _method: 'patch' };
         });
-        form.patch(information(course.id).url, {
+        form.post(information(course.id).url, {
+            forceFormData: true,
             only: ['course', 'overview'],
             preserveScroll: true,
             errorBag: 'courseInformation',
@@ -91,6 +103,7 @@ export default function CourseEditorInformation({
                 const values = informationValues(saved.course, saved.overview);
                 form.setData(values);
                 form.setDefaults(values);
+                setFilePreview(null);
                 onStatus('saved');
             },
         });
@@ -220,6 +233,36 @@ export default function CourseEditorInformation({
                             }
                         />
                     </Field>
+                    <div className="space-y-2">
+                        <Label htmlFor="editor-thumbnail-file">
+                            آپلود تصویر دوره
+                        </Label>
+                        <Input
+                            id="editor-thumbnail-file"
+                            type="file"
+                            accept="image/jpeg,image/png,image/webp"
+                            aria-invalid={!!form.errors.thumbnail_file}
+                            onChange={(event) => {
+                                const file = event.target.files?.[0] ?? null;
+                                form.setData('thumbnail_file', file);
+                                setFilePreview(
+                                    file ? URL.createObjectURL(file) : null,
+                                );
+                            }}
+                        />
+                        <InputError message={form.errors.thumbnail_file} />
+                        <p className="text-xs text-muted-foreground">
+                            تصویر JPG، PNG یا WebP تا ۵ مگابایت؛ با ذخیره
+                            اطلاعات دوره بارگذاری می‌شود.
+                        </p>
+                        {preview && (
+                            <img
+                                src={preview}
+                                alt="پیش‌نمایش تصویر دوره"
+                                className="max-h-48 max-w-full rounded-lg object-contain"
+                            />
+                        )}
+                    </div>
                     <Field
                         label="نشانی ویدئوی معرفی"
                         id="editor-intro"
@@ -247,8 +290,7 @@ export default function CourseEditorInformation({
                         />
                     </Field>
                     <p className="text-xs leading-6 text-muted-foreground">
-                        برای تغییر رسانه، نشانی http یا https وارد کنید.
-                        بارگذاری فایل در مراحل بعد اضافه می‌شود.
+                        برای ویدئوی معرفی نشانی http یا https وارد کنید.
                     </p>
                     <Field
                         label="وضعیت انتشار"
@@ -404,7 +446,7 @@ function TeacherSettings({
                             className="space-y-3 rounded-lg bg-muted/50 p-3 text-sm"
                         >
                             <div className="flex items-center justify-between gap-3">
-                                <span className="min-w-0 break-words">
+                                <span className="min-w-0 wrap-break-word">
                                     {names.get(teacher.id)}
                                 </span>
                                 {canManage ? (

@@ -35,6 +35,7 @@ class UpdateEditorCourseRequest extends FormRequest
             'slug' => ['required', 'string', 'max:255', 'regex:/^[\pL\pN_-]+$/u', Rule::unique('courses', 'slug')->ignore($this->route('course'))],
             'description' => ['nullable', 'string', 'max:4096'],
             'thumbnail' => ['nullable', 'string', 'max:255', Rule::when($this->input('thumbnail') !== $this->route('course')->thumbnail, 'url:http,https')],
+            'thumbnail_file' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
             'intro_video_url' => ['nullable', 'string', 'max:255', Rule::when($this->input('intro_video_url') !== $this->route('course')->intro_video_url, 'url:http,https')],
             'is_published' => ['sometimes', 'boolean'],
         ];

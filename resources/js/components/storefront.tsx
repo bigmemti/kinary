@@ -14,7 +14,7 @@ import { Form, Head, Link, usePage } from '@inertiajs/react';
 import { ArrowLeft, BookOpen, ShoppingBag } from 'lucide-react';
 import { type PropsWithChildren, useState } from 'react';
 
-export const academyName = 'آکادمی';
+export const academyName = import.meta.env.VITE_APP_NAME ||'آکادمی';
 export const persianNumber = (value: number) =>
     new Intl.NumberFormat('fa-IR').format(value);
 
@@ -107,7 +107,7 @@ export function Storefront({
                     </Link>
                     <nav
                         aria-label="ناوبری اصلی"
-                        className="order-3 flex w-full justify-center gap-6 border-t border-current/10 pt-4 text-sm md:order-none md:w-auto md:border-0 md:pt-0"
+                        className="order-3 flex w-full justify-center gap-6 border-t border-current/10 pt-4 text-sm md:order-0 md:w-auto md:border-0 md:pt-0"
                     >
                         <Link href={coursesIndex()}>همه دوره‌ها</Link>
                         <Link href={home().url + '#teachers'}>مدرسین</Link>

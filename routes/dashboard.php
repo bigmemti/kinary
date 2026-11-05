@@ -17,4 +17,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', fn () => Inertia::render('dashboard'))->name('dashboard');
 
     // Route::resource('wallet.order', OrderController::class)->only(['index', 'show'])->shallow();
+    // Route::resource('wallet.ledger', OrderController::class)->only(['index', 'show'])->shallow();
+    // Route::resource('wallet.transaction', OrderController::class)->only(['index', 'show'])->shallow();
 });

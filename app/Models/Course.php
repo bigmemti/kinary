@@ -77,4 +77,9 @@ class Course extends Model
             'teacher_id',
         )->where('course_teacher.role', TeacherRole::Owner);
     }
+
+    public static function published()
+    {
+        return self::where('is_published', true);
+    }
 }

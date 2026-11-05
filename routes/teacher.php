@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth', 'verified', 'role:teacher'])->prefix('teacher')->name('teacher.')->group(function () {
     Route::get('course/{course}/editor', Teacher\CourseEditorController::class)->name('course.editor');
+
     Route::get('space/{space}/quiz/editor', [Teacher\QuizEditorController::class, 'edit'])->name('quiz.editor');
     Route::post('space/{space}/quiz/editor', [Teacher\QuizEditorController::class, 'save'])->name('quiz.save');
     Route::patch('course/{course}/editor/information', [Teacher\CourseEditorController::class, 'updateInformation'])->name('course.editor.information');
@@ -14,6 +15,7 @@ Route::middleware(['auth', 'verified', 'role:teacher'])->prefix('teacher')->name
     Route::patch('content/{content}/editor', [Teacher\EditorContentController::class, 'update'])->name('content.editor.update');
     Route::delete('content/{content}/editor', [Teacher\EditorContentController::class, 'destroy'])->name('content.editor.destroy');
     Route::get('content/{content}/editor/download', [Teacher\EditorContentController::class, 'download'])->name('content.editor.download');
+
     Route::resource('course', Teacher\CourseController::class);
     Route::resource('course.space', Teacher\SpaceController::class)->shallow();
     Route::resource('course.section', Teacher\SectionController::class)->shallow();

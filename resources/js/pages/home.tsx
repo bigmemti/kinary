@@ -96,7 +96,7 @@ export default function Home({ courses, categories, teachers }: HomeProps) {
                     >
                         <div className="absolute inset-3 rounded-full border border-[#819264]/30" />
                         <div className="absolute inset-12 rounded-full border border-dashed border-[#819264]/30" />
-                        <div className="relative w-4/5 rotate-[-5deg] rounded-[2rem] bg-[#244d40] p-8 text-[#f6f5ea] shadow-2xl shadow-[#244d40]/15">
+                        <div className="relative w-4/5 rotate-[-5deg] rounded-4xl bg-[#244d40] p-8 text-[#f6f5ea] shadow-2xl shadow-[#244d40]/15">
                             <div className="flex items-center justify-between border-b border-white/20 pb-5">
                                 <BookOpen
                                     className="size-8"

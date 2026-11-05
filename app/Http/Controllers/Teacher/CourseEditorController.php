@@ -28,8 +28,10 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
+use Throwable;
 
 class CourseEditorController extends Controller
 {
@@ -51,16 +53,34 @@ class CourseEditorController extends Controller
 
     public function updateInformation(UpdateEditorCourseRequest $request, Course $course): RedirectResponse
     {
-        DB::transaction(function () use ($request, $course): void {
-            $lockedCourse = Course::query()->lockForUpdate()->findOrFail($course->id);
-            Gate::authorize('updateEditorInformation', $lockedCourse);
+        $storedPath = null;
 
-            if ($request->exists('is_published')) {
-                Gate::authorize('publishEditorCourse', $lockedCourse);
+        try {
+            DB::transaction(function () use ($request, $course, &$storedPath): void {
+                $lockedCourse = Course::query()->lockForUpdate()->findOrFail($course->id);
+                Gate::authorize('updateEditorInformation', $lockedCourse);
+
+                if ($request->exists('is_published')) {
+                    Gate::authorize('publishEditorCourse', $lockedCourse);
+                }
+
+                $data = $request->safe()->except('thumbnail_file');
+                if ($request->hasFile('thumbnail_file')) {
+                    $storedPath = $request->file('thumbnail_file')->store("courses/{$course->id}/covers", 'public');
+                    if ($storedPath === false) {
+                        throw ValidationException::withMessages(['thumbnail_file' => 'بارگذاری تصویر انجام نشد. دوباره تلاش کنید.']);
+                    }
+                    $data['thumbnail'] = Storage::disk('public')->url($storedPath);
+                }
+
+                $lockedCourse->update($data);
+            });
+        } catch (Throwable $exception) {
+            if ($storedPath) {
+                Storage::disk('public')->delete($storedPath);
             }
-
-            $lockedCourse->update($request->validated());
-        });
+            throw $exception;
+        }
 
         return to_route('teacher.course.editor', $course);
     }

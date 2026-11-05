@@ -4,7 +4,9 @@ use App\Enums\TeacherRole;
 use App\Models\Course;
 use App\Models\Teacher;
 use App\Models\User;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Testing\AssertableInertia as Assert;
 
 test('editor information permissions follow the teaching role in the same course', function (TeacherRole $role, bool $canEdit, bool $canManage) {
@@ -204,4 +206,36 @@ test('teacher course creation assigns the real teacher as owner and saves the pu
     $this->assertDatabaseHas('course_teacher', ['course_id' => $course->id, 'teacher_id' => $teacher->id, 'role' => 'owner']);
     expect($course->teachers->sole()->pivot->created_at)->not->toBeNull();
     expect($teacher->courses->sole()->pivot->role)->toBe('owner');
+});
+
+test('an owner uploads a course cover and it is saved as a public image', function () {
+    Storage::fake('public');
+    $course = Course::factory()->create();
+    $owner = Teacher::factory()->create();
+    $course->teachers()->attach($owner, ['role' => TeacherRole::Owner]);
+
+    $response = $this->actingAs($owner->user)->patch(route('teacher.course.editor.information', $course), [
+        'title' => $course->title, 'slug' => $course->slug,
+        'thumbnail_file' => UploadedFile::fake()->createWithContent('cover.png', base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jk1sAAAAASUVORK5CYII=')),
+    ]);
+
+    $response->assertSessionHasNoErrors();
+    $thumbnail = $course->fresh()->thumbnail;
+    expect($thumbnail)->toStartWith('/storage/courses/'.$course->id.'/covers/');
+    Storage::disk('public')->assertExists(substr($thumbnail, strlen('/storage/')));
+});
+
+test('invalid cover uploads are rejected and unauthorized teachers cannot upload', function () {
+    Storage::fake('public');
+    $course = Course::factory()->create();
+    $owner = Teacher::factory()->create();
+    $instructor = Teacher::factory()->create();
+    $course->teachers()->attach($owner, ['role' => TeacherRole::Owner]);
+    $course->teachers()->attach($instructor, ['role' => TeacherRole::Instructor]);
+    $data = ['title' => $course->title, 'slug' => $course->slug, 'thumbnail_file' => UploadedFile::fake()->create('file.pdf', 10, 'application/pdf')];
+
+    $this->actingAs($owner->user)->patch(route('teacher.course.editor.information', $course), $data)->assertSessionHasErrors('thumbnail_file');
+    $this->actingAs($instructor->user)->patch(route('teacher.course.editor.information', $course), $data)->assertForbidden();
+    expect($course->fresh()->thumbnail)->toBe($course->thumbnail);
+    expect(Storage::disk('public')->allFiles())->toBeEmpty();
 });
