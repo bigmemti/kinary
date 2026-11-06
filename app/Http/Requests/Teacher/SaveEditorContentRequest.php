@@ -13,7 +13,7 @@ use Illuminate\Validation\Rule;
 
 class SaveEditorContentRequest extends FormRequest
 {
-    public const TYPES = ['text', 'image', 'video', 'file', 'table', 'remind'];
+    public const TYPES = ['text', 'image', 'video', 'file', 'table', 'remind', 'homework'];
 
     public function authorize(): bool
     {
@@ -53,7 +53,10 @@ class SaveEditorContentRequest extends FormRequest
         $rules = [
             'type' => ['required', Rule::in(self::TYPES)],
             'description' => ['nullable', 'string', 'max:2000'],
-            'body' => [Rule::requiredIf($type === 'text'), 'nullable', 'string', 'max:65000'],
+            'body' => [Rule::requiredIf(in_array($type, ['text', 'homework'], true)), 'nullable', 'string', 'max:65000'],
+            'allowed_extensions' => ['nullable', 'string', 'max:500', 'regex:/^[a-zA-Z0-9, .]*$/'],
+            'answer_body' => ['nullable', 'string', 'max:65000'],
+            'answer_video_url' => ['nullable', 'url:http,https', 'max:2000'],
             'name' => [Rule::requiredIf(in_array($type, ['video'], true)), 'nullable', 'string', 'max:255'],
             'url' => [Rule::requiredIf($type === 'video'), 'nullable', 'url:http,https', 'max:2000'],
             'image_file' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp,gif', 'max:10240'],
@@ -64,7 +67,9 @@ class SaveEditorContentRequest extends FormRequest
             'content_id' => [Rule::requiredIf($type === 'remind'), 'nullable', 'integer', Rule::exists('contents', 'id')->whereIn('lesson_id', fn ($query) => $query->select('lessons.id')->from('lessons')->join('sections', 'sections.id', '=', 'lessons.section_id')->where('sections.course_id', $courseId))],
             'update_accesses' => ['sometimes', 'boolean'],
             'accesses' => ['sometimes', 'array', 'max:50'],
-            'accesses.*' => ['required', 'array:plan_id,requirements'],
+            'accesses.*' => ['required', 'array:plan_id,requirements,answer_release,answer_video_release'],
+            'accesses.*.answer_release' => ['sometimes', Rule::in(['never', 'approved', 'submitted', 'always'])],
+            'accesses.*.answer_video_release' => ['sometimes', Rule::in(['never', 'approved', 'submitted', 'always'])],
             'accesses.*.plan_id' => ['required', 'integer', 'distinct', $planRule],
             'accesses.*.requirements' => ['sometimes', 'array', 'max:20', function (string $attribute, mixed $value, Closure $fail): void {
                 if (! is_array($value)) {

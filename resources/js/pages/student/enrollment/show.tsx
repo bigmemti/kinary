@@ -4,13 +4,14 @@ import AppLayout from '@/layouts/app-layout';
 import { index } from '@/routes/student/enrollment';
 import { lesson as lessonRoute, visit } from '@/routes/student/study';
 import { start as startQuiz } from '@/routes/student/quiz';
+import { store as submitHomework, destroy as deleteHomework } from '@/routes/student/homework';
 import type {
     StudyContent,
     StudyLesson,
     StudyProgress,
     StudySection,
 } from '@/types/study';
-import { Head, Link, router } from '@inertiajs/react';
+import { Head, Link, router, useForm } from '@inertiajs/react';
 import { Download } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
@@ -206,6 +207,7 @@ function ContentBlock({ content, spaceId }: { content: StudyContent; spaceId: nu
                 <MarkdownContent className="text-lg leading-8 font-semibold">{content.description}</MarkdownContent>
             )}
             {content.type === 'quiz' && content.quizId && <div className="space-y-4"><p>آزمون</p><h3>{content.name}</h3><MarkdownContent>{content.body ?? ''}</MarkdownContent>{content.latestScore !== null && content.latestScore !== undefined && <p>آخرین نتیجه: {Number(content.latestScore).toLocaleString('fa-IR')}</p>}<Link href={startQuiz.url({ space: spaceId, quiz: content.quizId })} method="post" data={{ content: content.id }} as="button" className="storefront-button">شروع آزمونک</Link></div>}
+            {content.type === 'homework' && <Homework content={content} spaceId={spaceId} />}
             {content.type === 'text' && (
                 <MarkdownContent className="leading-9">{content.body ?? ''}</MarkdownContent>
             )}
@@ -282,4 +284,32 @@ function ContentBlock({ content, spaceId }: { content: StudyContent; spaceId: nu
             )}
         </>
     );
+}
+
+function Homework({ content, spaceId }: { content: StudyContent; spaceId: number }) {
+    const form = useForm<{ files: File[] }>({ files: [] });
+    const submission = content.submission;
+    return <div className="space-y-4">
+        <h3 className="font-bold">تکلیف</h3>
+        <MarkdownContent>{content.body ?? ''}</MarkdownContent>
+        <p className="text-sm">فایل‌های مجاز: {content.extensions?.join('، ')}. حداکثر ۵ فایل؛ هر فایل ۵ مگابایت و ZIP تا ۲۰ مگابایت.</p>
+        {submission ? <div className="space-y-2">
+            <p>{submission.approved ? 'ارسال شما تأیید شده است.' : 'ارسال شما در انتظار بررسی است.'}</p>
+            <ul>{submission.files.map((name, index) => <li key={index}>{name}</li>)}</ul>
+            {submission.score !== null && <p>نمره: {Number(submission.score).toLocaleString('fa-IR')} از ۱۰۰</p>}
+            {submission.note && <p>یادداشت مدرس: {submission.note}</p>}
+            {!submission.approved && <button type="button" className="storefront-button" onClick={() => { if (window.confirm('ارسال شما حذف شود؟')) router.delete(deleteHomework.url({ space: spaceId, content: content.id }), { preserveScroll: true }); }}>حذف ارسال</button>}
+        </div> : <form className="space-y-3" onSubmit={(event) => { event.preventDefault(); form.post(submitHomework.url({ space: spaceId, content: content.id }), { forceFormData: true, preserveScroll: true }); }}>
+            <label className="block">فایل‌های تکلیف<input className="block max-w-full" type="file" multiple required accept={content.extensions?.map((extension) => `.${extension}`).join(',')} onChange={(event) => form.setData('files', Array.from(event.target.files ?? []))} /></label>
+            {Object.values(form.errors).map((error, index) => <p role="alert" key={index}>{error}</p>)}
+            <button disabled={form.processing} className="storefront-button">{form.processing ? 'در حال ارسال…' : 'ارسال تکلیف'}</button>
+        </form>}
+        {(content.answer || content.answerVideoUrl) && <details className="rounded-xl border border-current/15 p-4">
+            <summary className="cursor-pointer font-semibold">پاسخ را اینجا ببینید</summary>
+            <div className="mt-4 space-y-4">
+                {content.answer && <MarkdownContent>{content.answer}</MarkdownContent>}
+                {content.answerVideoUrl && <video controls preload="metadata" playsInline src={content.answerVideoUrl} aria-label="ویدیوی پاسخ تکلیف" className="w-full rounded-xl bg-black">مرورگر شما امکان پخش این ویدیو را ندارد.</video>}
+            </div>
+        </details>}
+    </div>;
 }

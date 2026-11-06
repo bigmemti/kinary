@@ -10,6 +10,10 @@
 
 Before creating or editing any user-facing page or component, read [THEME.md](THEME.md) and follow its Persian/RTL design, palette, shared components, and course access presentation rules. Preserve this theme unless the user explicitly requests a change.
 
+## Scores
+
+All scores in the application must be on a 0–100 scale.
+
 <laravel-boost-guidelines>
 === foundation rules ===
 

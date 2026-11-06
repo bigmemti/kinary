@@ -6,6 +6,7 @@ use App\Enums\TeacherRole;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Teacher\UpdateCourseTeachersRequest;
 use App\Http\Requests\Teacher\UpdateEditorCourseRequest;
+use App\Models\Assignment;
 use App\Models\Category;
 use App\Models\Content;
 use App\Models\Course;
@@ -193,9 +194,13 @@ class CourseEditorController extends Controller
                             TableContent::class => 'table',
                             RemindContent::class => 'remind',
                             Quiz::class => 'quiz',
+                            Assignment::class => 'homework',
                             default => 'unknown',
                         },
-                        'body' => $content->contentable instanceof TextContent ? $content->contentable->body : null,
+                        'body' => $content->contentable instanceof TextContent || $content->contentable instanceof Assignment ? $content->contentable->body : null,
+                        'allowed_extensions' => $content->contentable instanceof Assignment ? implode(', ', $content->contentable->allowed_extensions ?? []) : '',
+                        'answer_body' => $content->contentable instanceof Assignment ? $content->contentable->answer_body : null,
+                        'answer_video_url' => $content->contentable instanceof Assignment ? $content->contentable->answer_video_url : null,
                         'name' => $content->contentable instanceof ImageContent || $content->contentable instanceof VideoContent || $content->contentable instanceof FileContent ? $content->contentable->name : null,
                         'url' => match (true) {
                             $content->contentable instanceof ImageContent => Storage::disk('public')->url($content->contentable->path),
@@ -208,6 +213,8 @@ class CourseEditorController extends Controller
                         'quiz_space_id' => $content->contentable instanceof Quiz ? $content->contentable->space_id : null,
                         'accesses' => $content->accesses->map(fn ($access): array => [
                             'plan_id' => $access->plan_id,
+                            'answer_release' => $access->answer_release,
+                            'answer_video_release' => $access->answer_video_release,
                             'requirements' => $access->requirements->map(fn ($requirement): array => ['space_id' => $requirement->space_id, 'score' => $requirement->score])->values()->all(),
                         ])->values()->all(),
                         'delete_block_reason' => $content->deletionBlockReason(),

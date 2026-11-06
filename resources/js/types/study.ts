@@ -46,6 +46,7 @@ export interface StudyContent {
         | 'table'
         | 'remind'
         | 'quiz'
+        | 'homework'
         | 'unavailable';
     body?: string;
     name?: string;
@@ -54,4 +55,8 @@ export interface StudyContent {
     target?: StudyContent;
     quizId?: number;
     latestScore?: string | null;
+    extensions?: string[];
+    submission?: { approved: boolean; score: number | null; note: string | null; files: string[] } | null;
+    answer?: string | null;
+    answerVideoUrl?: string | null;
 }

@@ -48,6 +48,9 @@ class Content extends Model
 
     public function deletionBlockReason(): ?string
     {
+        if ($this->contentable_type === Assignment::class && DB::table('submissions')->where('assignment_id', $this->contentable_id)->exists()) {
+            return 'این تکلیف دارای ارسال دانشجو است و حذف نمی‌شود.';
+        }
         if (DB::table('progress')->where('content_id', $this->id)->exists()) {
             return 'این محتوا پیشرفت دانشجو دارد و حذف نمی‌شود.';
         }

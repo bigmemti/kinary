@@ -93,7 +93,10 @@ export interface CourseEditorContent {
     id: number;
     description: string | null;
     order: number;
-    type: 'text' | 'image' | 'video' | 'file' | 'table' | 'remind' | 'quiz' | 'unknown';
+    type: 'text' | 'image' | 'video' | 'file' | 'table' | 'remind' | 'quiz' | 'homework' | 'unknown';
+    allowed_extensions: string;
+    answer_body: string | null;
+    answer_video_url: string | null;
     quiz_space_id: number | null;
     body: string | null;
     name: string | null;
@@ -102,6 +105,8 @@ export interface CourseEditorContent {
     remind_content_id: number | null;
     accesses: {
         plan_id: number;
+        answer_release: 'never' | 'approved' | 'submitted' | 'always';
+        answer_video_release: 'never' | 'approved' | 'submitted' | 'always';
         requirements: { space_id: number; score: number }[];
     }[];
     delete_block_reason: string | null;

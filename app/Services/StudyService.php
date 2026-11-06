@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Assignment;
 use App\Models\Content;
 use App\Models\Enrollment;
 use App\Models\FileContent;
@@ -76,13 +77,28 @@ class StudyService
             ->whereHas('plan', fn (Builder $query): Builder => $query->where('space_id', $space->id))->pluck('plan_id');
 
         return Content::query()->whereHas('lesson.section', fn (Builder $query): Builder => $query->where('course_id', $space->course_id))
-            ->whereHas('accesses', fn (Builder $query): Builder => $query->whereIn('plan_id', $planIds)
-                ->whereDoesntHave('requirements', fn (Builder $requirements): Builder => $requirements->whereNotExists(
-                    fn ($grades) => $grades->selectRaw('1')->from('grades')->join('attempts', 'attempts.id', '=', 'grades.attempt_id')
-                        ->whereColumn('grades.space_id', 'requirements.space_id')->where('grades.student_id', $user->student->id)
-                        ->whereColumn('attempts.score', '>=', 'requirements.score')
-                )))
+            ->whereHas('accesses', fn (Builder $query): Builder => $this->eligibleAccesses($query, $user, $planIds))
             ->with('lesson.section')->orderBy('order')->orderBy('id');
+    }
+
+    private function eligibleAccesses(Builder $query, User $user, Collection $planIds): Builder
+    {
+        return $query->whereIn('plan_id', $planIds)
+            ->whereDoesntHave('requirements', fn (Builder $requirements): Builder => $requirements->whereNotExists(
+                fn ($grades) => $grades->selectRaw('1')->from('grades')->join('attempts', 'attempts.id', '=', 'grades.attempt_id')
+                    ->whereColumn('grades.space_id', 'requirements.space_id')->where('grades.student_id', $user->student->id)
+                    ->whereColumn('attempts.score', '>=', 'requirements.score')
+            ));
+    }
+
+    private function answerVisible(string $release, bool $submitted, bool $approved): bool
+    {
+        return match ($release) {
+            'always' => true,
+            'submitted' => $submitted,
+            'approved' => $approved,
+            default => false,
+        };
     }
 
     private function authorizeSpace(User $user, Space $space): void
@@ -191,11 +207,25 @@ class StudyService
      */
     private function contentData(Content $content, Space $space, Collection $allowed, User $user, array $visited = []): array
     {
-        $types = [TextContent::class, ImageContent::class, VideoContent::class, FileContent::class, TableContent::class, RemindContent::class, Quiz::class];
+        $types = [TextContent::class, ImageContent::class, VideoContent::class, FileContent::class, TableContent::class, RemindContent::class, Quiz::class, Assignment::class];
         $record = in_array($content->contentable_type, $types, true) ? $content->contentable : null;
         $data = ['id' => $content->id, 'description' => $content->description, 'type' => 'unavailable'];
 
-        if ($record instanceof Quiz && $record->space_id === $space->id) {
+        if ($record instanceof Assignment) {
+            $submission = DB::table('submissions')->where('assignment_id', $record->id)->where('student_id', $user->student->id)->first();
+            $planIds = $user->student->enrollments()->where('is_active', true)
+                ->whereHas('plan', fn (Builder $query): Builder => $query->where('space_id', $space->id))->pluck('plan_id');
+            $accesses = $this->eligibleAccesses($content->accesses()->getQuery(), $user, $planIds)->get();
+            $submitted = $submission !== null;
+            $approved = $submission?->approved_at !== null;
+            $showText = $accesses->contains(fn ($access): bool => $this->answerVisible($access->answer_release, $submitted, $approved));
+            $showVideo = $accesses->contains(fn ($access): bool => $this->answerVisible($access->answer_video_release, $submitted, $approved));
+
+            return [...$data, 'type' => 'homework', 'body' => $record->body, 'extensions' => array_values(array_unique([...($record->allowed_extensions ?? []), 'zip'])), 'submission' => $submission ? [
+                'approved' => $submission->approved_at !== null, 'score' => $submission->score, 'note' => $submission->note,
+                'files' => DB::table('submission_files')->where('submission_id', $submission->id)->pluck('name')->all(),
+            ] : null, 'answer' => $showText ? $record->answer_body : null, 'answerVideoUrl' => $showVideo ? $record->answer_video_url : null];
+        } elseif ($record instanceof Quiz && $record->space_id === $space->id) {
             $latest = $record->attempts()->where('student_id', $user->student->id)->whereNotNull('finished_at')->latest('finished_at')->first();
 
             return [...$data, 'type' => 'quiz', 'name' => $record->title, 'quizId' => $record->id, 'body' => $record->description, 'latestScore' => $latest?->score];

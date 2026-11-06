@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { RichTextEditor as Textarea } from '@/components/rich-text-editor';
 import { destroy, update } from '@/routes/teacher/content/editor';
 import { editor as quizEditor } from '@/routes/teacher/quiz';
+import { index as homeworkIndex } from '@/routes/teacher/homework';
 import type {
     CourseEditorContent,
     CourseEditorOverview,
@@ -22,6 +23,7 @@ const labels = {
     table: 'جدول',
     remind: 'ارجاع / یادآوری',
     quiz: 'آزمونک',
+    homework: 'تکلیف',
 };
 
 function values(content: CourseEditorContent) {
@@ -29,6 +31,9 @@ function values(content: CourseEditorContent) {
         type: content.type === 'unknown' ? 'text' : content.type,
         description: content.description ?? '',
         body: content.body ?? '',
+        allowed_extensions: content.allowed_extensions ?? '',
+        answer_body: content.answer_body ?? '',
+        answer_video_url: content.answer_video_url ?? '',
         name: content.name ?? '',
         url: content.type === 'video' ? (content.url ?? '') : '',
         table: content.table ?? [['', '']],
@@ -37,6 +42,8 @@ function values(content: CourseEditorContent) {
         content_file: null as File | null,
         accesses: content.accesses.map((access) => ({
             plan_id: access.plan_id,
+            answer_release: access.answer_release ?? 'submitted',
+            answer_video_release: access.answer_video_release ?? 'never',
             requirements: access.requirements.map((row) => ({ ...row })),
         })),
     };
@@ -215,9 +222,9 @@ export default function CourseEditorContentForm({
                     />
                     <InputError message={errors.description} />
                 </div>
-                {form.data.type === 'text' && (
+                {(form.data.type === 'text' || form.data.type === 'homework') && (
                     <div className="space-y-2">
-                        <Label htmlFor="content-body">متن محتوا</Label>
+                        <Label htmlFor="content-body">{form.data.type === 'homework' ? 'صورت سؤال' : 'متن محتوا'}</Label>
                         <Textarea
                             id="content-body"
                             rows={10}
@@ -228,6 +235,21 @@ export default function CourseEditorContentForm({
                             }
                         />
                         <InputError message={errors.body} />
+                    </div>
+                )}
+                {form.data.type === 'homework' && (
+                    <div className="space-y-2">
+                        <Label htmlFor="homework-extensions">پسوندهای مجاز فایل</Label>
+                        <Input id="homework-extensions" dir="ltr" placeholder="pdf, png, txt, py, js, php" value={form.data.allowed_extensions} onChange={(event) => form.setData('allowed_extensions', event.target.value)} />
+                        <p className="text-sm">پسوندها را با ویرگول جدا کنید. فایل ZIP همیشه مجاز است.</p>
+                        <InputError message={errors.allowed_extensions} />
+                        <Label htmlFor="homework-answer">متن پاسخ (اختیاری)</Label>
+                        <Textarea id="homework-answer" rows={8} value={form.data.answer_body} onChange={(event) => form.setData('answer_body', event.target.value)} />
+                        <InputError message={errors.answer_body} />
+                        <Label htmlFor="homework-answer-video">نشانی ویدیوی پاسخ (اختیاری)</Label>
+                        <Input id="homework-answer-video" dir="ltr" type="url" value={form.data.answer_video_url} onChange={(event) => form.setData('answer_video_url', event.target.value)} />
+                        <InputError message={errors.answer_video_url} />
+                        {content.type === 'homework' && <Link className="block underline" href={homeworkIndex(content.id)}>مشاهده ارسال‌های تکلیف</Link>}
                     </div>
                 )}
                 {['video', 'image', 'file'].includes(form.data.type) && (
@@ -496,6 +518,8 @@ export default function CourseEditorContentForm({
                                                               {
                                                                   plan_id:
                                                                       plan.id,
+                                                                  answer_release: 'submitted',
+                                                                  answer_video_release: 'never',
                                                                   requirements:
                                                                       [],
                                                               },
@@ -510,6 +534,11 @@ export default function CourseEditorContentForm({
                                         />
                                         {plan.spaceName} / {plan.name}
                                     </label>
+                                    {access && form.data.type === 'homework' && (['answer_release', 'answer_video_release'] as const).map((field) => <label key={field} className="block space-y-2 text-sm">{field === 'answer_release' ? 'دسترسی متن پاسخ' : 'دسترسی ویدیوی پاسخ'}
+                                        <select className="block w-full rounded-md border bg-background p-2" value={access[field]} onChange={(event) => form.setData('accesses', form.data.accesses.map((item) => item.plan_id === plan.id ? { ...item, [field]: event.target.value as typeof item.answer_release } : item))}>
+                                            <option value="never">بدون دسترسی</option><option value="approved">پس از تأیید مدرس</option><option value="submitted">پس از ارسال تکلیف</option><option value="always">بلافاصله</option>
+                                        </select>
+                                    </label>)}
                                     {access &&
                                         overview.spaces
                                             .filter(

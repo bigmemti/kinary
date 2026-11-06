@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Teacher;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Teacher\SaveEditorContentRequest;
+use App\Models\Assignment;
 use App\Models\Content;
 use App\Models\Course;
 use App\Models\FileContent;
@@ -32,6 +33,7 @@ class EditorContentController extends Controller
         'file' => FileContent::class,
         'table' => TableContent::class,
         'remind' => RemindContent::class,
+        'homework' => Assignment::class,
     ];
 
     public function download(Content $content): StreamedResponse
@@ -100,6 +102,9 @@ class EditorContentController extends Controller
                 $content = Content::query()->lockForUpdate()->findOrFail($content->id);
                 $current = $this->typeRecord($content);
                 $targetClass = self::TYPE_CLASSES[$request->validated('type')];
+                if ($current instanceof Assignment && $targetClass !== Assignment::class && DB::table('submissions')->where('assignment_id', $current->id)->exists()) {
+                    throw ValidationException::withMessages(['type' => 'تکلیف دارای ارسال قابل تغییر نوع نیست.']);
+                }
                 $record = ($current !== null && $current::class === $targetClass) ? $current : new $targetClass;
 
                 $this->fillTypeRecord($request, $course, $record, $storedFiles, $obsoleteFiles, $content);
@@ -163,7 +168,16 @@ class EditorContentController extends Controller
     {
         $type = $request->validated('type');
 
-        if ($type === 'text') {
+        if ($type === 'homework') {
+            $record->body = $request->validated('body');
+            $record->allowed_extensions = array_values(array_unique(array_filter(array_map(fn (string $value): string => strtolower(ltrim(trim($value), '.')), explode(',', (string) $request->validated('allowed_extensions'))))));
+            if ($request->exists('answer_body')) {
+                $record->answer_body = $request->validated('answer_body');
+            }
+            if ($request->exists('answer_video_url')) {
+                $record->answer_video_url = $request->validated('answer_video_url');
+            }
+        } elseif ($type === 'text') {
             $record->body = $request->validated('body');
         } elseif ($type === 'video') {
             $record->name = $request->validated('name');
@@ -236,6 +250,9 @@ class EditorContentController extends Controller
 
         foreach ($accesses as $item) {
             $access = $content->accesses()->firstOrCreate(['plan_id' => $item['plan_id']]);
+            $access->answer_release = $item['answer_release'] ?? $access->answer_release ?? 'submitted';
+            $access->answer_video_release = $item['answer_video_release'] ?? $access->answer_video_release ?? 'never';
+            $access->save();
             $requirements = $item['requirements'] ?? [];
             $access->requirements()->whereNotIn('space_id', array_column($requirements, 'space_id'))->delete();
             foreach ($requirements as $requirement) {

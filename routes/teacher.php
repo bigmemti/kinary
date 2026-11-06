@@ -15,6 +15,9 @@ Route::middleware(['auth', 'verified', 'role:teacher'])->prefix('teacher')->name
     Route::patch('content/{content}/editor', [Teacher\EditorContentController::class, 'update'])->name('content.editor.update');
     Route::delete('content/{content}/editor', [Teacher\EditorContentController::class, 'destroy'])->name('content.editor.destroy');
     Route::get('content/{content}/editor/download', [Teacher\EditorContentController::class, 'download'])->name('content.editor.download');
+    Route::get('content/{content}/homework', [Teacher\HomeworkController::class, 'index'])->name('homework.index');
+    Route::get('content/{content}/homework/file/{file}', [Teacher\HomeworkController::class, 'download'])->name('homework.download');
+    Route::post('content/{content}/homework/submission/{submission}', [Teacher\HomeworkController::class, 'approve'])->name('homework.approve');
 
     Route::resource('course', Teacher\CourseController::class);
     Route::resource('course.space', Teacher\SpaceController::class)->shallow();
