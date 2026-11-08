@@ -46,7 +46,7 @@ export default function QuizEditor({
         title: quiz?.title ?? '',
         description: quiz?.description ?? contentDescription ?? '',
         duration_seconds: quiz?.duration_seconds ?? 600,
-        correct_score: quiz?.correct_score ?? '1',
+        correct_score: '1',
         wrong_penalty: quiz?.wrong_penalty ?? '0',
         passing_score: quiz?.passing_score ?? '',
         guest_attempt_limit: quiz?.guest_attempt_limit ?? 3,
@@ -125,37 +125,19 @@ export default function QuizEditor({
                                 }
                             />
                         </label>
-                        <label className="block">
-                            امتیاز هر پاسخ درست{' '}
+                        <label className="flex items-center gap-2">
                             <input
-                                type="number"
-                                step="0.01"
-                                min="0.01"
-                                className="block rounded border p-2"
-                                value={form.data.correct_score}
-                                onChange={(e) =>
-                                    form.setData(
-                                        'correct_score',
-                                        e.target.value,
-                                    )
-                                }
-                            />
-                        </label>
-                        <label className="block">
-                            کسر امتیاز پاسخ غلط{' '}
-                            <input
-                                type="number"
-                                step="0.01"
-                                min="0"
-                                className="block rounded border p-2"
-                                value={form.data.wrong_penalty}
+                                type="checkbox"
+                                checked={Number(form.data.wrong_penalty) > 0}
                                 onChange={(e) =>
                                     form.setData(
                                         'wrong_penalty',
-                                        e.target.value,
+                                        e.target.checked ? '0.33' : '0',
                                     )
                                 }
                             />
+                            نمرهٔ منفی: هر سه پاسخ غلط یک پاسخ درست را خنثی
+                            می‌کند.
                         </label>
                         {!lessonId && (
                             <>

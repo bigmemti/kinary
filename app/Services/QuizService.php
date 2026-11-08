@@ -86,8 +86,12 @@ class QuizService
                 throw ValidationException::withMessages(['quiz' => 'زمان پاسخ‌گویی به پایان رسیده است.']);
             }
             $question = $attempt->quiz->questions()->where('questions.id', $questionId)->firstOrFail();
+            $previousAnswer = DB::table('answers')->where('attempt_id', $attempt->id)->where('question_id', $questionId)->first();
             if ($choiceId === null) {
                 DB::table('answers')->where('attempt_id', $attempt->id)->where('question_id', $questionId)->delete();
+                if ($previousAnswer) {
+                    app(ActivityLogger::class)->record('quiz.answer.deleted', properties: ['attempt_id' => $attempt->id, 'question_id' => $questionId, 'attributes' => ['choice_id' => $previousAnswer->choice_id]]);
+                }
 
                 return;
             }
@@ -96,6 +100,10 @@ class QuizService
                 ['attempt_id' => $attempt->id, 'question_id' => $questionId],
                 ['choice_id' => $choiceId, 'updated_at' => now(), 'created_at' => now()],
             );
+            $changes = $previousAnswer
+                ? ['before' => ['choice_id' => $previousAnswer->choice_id], 'after' => ['choice_id' => $choiceId]]
+                : ['attributes' => ['choice_id' => $choiceId]];
+            app(ActivityLogger::class)->record('quiz.answer.saved', properties: ['attempt_id' => $attempt->id, 'question_id' => $questionId, ...$changes]);
         });
     }
 
@@ -144,7 +152,9 @@ class QuizService
             ->where('answers.attempt_id', $attempt->id)->get(['choices.is_correct']);
         $correct = $answers->where('is_correct', true)->count();
         $wrong = $answers->count() - $correct;
-        $attempt->score = round($correct * (float) $quiz->correct_score - $wrong * (float) $quiz->wrong_penalty, 2);
+        $questionCount = $quiz->questions()->count();
+        $earned = $correct - ((float) $quiz->wrong_penalty > 0 ? $wrong / 3 : 0);
+        $attempt->score = $questionCount > 0 ? round(max(0, min(100, $earned * 100 / $questionCount)), 2) : 0;
         $attempt->finished_at = now();
         $attempt->save();
 
@@ -179,8 +189,9 @@ class QuizService
     {
         $quiz = $attempt->quiz;
         $space = Space::query()->whereKey($quiz->space_id)->where('quiz_id', $quiz->id)->first();
-        $maximum = $quiz->questions()->count() * (float) $quiz->correct_score;
-        if ($space && $quiz->passing_score !== null && $maximum > 0 && (float) $attempt->score * 100 >= (float) $quiz->passing_score * $maximum) {
+        if ($space && $quiz->passing_score !== null && $quiz->questions()->exists() && (float) $attempt->score >= (float) $quiz->passing_score) {
+            $logger = app(ActivityLogger::class);
+            $before = $logger->snapshot('grades', ['space_id' => $space->id, 'student_id' => $attempt->student_id], ['id', 'attempt_id']);
             $existing = DB::table('grades')->where('space_id', $space->id)->where('student_id', $attempt->student_id)->lockForUpdate()->first();
             if (! $existing) {
                 DB::table('grades')->insert(['space_id' => $space->id, 'student_id' => $attempt->student_id,
@@ -188,6 +199,7 @@ class QuizService
             } elseif ($attempt->score > Attempt::query()->findOrFail($existing->attempt_id)->score) {
                 DB::table('grades')->where('id', $existing->id)->update(['attempt_id' => $attempt->id, 'updated_at' => now()]);
             }
+            $logger->recordChanges('certificate.grade.changed', $before, $logger->snapshot('grades', ['space_id' => $space->id, 'student_id' => $attempt->student_id], ['id', 'attempt_id']), $attempt);
         }
     }
 }

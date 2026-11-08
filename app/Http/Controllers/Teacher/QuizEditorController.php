@@ -13,6 +13,7 @@ use App\Models\Space;
 use App\Models\TableContent;
 use App\Models\TextContent;
 use App\Models\VideoContent;
+use App\Services\ActivityLogger;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -100,9 +101,11 @@ class QuizEditorController extends Controller
             }
             $quiz ??= new Quiz;
             $quiz->space_id = $space->id;
-            foreach (['title', 'description', 'duration_seconds', 'correct_score', 'wrong_penalty', 'guest_attempt_limit'] as $key) {
+            foreach (['title', 'description', 'duration_seconds', 'guest_attempt_limit'] as $key) {
                 $quiz->{$key} = $data[$key] ?? null;
             }
+            $quiz->correct_score = 1;
+            $quiz->wrong_penalty = (float) $data['wrong_penalty'] > 0 ? 0.33 : 0;
             $quiz->passing_score = $lesson ? null : $data['passing_score'];
             $quiz->time = gmdate('H:i:s', $data['duration_seconds']);
             $quiz->score = 0;
@@ -115,6 +118,9 @@ class QuizEditorController extends Controller
                 }
                 $ids[] = $question->id;
             }
+            $logger = app(ActivityLogger::class);
+            $beforeQuestions = $logger->snapshot('question_quiz', ['quiz_id' => $quiz->id], ['question_id', 'order']);
+            $beforePlans = $logger->snapshot('plan_quiz', ['quiz_id' => $quiz->id], ['plan_id', 'attempt_limit']);
             $quiz->questions()->sync(collect($ids)->values()->mapWithKeys(fn ($id, $index) => [$id => ['order' => $index]])->all());
             DB::table('plan_quiz')->where('quiz_id', $quiz->id)->delete();
             foreach ($data['plans'] as $plan) {
@@ -122,6 +128,8 @@ class QuizEditorController extends Controller
                     DB::table('plan_quiz')->insert(['plan_id' => $plan['id'], 'quiz_id' => $quiz->id, 'attempt_limit' => $plan['limit'] ?? null]);
                 }
             }
+            $logger->recordChanges('quiz.questions.changed', $beforeQuestions, $logger->snapshot('question_quiz', ['quiz_id' => $quiz->id], ['question_id', 'order']), $quiz);
+            $logger->recordChanges('quiz.plans.changed', $beforePlans, $logger->snapshot('plan_quiz', ['quiz_id' => $quiz->id], ['plan_id', 'attempt_limit']), $quiz);
             if ($lesson) {
                 if (! $content) {
                     $content = Content::query()->create(['lesson_id' => $lesson->id, 'description' => $data['description'] ?? '',
@@ -136,6 +144,7 @@ class QuizEditorController extends Controller
                     $old->delete();
                 }
                 $contentId = $content->id;
+                $beforeAccesses = $content->accesses()->with('requirements')->orderBy('id')->get()->toArray();
                 $enabledPlanIds = collect($data['plans'])->where('enabled', true)->pluck('id')->all();
                 $removed = $content->accesses()->whereNotIn('plan_id', $enabledPlanIds)->pluck('id');
                 DB::table('requirements')->whereIn('access_id', $removed)->delete();
@@ -145,6 +154,7 @@ class QuizEditorController extends Controller
                         $content->accesses()->firstOrCreate(['plan_id' => $plan['id']]);
                     }
                 }
+                $logger->recordChanges('content.accesses.changed', $beforeAccesses, $content->accesses()->with('requirements')->orderBy('id')->get()->toArray(), $content);
             } else {
                 $space->update(['quiz_id' => $quiz->id]);
             }
