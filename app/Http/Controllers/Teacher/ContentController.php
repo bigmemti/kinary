@@ -7,6 +7,8 @@ use App\Http\Requests\Teacher\StoreContentRequest;
 use App\Http\Requests\Teacher\UpdateContentRequest;
 use App\Models\Content;
 use App\Models\Lesson;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\ValidationException;
 
 class ContentController extends Controller
 {
@@ -15,6 +17,8 @@ class ContentController extends Controller
      */
     public function index(Lesson $lesson)
     {
+        Gate::authorize('viewEditor', $lesson->section->course);
+
         return inertia('teacher/lesson/content/index', [
             'lesson' => $lesson->load(['contents']),
         ]);
@@ -25,6 +29,8 @@ class ContentController extends Controller
      */
     public function create(Lesson $lesson)
     {
+        Gate::authorize('updateEditorStructure', $lesson->section->course);
+
         return inertia('teacher/lesson/content/create', [
             'lesson' => $lesson,
         ]);
@@ -35,6 +41,7 @@ class ContentController extends Controller
      */
     public function store(StoreContentRequest $request, Lesson $lesson)
     {
+        Gate::authorize('updateEditorStructure', $lesson->section->course);
         $lesson->contents()->create($request->validated());
     }
 
@@ -43,6 +50,8 @@ class ContentController extends Controller
      */
     public function show(Content $content)
     {
+        Gate::authorize('viewEditor', $content->lesson->section->course);
+
         return inertia('teacher/content/show', [
             'content' => $content,
         ]);
@@ -53,6 +62,8 @@ class ContentController extends Controller
      */
     public function edit(Content $content)
     {
+        Gate::authorize('updateEditorStructure', $content->lesson->section->course);
+
         return inertia('teacher/content/edit', [
             'content' => $content,
         ]);
@@ -63,6 +74,7 @@ class ContentController extends Controller
      */
     public function update(UpdateContentRequest $request, Content $content)
     {
+        Gate::authorize('updateEditorStructure', $content->lesson->section->course);
         $content->update($request->validated());
     }
 
@@ -71,6 +83,10 @@ class ContentController extends Controller
      */
     public function destroy(Content $content)
     {
+        Gate::authorize('deleteEditorStructure', $content->lesson->section->course);
+        if ($reason = $content->deletionBlockReason()) {
+            throw ValidationException::withMessages(['content' => $reason]);
+        }
         $content->delete();
     }
 }

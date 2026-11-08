@@ -65,7 +65,7 @@ class CoursePolicy
             return Response::denyAsNotFound();
         }
 
-        return $course->teachers()->where('teachers.user_id', $user->id)->exists()
+        return $course->teachers()->where('teachers.user_id', $user->id)->where('course_teacher.role', '!=', TeacherRole::Reminder->value)->exists()
             ? Response::allow()
             : Response::denyAsNotFound();
     }
