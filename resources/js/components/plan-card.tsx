@@ -25,7 +25,13 @@ export interface PublicPlan {
     lessonsCount: number;
 }
 
-export default function PlanCard({ plan }: { plan: PublicPlan }) {
+export default function PlanCard({
+    plan,
+    highlighted = false,
+}: {
+    plan: PublicPlan;
+    highlighted?: boolean;
+}) {
     const { auth } = usePage<{ auth: { user: { id: number } | null } }>().props;
     const disabled =
         plan.action === 'enrolled' || plan.action === 'unavailable';
@@ -40,7 +46,14 @@ export default function PlanCard({ plan }: { plan: PublicPlan }) {
     };
     const label = labels[plan.action];
     return (
-        <article className="flex h-full flex-col rounded-3xl border border-current/15 bg-white p-6 sm:p-8 dark:bg-white/5">
+        <article
+            className={`flex h-full flex-col rounded-3xl border bg-white p-6 sm:p-8 dark:bg-white/5 ${highlighted ? 'border-[#687943] ring-2 ring-[#8b9b5a]/40' : 'border-current/15'}`}
+        >
+            {highlighted && (
+                <p className="mb-3 rounded-xl bg-[#e7ebdf] p-3 text-sm font-bold dark:bg-white/10">
+                    شامل محتوای این یادآوری
+                </p>
+            )}
             <p className="storefront-eyebrow">پلن آموزشی</p>
             <h3 className="text-xl leading-8 font-bold">{plan.name}</h3>
             <p className="my-7 flex flex-wrap items-baseline gap-2">
@@ -52,7 +65,9 @@ export default function PlanCard({ plan }: { plan: PublicPlan }) {
                 )}
             </p>
             {plan.description && (
-                <MarkdownContent className="mb-6 text-sm leading-8 opacity-80">{plan.description}</MarkdownContent>
+                <MarkdownContent className="mb-6 text-sm leading-8 opacity-80">
+                    {plan.description}
+                </MarkdownContent>
             )}
             {plan.upgradeFrom && !disabled && (
                 <p className="mb-6 text-sm leading-8">

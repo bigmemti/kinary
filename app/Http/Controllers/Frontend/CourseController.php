@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
+use App\Models\Content;
 use App\Models\Course;
+use App\Services\CommunityService;
 use App\Services\CoursePageService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -42,10 +44,15 @@ class CourseController extends Controller
     public function show(Request $request, Course $course, CoursePageService $coursePage): Response
     {
         abort_unless($course->is_published, 404);
+        $targetId = $request->validate(['reminder' => ['nullable', 'integer']])['reminder'] ?? null;
+        $target = $targetId ? Content::query()->whereKey($targetId)
+            ->whereHas('lesson.section', fn (Builder $query): Builder => $query->where('course_id', $course->id))->first() : null;
 
         return Inertia::render('course/details', [
             ...$coursePage->data($course, $request->user()),
+            'reminderPlanIds' => $target?->accesses()->pluck('plan_id')->all() ?? [],
             'canonicalUrl' => route('course.show', $course->slug),
+            'comments' => app(CommunityService::class)->comments($course, $request->user()),
         ])->withViewData([
             'storefrontTitle' => $course->title.' | آکادمی',
             'storefrontDescription' => str($course->description ?? $course->title)->stripTags()->limit(160)->toString(),

@@ -1,12 +1,13 @@
 import { MarkdownContent } from '@/components/markdown-content';
+import CommunityComments, { type CommunityComment } from '@/components/community-comments';
 import PlanCard, { type PublicPlan } from '@/components/plan-card';
 import { EmptyState, persianNumber, Storefront } from '@/components/storefront';
 import { nestedSections, type NestedSection } from '@/lib/section-tree';
 import { home } from '@/routes';
 import { show as categoryShow } from '@/routes/category';
 import { index } from '@/routes/course';
-import { show as teacherShow } from '@/routes/teacher';
 import { start as startQuiz } from '@/routes/student/quiz';
+import { show as teacherShow } from '@/routes/teacher';
 import { Link } from '@inertiajs/react';
 import {
     ArrowDown,
@@ -42,6 +43,7 @@ interface PublicSpace {
 }
 
 interface CoursePageProps {
+    comments: CommunityComment[];
     course: {
         id: number;
         title: string;
@@ -51,10 +53,20 @@ interface CoursePageProps {
         teachers: { id: number; name: string }[];
     };
     spaces: PublicSpace[];
+    reminderPlanIds?: number[];
 }
 
-export default function CourseDetails({ course, spaces }: CoursePageProps) {
-    const [selectedSpaceId, setSelectedSpaceId] = useState(spaces[0]?.id);
+export default function CourseDetails({
+    course,
+    spaces,
+    reminderPlanIds = [],
+    comments,
+}: CoursePageProps) {
+    const [selectedSpaceId, setSelectedSpaceId] = useState(
+        spaces.find((space) =>
+            space.plans.some((plan) => reminderPlanIds.includes(plan.id)),
+        )?.id ?? spaces[0]?.id,
+    );
     const [failedThumbnail, setFailedThumbnail] = useState(false);
     const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
     const tabsId = useId();
@@ -228,6 +240,13 @@ export default function CourseDetails({ course, spaces }: CoursePageProps) {
                                     className={`shrink-0 rounded-xl px-6 py-3 text-sm transition ${selectedSpace?.id === space.id ? 'bg-[#244d40] font-bold text-white dark:bg-[#d9e3ad] dark:text-[#243b37]' : 'hover:bg-black/5 dark:hover:bg-white/5'}`}
                                 >
                                     {space.name}
+                                    {space.plans.some((plan) =>
+                                        reminderPlanIds.includes(plan.id),
+                                    ) && (
+                                        <span className="mr-2 text-xs">
+                                            · شامل یادآوری
+                                        </span>
+                                    )}
                                 </button>
                             ))}
                         </div>
@@ -245,7 +264,22 @@ export default function CourseDetails({ course, spaces }: CoursePageProps) {
                         }
                         tabIndex={spaces.length > 1 ? 0 : undefined}
                     >
-                        {selectedSpace.quizId && <div className="mb-8 space-y-3"><h2 className="font-bold">آزمون پایانی</h2><Link method="post" as="button" className="storefront-button" href={startQuiz({ space: selectedSpace.id, quiz: selectedSpace.quizId })}>شرکت در آزمون پایانی</Link></div>}
+                        {selectedSpace.quizId && (
+                            <div className="mb-8 space-y-3">
+                                <h2 className="font-bold">آزمون پایانی</h2>
+                                <Link
+                                    method="post"
+                                    as="button"
+                                    className="storefront-button"
+                                    href={startQuiz({
+                                        space: selectedSpace.id,
+                                        quiz: selectedSpace.quizId,
+                                    })}
+                                >
+                                    شرکت در آزمون پایانی
+                                </Link>
+                            </div>
+                        )}
                         {selectedSpace.categories.length > 0 && (
                             <nav
                                 aria-label="دسته‌بندی‌های فضای آموزشی"
@@ -322,7 +356,13 @@ export default function CourseDetails({ course, spaces }: CoursePageProps) {
                         {selectedSpace.plans.length ? (
                             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                                 {selectedSpace.plans.map((plan) => (
-                                    <PlanCard key={plan.id} plan={plan} />
+                                    <PlanCard
+                                        key={plan.id}
+                                        plan={plan}
+                                        highlighted={reminderPlanIds.includes(
+                                            plan.id,
+                                        )}
+                                    />
                                 ))}
                             </div>
                         ) : (
@@ -339,6 +379,7 @@ export default function CourseDetails({ course, spaces }: CoursePageProps) {
                     </EmptyState>
                 )}
             </section>
+            <div className="mx-auto max-w-7xl px-5 lg:px-10"><CommunityComments comments={comments} context={{ type: 'course', targetId: course.id }} title="دیدگاه‌های دوره" /></div>
         </Storefront>
     );
 }
