@@ -43,12 +43,19 @@ test('students submit files and can remove only before approval', function () {
     $this->actingAs($student)->post(route('student.homework.store', [$space, $content]), ['files' => [UploadedFile::fake()->createWithContent('solution.py', 'print(1)')]])->assertSessionHasNoErrors();
     $submission = DB::table('submissions')->first();
     $file = DB::table('submission_files')->first();
+    $this->assertDatabaseHas('activity_logs', ['event' => 'homework.submitted', 'actor_id' => $student->id]);
     Storage::disk('local')->assertExists($file->path);
     $this->post(route('student.homework.store', [$space, $content]), ['files' => [UploadedFile::fake()->createWithContent('again.txt', 'test')]])->assertSessionHasErrors('files');
     $this->actingAs($teacher->user)->post(route('teacher.homework.approve', [$content, $submission->id]), ['score' => 101])->assertSessionHasErrors('score');
     $this->post(route('teacher.homework.approve', [$content, $submission->id]), ['score' => 80, 'note' => 'good'])->assertSessionHasNoErrors();
     $this->actingAs($student)->delete(route('student.homework.destroy', [$space, $content]))->assertSessionHasErrors('files');
     $this->assertDatabaseHas('submissions', ['id' => $submission->id, 'score' => 80, 'note' => 'good']);
+    $log = DB::table('activity_logs')->where('event', 'homework.reviewed')->sole();
+    $properties = json_decode($log->properties, true);
+    expect($properties['submission_id'])->toBe($submission->id)
+        ->and($properties['before']['score'])->toBeNull()
+        ->and($properties['after']['score'])->toBe(80)
+        ->and($properties['after']['note'])->toBe('good');
 });
 
 test('submission validation and ownership are enforced', function () {
@@ -63,6 +70,8 @@ test('submission validation and ownership are enforced', function () {
     $this->actingAs($stranger)->delete(route('student.homework.destroy', [$space, $content]))->assertNotFound();
     $this->actingAs($student)->delete(route('student.homework.destroy', [$space, $content]))->assertSessionHasNoErrors();
     Storage::disk('local')->assertMissing($path);
+    $log = DB::table('activity_logs')->where('event', 'homework.deleted')->sole();
+    expect(json_decode($log->properties, true)['files'][0]['name'])->toBe('ok.txt');
     $this->assertDatabaseCount('submissions', 0);
 });
 
@@ -87,6 +96,16 @@ test('the course owner configures homework and answer release for each plan', fu
     expect($content->fresh()->contentable->answer_body)->toBe('**پاسخ**');
     $this->assertDatabaseHas('accesses', ['content_id' => $content->id, 'plan_id' => $firstPlan->id, 'answer_release' => 'approved', 'answer_video_release' => 'never']);
     $this->assertDatabaseHas('accesses', ['content_id' => $content->id, 'plan_id' => $secondPlan->id, 'answer_release' => 'always', 'answer_video_release' => 'submitted']);
+
+    $this->get(route('teacher.course.editor', $space->course))->assertInertia(fn (Assert $page) => $page
+        ->loadDeferredProps(fn (Assert $reload) => $reload
+            ->where('overview.sections.0.lessons.0.contents.0.type', 'homework')
+            ->where('overview.sections.0.lessons.0.contents.0.body', 'سؤال جدید')
+            ->where('overview.sections.0.lessons.0.contents.0.answer_body', '**پاسخ**')
+            ->where('overview.sections.0.lessons.0.contents.0.answer_video_url', 'https://example.com/answer.mp4')
+            ->where('overview.sections.0.lessons.0.contents.0.allowed_extensions', 'pdf, py, png')
+            ->where('overview.sections.0.lessons.0.contents.0.accesses.0.answer_release', 'approved')
+            ->where('overview.sections.0.lessons.0.contents.0.accesses.1.answer_video_release', 'submitted')));
 });
 
 test('text and video answers follow each plan independently and approval belongs to the student', function () {
