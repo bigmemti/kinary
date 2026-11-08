@@ -5,6 +5,7 @@ import {
     Storefront,
     type PublicCourse,
 } from '@/components/storefront';
+import CommunityComments, { type CommunityComment } from '@/components/community-comments';
 import { show as categoryShow } from '@/routes/category';
 import { index as coursesIndex } from '@/routes/course';
 import { show as teacherShow } from '@/routes/teacher';
@@ -22,6 +23,7 @@ import {
 } from 'lucide-react';
 
 interface HomeProps {
+    comments: CommunityComment[];
     courses: PublicCourse[];
     categories: { id: number; name: string; slug: string }[];
     teachers: { id: number; name: string; description: string | null }[];
@@ -46,7 +48,7 @@ const questions = [
     },
 ];
 
-export default function Home({ courses, categories, teachers }: HomeProps) {
+export default function Home({ courses, categories, teachers, comments }: HomeProps) {
     return (
         <Storefront
             title="یادگیری مهندسی نرم‌افزار"
@@ -319,6 +321,7 @@ export default function Home({ courses, categories, teachers }: HomeProps) {
                     ))}
                 </div>
             </section>
+            <div className="mx-auto max-w-7xl px-5 lg:px-10"><CommunityComments comments={comments} context={{ type: 'site' }} title="نظر شما درباره آکادمی" /></div>
         </Storefront>
     );
 }

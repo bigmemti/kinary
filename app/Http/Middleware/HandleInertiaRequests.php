@@ -50,9 +50,9 @@ class HandleInertiaRequests extends Middleware
                 'permissions' => fn (): array => $request->user()?->getAllPermissions()->pluck('name')->unique()->values()->all() ?? [],
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
-            'pageDirection' => $request->routeIs('home', 'course.*', 'category.*', 'cart.*', 'login', 'register') ? 'rtl' : 'ltr',
+            'pageDirection' => $request->routeIs('home', 'course.*', 'category.*', 'cart.*', 'community.*', 'login', 'register') ? 'rtl' : 'ltr',
             'cartNotice' => fn (): ?string => $request->session()->get('cart_notice'),
-            'storefrontCart' => fn (): array => $request->user() && $request->routeIs('home', 'course.*', 'category.*', 'cart.*', 'login', 'register')
+            'storefrontCart' => fn (): array => $request->user() && $request->routeIs('home', 'course.*', 'category.*', 'cart.*', 'community.*', 'login', 'register')
                 ? app(CartService::class)->items($request->user())
                 : [],
         ];
@@ -69,6 +69,7 @@ class HandleInertiaRequests extends Middleware
                 'course.index',
                 'course.show',
                 'category.show',
+                'community.show',
                 'login',
                 'register',
             ),

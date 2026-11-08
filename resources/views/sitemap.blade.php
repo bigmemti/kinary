@@ -27,4 +27,13 @@
             @endif
         </url>
     @endforeach
+
+    @foreach ($discussions as $discussion)
+        <url>
+            <loc>{{ $discussion->url() }}</loc>
+            @if ($discussion->updated_at)
+                <lastmod>{{ $discussion->updated_at->toAtomString() }}</lastmod>
+            @endif
+        </url>
+    @endforeach
 </urlset>

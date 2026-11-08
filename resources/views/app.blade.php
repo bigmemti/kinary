@@ -35,6 +35,9 @@
             <meta name="description" content="{{ $storefrontDescription }}" inertia="description">
             <link rel="canonical" href="{{ url()->current() }}" inertia="canonical">
         @endisset
+        @if (! empty($storefrontRobots))
+            <meta name="robots" content="{{ $storefrontRobots }}" inertia="robots">
+        @endif
 
         <link rel="icon" href="/favicon.ico" sizes="any">
         <link rel="icon" href="/favicon.svg" type="image/svg+xml">
