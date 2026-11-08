@@ -10,6 +10,10 @@
 
 Before creating or editing any user-facing page or component, read [THEME.md](THEME.md) and follow its Persian/RTL design, palette, shared components, and course access presentation rules. Preserve this theme unless the user explicitly requests a change.
 
+## Activity logging
+
+Every new or changed user-visible action, security event, background operation, and data mutation must include appropriate activity logging and regression coverage. Record the actor (including guests or system actions), outcome, relevant subject and context. For updates record safe before and after values; for creation record the created data. Explicitly cover query-builder, bulk and pivot changes, which do not dispatch Eloquent model events. Never log passwords, tokens, recovery codes, payment secrets, or other credentials. Avoid logging ordinary page navigation.
+
 ## Scores
 
 All scores in the application must be on a 0–100 scale.
