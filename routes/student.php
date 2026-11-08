@@ -23,6 +23,7 @@ Route::middleware(['auth', 'verified', 'role:student'])->prefix('student')->name
     Route::get('study/{space}/lesson/{lesson}', [StudyController::class, 'show'])->name('study.lesson');
     Route::post('study/{space}/lesson/{lesson}/visit', [StudyController::class, 'visit'])->name('study.visit');
     Route::get('study/{space}/content/{content}/download', [StudyController::class, 'download'])->name('study.download');
+    Route::get('study/{space}/content/{content}/reminder-download', [StudyController::class, 'reminderDownload'])->name('study.reminder-download');
     Route::post('study/{space}/content/{content}/homework', [HomeworkController::class, 'store'])->name('homework.store');
     Route::delete('study/{space}/content/{content}/homework', [HomeworkController::class, 'destroy'])->name('homework.destroy');
     Route::post('quiz/{space}/{quiz}/start', [QuizController::class, 'start'])->name('quiz.start');

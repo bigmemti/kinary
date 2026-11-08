@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth', 'verified', 'role:teacher'])->prefix('teacher')->name('teacher.')->group(function () {
     Route::get('course/{course}/editor', Teacher\CourseEditorController::class)->name('course.editor');
+    Route::get('course/{course}/editor/reminder-sources', Teacher\ReminderSourceController::class)->name('course.editor.reminder-sources');
+    Route::get('course/{course}/editor/reminder-file/{content}', [Teacher\ReminderSourceController::class, 'download'])->name('course.editor.reminder-download');
 
     Route::get('space/{space}/quiz/editor', [Teacher\QuizEditorController::class, 'edit'])->name('quiz.editor');
     Route::post('space/{space}/quiz/editor', [Teacher\QuizEditorController::class, 'save'])->name('quiz.save');

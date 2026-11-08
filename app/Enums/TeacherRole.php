@@ -9,4 +9,5 @@ enum TeacherRole: string
     case Assistant = 'assistant';
     case Reviewer = 'reviewer';
     case Editor = 'editor';
+    case Reminder = 'reminder';
 }
