@@ -31,7 +31,12 @@ export interface StudySpace extends StudyProgress {
         final: boolean;
         limit: number | null;
         canStart: boolean;
-        attempts: { id: number; startedAt: string | null; finished: boolean; score: string | null }[];
+        attempts: {
+            id: number;
+            startedAt: string | null;
+            finished: boolean;
+            score: string | null;
+        }[];
     }[];
 }
 
@@ -47,16 +52,38 @@ export interface StudyContent {
         | 'remind'
         | 'quiz'
         | 'homework'
+        | 'exercise'
+        | 'deck'
+        | 'locked'
         | 'unavailable';
+    requirementAlternatives?: {
+        spaceId: number;
+        spaceName: string;
+        courseTitle: string;
+        score: number;
+        quizId: number;
+        canStart: boolean;
+    }[][];
     body?: string;
     name?: string;
+    cards?: { id: number; question: string; answer: string }[];
+    personalDecks?: { id: number; name: string }[];
     url?: string | null;
     rows?: string[][];
     target?: StudyContent;
+    sourceCourse?: string;
+    sourceLesson?: string;
+    sourceUrl?: string | null;
+    sourceAccessible?: boolean;
     quizId?: number;
     latestScore?: string | null;
     extensions?: string[];
-    submission?: { approved: boolean; score: number | null; note: string | null; files: string[] } | null;
+    submission?: {
+        approved: boolean;
+        score: number | null;
+        note: string | null;
+        files: string[];
+    } | null;
     answer?: string | null;
     answerVideoUrl?: string | null;
 }

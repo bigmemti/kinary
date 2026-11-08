@@ -165,7 +165,7 @@ test('private lesson files are downloadable only with access in the requested sp
     $this->actingAs(User::factory()->create())->get(route('student.study.download', [$space, $content]))->assertNotFound();
 });
 
-test('reminders cannot expose inaccessible target content', function () {
+test('reminders expose only their selected target even without a source plan', function () {
     [$user, $space, $plan, $lesson] = studyFixture();
     $private = Content::factory()->text()->for($lesson)->create();
     $remind = RemindContent::create(['content_id' => $private->id]);
@@ -173,8 +173,8 @@ test('reminders cannot expose inaccessible target content', function () {
     Access::create(['plan_id' => $plan->id, 'content_id' => $content->id]);
 
     $this->actingAs($user)->get(route('student.study.lesson', [$space, $lesson]))->assertInertia(fn (Assert $page) => $page
-        ->where('contents.1.type', 'unavailable')->missing('contents.1.target'))
-        ->assertDontSee($private->contentable->body);
+        ->where('contents.1.type', 'remind')->where('contents.1.target.body', $private->contentable->body)
+        ->where('contents.1.sourceAccessible', false));
 });
 
 test('study pages require authentication', function () {
@@ -265,3 +265,13 @@ test('continue opens the first lesson with unread accessible content in curricul
     'completed lesson is skipped even if unpurchased content remains' => [['first', 'first-extra'], 1],
     'fully read space keeps the last visited lesson' => [['first', 'first-extra', 'second', 'last'], 2],
 ]);
+
+test('students receive the saved embed player source for accessible video', function () {
+    [$user, $space, $plan, $lesson] = studyFixture();
+    $video = VideoContent::create(['name' => 'Video', 'path' => 'embed:https://www.youtube.com/embed/abc']);
+    $content = Content::factory()->for($lesson)->create(['order' => 2, 'contentable_type' => $video::class, 'contentable_id' => $video->id]);
+    Access::create(['plan_id' => $plan->id, 'content_id' => $content->id]);
+
+    $this->actingAs($user)->get(route('student.study.lesson', [$space, $lesson]))->assertInertia(fn (Assert $page) => $page
+        ->where('contents.1.type', 'video')->where('contents.1.url', 'embed:https://www.youtube.com/embed/abc'));
+});
