@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Teacher\UpdateEditorLessonRequest;
 use App\Models\Course;
 use App\Models\Lesson;
+use App\Services\ActivityLogger;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
@@ -59,11 +60,14 @@ class EditorLessonController extends Controller
 
                 if ($request->exists('pricings') || $request->boolean('update_pricings')) {
                     Gate::authorize('manageEditorCommerce', $course);
+                    $logger = app(ActivityLogger::class);
+                    $before = $logger->snapshot('pricings', ['lesson_id' => $lesson->id], ['plan_id', 'price']);
                     $pricings = $request->validated('pricings', []);
                     $lesson->pricings()->whereNotIn('plan_id', array_column($pricings, 'plan_id'))->delete();
                     foreach ($pricings as $pricing) {
                         $lesson->pricings()->updateOrCreate(['plan_id' => $pricing['plan_id']], ['price' => $pricing['price']]);
                     }
+                    $logger->recordChanges('lesson.pricings.changed', $before, $logger->snapshot('pricings', ['lesson_id' => $lesson->id], ['plan_id', 'price']), $lesson);
                 }
             });
         } catch (Throwable $exception) {

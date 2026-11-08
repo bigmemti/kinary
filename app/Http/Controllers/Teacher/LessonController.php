@@ -8,6 +8,7 @@ use App\Http\Requests\Teacher\UpdateLessonRequest;
 use App\Models\Course;
 use App\Models\Lesson;
 use App\Models\Section;
+use App\Services\ActivityLogger;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
@@ -126,7 +127,10 @@ class LessonController extends Controller
             if ($lesson->contents()->exists()) {
                 throw ValidationException::withMessages(['delete' => 'ابتدا محتواهای لسن را حذف کنید.']);
             }
+            $logger = app(ActivityLogger::class);
+            $before = $logger->snapshot('pricings', ['lesson_id' => $lesson->id], ['plan_id', 'price']);
             $lesson->pricings()->delete();
+            $logger->recordChanges('lesson.pricings.changed', $before, [], $lesson);
             $lesson->delete();
         });
 
