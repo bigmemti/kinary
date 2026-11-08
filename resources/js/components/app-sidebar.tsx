@@ -24,8 +24,10 @@ import { index as teachers } from '@/routes/admin/teacher';
 import { index as transactions } from '@/routes/admin/transaction';
 import { index as users } from '@/routes/admin/user';
 import { index as wallets } from '@/routes/admin/wallet';
+import { moderation as commentModeration } from '@/routes/community';
 import { index as studying_courses } from '@/routes/student/enrollment';
 import { index as student_certificates } from '@/routes/student/certificate';
+import { index as flashcards, today as flashcardsToday } from '@/routes/student/flashcards';
 import { index as teaching_courses } from '@/routes/teacher/course';
 import { SharedData, type NavItem } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
@@ -37,6 +39,7 @@ import {
     Layers,
     LayoutGrid,
     LinkIcon,
+    MessageSquare,
     ReceiptText,
     School,
     ShoppingCart,
@@ -66,6 +69,8 @@ const mainNavItems: NavItem[] = [
         icon: GraduationCap,
         can: { role: 'student' },
     },
+    { title: 'فلش‌کارت‌های من', href: flashcards(), icon: Layers, can: { role: 'student' } },
+    { title: 'مرور امروز', href: flashcardsToday(), icon: BookOpen, can: { role: 'student' } },
     {
         title: 'Teaching Courses',
         href: teaching_courses(),
@@ -77,6 +82,7 @@ const mainNavItems: NavItem[] = [
 ];
 
 const adminNavItems: NavItem[] = [
+    { title: 'مدیریت دیدگاه‌ها', href: commentModeration(), icon: MessageSquare },
     { title: 'دسته‌بندی‌ها', href: categories(), icon: Layers },
     {
         title: 'Users',
