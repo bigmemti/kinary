@@ -10,6 +10,8 @@ use App\Models\Assignment;
 use App\Models\Category;
 use App\Models\Content;
 use App\Models\Course;
+use App\Models\Deck;
+use App\Models\Exercise;
 use App\Models\FileContent;
 use App\Models\ImageContent;
 use App\Models\Lesson;
@@ -22,6 +24,7 @@ use App\Models\TableContent;
 use App\Models\Teacher;
 use App\Models\TextContent;
 use App\Models\VideoContent;
+use App\Services\ActivityLogger;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -95,7 +98,10 @@ class CourseEditorController extends Controller
             $teachers = collect($request->validated('teachers'))->mapWithKeys(fn (array $teacher): array => [
                 $teacher['id'] => ['role' => $teacher['role']],
             ]);
+            $logger = app(ActivityLogger::class);
+            $before = $logger->snapshot('course_teacher', ['course_id' => $course->id], ['teacher_id', 'role']);
             $lockedCourse->teachers()->sync($teachers->all());
+            $logger->recordChanges('course.teachers.changed', $before, $logger->snapshot('course_teacher', ['course_id' => $course->id], ['teacher_id', 'role']), $lockedCourse);
         });
 
         return Gate::allows('viewEditor', $course)
@@ -132,10 +138,11 @@ class CourseEditorController extends Controller
             ->get(['id', 'course_id', 'parent_id', 'name', 'order']);
 
         $contents = new Collection($sections->flatMap(fn (Section $section) => $section->lessons->flatMap(fn (Lesson $lesson) => $lesson->contents))->all());
-        $supportedTypes = [TextContent::class, ImageContent::class, VideoContent::class, FileContent::class, TableContent::class, RemindContent::class, Quiz::class];
+        $supportedTypes = [TextContent::class, ImageContent::class, VideoContent::class, FileContent::class, TableContent::class, RemindContent::class, Quiz::class, Assignment::class];
         $contents->reject(fn (Content $content): bool => in_array($content->contentable_type, $supportedTypes, true))
             ->each(fn (Content $content) => $content->setRelation('contentable', null));
         $contents->filter(fn (Content $content): bool => in_array($content->contentable_type, $supportedTypes, true))->load('contentable');
+        $contents->filter(fn (Content $content): bool => $content->contentable_type === RemindContent::class)->load('contentable.target.lesson.section.course');
 
         $teachers = $course->teachers()
             ->with('user:id,name')
@@ -152,7 +159,12 @@ class CourseEditorController extends Controller
         $spaces = $course->spaces()->orderBy('id')->with(['categories:id,name', 'plans' => fn (HasMany $query) => $query->orderBy('order')->orderBy('id')->withCount(['enrollments', 'orders'])])->get();
 
         return [
+            'reminder_source_url' => route('teacher.course.editor.reminder-sources', $course),
             'available_categories' => Category::query()->orderBy('name')->get(['id', 'name'])->toArray(),
+            'requirement_spaces' => Gate::allows('manageEditorCommerce', $course)
+                ? Space::query()->whereNotNull('quiz_id')->with('course:id,title')->orderBy('id')->get(['id', 'name', 'course_id', 'quiz_id'])
+                    ->map(fn (Space $space): array => ['id' => $space->id, 'name' => $space->name, 'course_title' => $space->course->title])->all()
+                : [],
             'slug' => $course->slug,
             'description' => $course->description,
             'thumbnail' => $course->thumbnail,
@@ -195,21 +207,28 @@ class CourseEditorController extends Controller
                             RemindContent::class => 'remind',
                             Quiz::class => 'quiz',
                             Assignment::class => 'homework',
+                            Exercise::class => 'exercise',
+                            Deck::class => 'deck',
                             default => 'unknown',
                         },
-                        'body' => $content->contentable instanceof TextContent || $content->contentable instanceof Assignment ? $content->contentable->body : null,
+                        'body' => $content->contentable instanceof Exercise ? $content->contentable->question : ($content->contentable instanceof TextContent || $content->contentable instanceof Assignment ? $content->contentable->body : null),
                         'allowed_extensions' => $content->contentable instanceof Assignment ? implode(', ', $content->contentable->allowed_extensions ?? []) : '',
-                        'answer_body' => $content->contentable instanceof Assignment ? $content->contentable->answer_body : null,
-                        'answer_video_url' => $content->contentable instanceof Assignment ? $content->contentable->answer_video_url : null,
-                        'name' => $content->contentable instanceof ImageContent || $content->contentable instanceof VideoContent || $content->contentable instanceof FileContent ? $content->contentable->name : null,
+                        'answer_body' => $content->contentable instanceof Exercise ? $content->contentable->answer : ($content->contentable instanceof Assignment ? $content->contentable->answer_body : null),
+                        'answer_video_url' => ($content->contentable instanceof Assignment || $content->contentable instanceof Exercise) ? $content->contentable->answer_video_url : null,
+                        'name' => $content->contentable instanceof ImageContent || $content->contentable instanceof VideoContent || $content->contentable instanceof FileContent || $content->contentable instanceof Deck ? $content->contentable->name : null,
+                        'cards' => $content->contentable instanceof Deck ? $content->contentable->cards()->get(['id', 'question', 'answer'])->toArray() : [],
                         'url' => match (true) {
                             $content->contentable instanceof ImageContent => Storage::disk('public')->url($content->contentable->path),
-                            $content->contentable instanceof VideoContent => $content->contentable->path,
+                            $content->contentable instanceof VideoContent => str_starts_with($content->contentable->path, 'embed:')
+                                ? '<iframe src="'.htmlspecialchars(substr($content->contentable->path, 6), ENT_QUOTES).'"></iframe>'
+                                : $content->contentable->path,
                             $content->contentable instanceof FileContent => route('teacher.content.editor.download', $content),
                             default => null,
                         },
                         'table' => $content->contentable instanceof TableContent ? $content->contentable->table : null,
                         'remind_content_id' => $content->contentable instanceof RemindContent ? $content->contentable->content_id : null,
+                        'remind_target_label' => $content->contentable instanceof RemindContent && $content->contentable->target
+                            ? $content->contentable->target->lesson->section->course->title.' / '.$content->contentable->target->lesson->name.' / '.($content->contentable->target->description ?: 'محتوای انتخاب‌شده') : null,
                         'quiz_space_id' => $content->contentable instanceof Quiz ? $content->contentable->space_id : null,
                         'accesses' => $content->accesses->map(fn ($access): array => [
                             'plan_id' => $access->plan_id,

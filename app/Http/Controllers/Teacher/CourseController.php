@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Teacher\StoreCourseRequest;
 use App\Http\Requests\Teacher\UpdateCourseRequest;
 use App\Models\Course;
+use App\Services\ActivityLogger;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
@@ -20,7 +21,7 @@ class CourseController extends Controller
     public function index()
     {
         return inertia('teacher/course/index', [
-            'courses' => auth()->user()->teacher->courses->loadCount(['spaces', 'sections']),
+            'courses' => auth()->user()->teacher->courses()->where('course_teacher.role', '!=', TeacherRole::Reminder->value)->withCount(['spaces', 'sections'])->get(),
         ]);
     }
 
@@ -40,6 +41,7 @@ class CourseController extends Controller
         DB::transaction(function () use ($request): void {
             $course = Course::create(['is_published' => false, ...$request->validated()]);
             $course->teachers()->attach($request->user()->teacher->id, ['role' => TeacherRole::Owner]);
+            app(ActivityLogger::class)->record('course.teacher.added', properties: ['teacher_id' => $request->user()->teacher->id, 'role' => TeacherRole::Owner->value], subject: $course);
         });
 
         return to_route('teacher.course.index');
@@ -50,6 +52,8 @@ class CourseController extends Controller
      */
     public function show(Course $course)
     {
+        Gate::authorize('viewEditor', $course);
+
         return inertia('teacher/course/show', [
             'course' => $course->loadCount(['spaces', 'sections'])->load(['spaces', 'sections']),
         ]);
@@ -92,6 +96,7 @@ class CourseController extends Controller
      */
     public function destroy(Course $course)
     {
+        Gate::authorize('manageEditorTeachers', $course);
         $course->delete();
     }
 }

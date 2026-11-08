@@ -4,6 +4,7 @@ use App\Enums\TeacherRole;
 use App\Models\Course;
 use App\Models\Teacher;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use Inertia\Testing\AssertableInertia as Assert;
 
 test('an owner can add and remove teachers and change roles without altering other courses', function () {
@@ -28,6 +29,13 @@ test('an owner can add and remove teachers and change roles without altering oth
     $this->assertDatabaseHas('course_teacher', ['course_id' => $course->id, 'teacher_id' => $changed->id, 'role' => 'editor']);
     $this->assertDatabaseHas('course_teacher', ['course_id' => $course->id, 'teacher_id' => $added->id, 'role' => 'reviewer']);
     $this->assertDatabaseHas('course_teacher', ['course_id' => $otherCourse->id, 'teacher_id' => $removed->id, 'role' => 'owner']);
+    $log = DB::table('activity_logs')->where('event', 'course.teachers.changed')->where('subject_id', $course->id)->sole();
+    $changes = json_decode($log->properties, true);
+    expect(collect($changes['before'])->firstWhere('teacher_id', $changed->id)['role'])->toBe('instructor')
+        ->and(collect($changes['after'])->firstWhere('teacher_id', $changed->id)['role'])->toBe('editor')
+        ->and(collect($changes['before'])->pluck('teacher_id')->all())->toContain($removed->id)
+        ->and(collect($changes['after'])->pluck('teacher_id')->all())->not->toContain($removed->id);
+
     $this->get(route('teacher.course.editor', $course))->assertInertia(fn (Assert $page) => $page
         ->loadDeferredProps(fn (Assert $reload) => $reload
             ->has('overview.teachers', 3)

@@ -22,6 +22,8 @@ const contentTypeLabels: Record<CourseEditorContent['type'], string> = {
     table: 'جدول',
     remind: 'ارجاع / یادآوری',
     homework: 'تکلیف',
+    exercise: 'تمرین',
+    deck: 'فلش‌کارت',
     quiz: 'آزمون',
     unknown: 'نوع ناشناخته',
 };

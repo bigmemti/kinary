@@ -28,6 +28,7 @@ const roleLabels: Record<CourseTeacherRole, string> = {
     assistant: 'دستیار',
     reviewer: 'بازبین',
     editor: 'ویراستار',
+    reminder: 'فقط استفاده در یادآوری',
 };
 
 function informationValues(
@@ -431,6 +432,13 @@ function TeacherSettings({
                 <Users className="size-4" aria-hidden="true" />
                 مدرس‌های دوره
             </h3>
+            {canManage && (
+                <p className="text-xs leading-6 text-muted-foreground">
+                    سمت «فقط استفاده در یادآوری» به مدرس اجازه می‌دهد محتوای
+                    انتخابی این دوره را به دانشجویان دورهٔ خودش نشان دهد. حذف
+                    این دسترسی یادآوری‌های قبلی را تغییر نمی‌دهد.
+                </p>
+            )}
             {!canManage && (
                 <p className="text-xs leading-6 text-muted-foreground">
                     مدیریت مدرس‌ها و سمت‌ها فقط در اختیار مالک دوره است.

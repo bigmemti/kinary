@@ -1,13 +1,13 @@
 import { useCourseEditorDirty } from '@/components/course-editor-state';
 import InputError from '@/components/input-error';
+import { RichTextEditor as Textarea } from '@/components/rich-text-editor';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { RichTextEditor as Textarea } from '@/components/rich-text-editor';
 import courseRoutes from '@/routes/teacher/course';
 import planRoutes from '@/routes/teacher/plan';
-import spaceRoutes from '@/routes/teacher/space';
 import { editor as quizEditor } from '@/routes/teacher/quiz';
+import spaceRoutes from '@/routes/teacher/space';
 import type {
     CourseEditorOverview,
     CourseEditorPlan,
@@ -156,7 +156,16 @@ export default function CourseEditorSpaces({
                         )}
                     </header>
                     <div className="space-y-3 p-3">
-                        {canManage && <Link className="block rounded border p-2 text-sm" href={quizEditor(space.id)}>{space.quiz_id ? 'ویرایش آزمون پایانی' : 'ساخت آزمون پایانی'}</Link>}
+                        {canManage && (
+                            <Link
+                                className="block rounded border p-2 text-sm"
+                                href={quizEditor(space.id)}
+                            >
+                                {space.quiz_id
+                                    ? 'ویرایش آزمون پایانی'
+                                    : 'ساخت آزمون پایانی'}
+                            </Link>
+                        )}
                         {space.plans.map((plan) => (
                             <div
                                 key={plan.id}
@@ -410,14 +419,29 @@ function CommerceForm({
                                 }
                             >
                                 <option value="">بدون آزمون</option>
-                                {quizzes.filter((quiz) => quiz.id === target.item?.quiz_id).map((quiz) => (
-                                    <option key={quiz.id} value={quiz.id}>
-                                        آزمون {quiz.id} · نمره {quiz.score}
-                                    </option>
-                                ))}
+                                {quizzes
+                                    .filter(
+                                        (quiz) =>
+                                            quiz.id === target.item?.quiz_id,
+                                    )
+                                    .map((quiz) => (
+                                        <option key={quiz.id} value={quiz.id}>
+                                            آزمون {quiz.id}
+                                        </option>
+                                    ))}
                             </select>
-                            <p className="text-xs text-muted-foreground">برای ساخت یا ویرایش آزمون پایانی از دکمه آزمون در کارت همین فضا استفاده کنید.</p>
-                            {target.item && <Link className="block rounded border p-2 text-sm" href={quizEditor(target.item.id)}>ایجاد یا ویرایش آزمون پایانی</Link>}
+                            <p className="text-xs text-muted-foreground">
+                                برای ساخت یا ویرایش آزمون پایانی از دکمه آزمون
+                                در کارت همین فضا استفاده کنید.
+                            </p>
+                            {target.item && (
+                                <Link
+                                    className="block rounded border p-2 text-sm"
+                                    href={quizEditor(target.item.id)}
+                                >
+                                    ایجاد یا ویرایش آزمون پایانی
+                                </Link>
+                            )}
                             <InputError message={form.errors.quiz_id} />
                         </div>
                         <div className="space-y-2">
