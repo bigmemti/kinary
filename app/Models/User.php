@@ -3,11 +3,13 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Services\ActivityLogger;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\DB;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Spatie\Permission\Traits\HasRoles;
 
@@ -75,7 +77,15 @@ class User extends Authenticatable
 
     public function updateOrders()
     {
-        $this->wallet->orders()->where('status', 'pending')->where('updated_at', '<', now()->subHours(24))->update(['status' => 'expired']);
+        DB::transaction(function (): void {
+            $expired = $this->wallet->orders()->where('status', 'pending')->where('updated_at', '<', now()->subHours(24))->lockForUpdate()->orderBy('id')->get(['id', 'status']);
+            if ($expired->isEmpty()) {
+                return;
+            }
+            $this->wallet->orders()->whereIn('id', $expired->modelKeys())->update(['status' => 'expired']);
+            $after = $this->wallet->orders()->whereIn('id', $expired->modelKeys())->orderBy('id')->get(['id', 'status'])->toArray();
+            app(ActivityLogger::class)->recordChanges('orders.expired', $expired->toArray(), $after, $this);
+        });
     }
 
     public function hasActiveCart()
