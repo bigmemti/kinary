@@ -3,6 +3,8 @@
 use App\Enums\TeacherRole;
 use App\Models\Content;
 use App\Models\Course;
+use App\Models\Deck;
+use App\Models\Exercise;
 use App\Models\FileContent;
 use App\Models\ImageContent;
 use App\Models\Lesson;
@@ -37,6 +39,21 @@ function contentTestImage(): UploadedFile
 {
     return UploadedFile::fake()->createWithContent('image.png', base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jk1sAAAAASUVORK5CYII='));
 }
+
+test('teacher creates a flashcard deck as lesson content', function () {
+    [, $teacher, , , $lesson, $plan] = contentEditorData();
+    $this->actingAs($teacher->user)->post(route('teacher.lesson.editor.contents.store', $lesson), [
+        'type' => 'deck',
+        'name' => 'Vocabulary',
+        'cards' => [['question' => 'Question', 'answer' => 'Answer']],
+        'accesses' => [['plan_id' => $plan->id]],
+    ])->assertSessionHasNoErrors();
+
+    $content = Content::query()->where('contentable_type', Deck::class)->firstOrFail();
+    expect($content->contentable->name)->toBe('Vocabulary');
+    $this->assertDatabaseHas('cards', ['deck_id' => $content->contentable_id, 'question' => 'Question', 'answer' => 'Answer']);
+    $this->assertDatabaseHas('accesses', ['content_id' => $content->id, 'plan_id' => $plan->id]);
+});
 beforeEach(function () {
     Storage::fake('public');
     Storage::fake('local');
@@ -57,6 +74,24 @@ test('owner creates text content with access and prerequisite', function () {
     expect($content->contentable)->toBeInstanceOf(TextContent::class)->and($content->order)->toBe(1);
     $this->assertDatabaseHas('accesses', ['content_id' => $content->id, 'plan_id' => $plan->id]);
     $this->assertDatabaseHas('requirements', ['space_id' => $space->id, 'score' => 10]);
+});
+
+test('prerequisites accept a final exam in another course and scores from zero to one hundred', function () {
+    [, $teacher, , , $lesson, $plan] = contentEditorData();
+    $source = Space::factory()->for(Course::factory()->create())->create();
+    $quiz = DB::table('quizzes')->insertGetId(['space_id' => $source->id, 'time' => '00:10:00', 'score' => 0]);
+    $source->update(['quiz_id' => $quiz]);
+    $this->actingAs($teacher->user);
+
+    $payload = ['type' => 'text', 'body' => 'Content', 'accesses' => [['plan_id' => $plan->id,
+        'requirements' => [['space_id' => $source->id, 'score' => 100]]]]];
+    $this->post(route('teacher.lesson.editor.contents.store', $lesson), $payload)->assertSessionHasNoErrors();
+    $this->assertDatabaseHas('requirements', ['space_id' => $source->id, 'score' => 100]);
+    $payload['accesses'][0]['requirements'][0]['score'] = 101;
+    $this->post(route('teacher.lesson.editor.contents.store', $lesson), $payload)->assertSessionHasErrors('accesses.0.requirements.0.score');
+    $source->update(['quiz_id' => null]);
+    $payload['accesses'][0]['requirements'][0]['score'] = 0;
+    $this->post(route('teacher.lesson.editor.contents.store', $lesson), $payload)->assertSessionHasErrors('accesses.0.requirements.0.space_id');
 });
 
 test('editor uploads image to public and file to private disk', function () {
@@ -305,4 +340,35 @@ test('media name can be edited without replacing the existing file', function ()
     expect($content->fresh()->contentable->name)->toBe('Edited cover');
     expect($content->fresh()->contentable->path)->toBe($path);
     Storage::disk('public')->assertExists($path);
+});
+
+test('video embed code is saved safely and can be edited', function () {
+    [$course, $teacher, , , $lesson] = contentEditorData();
+    $this->actingAs($teacher->user);
+    $markup = '<iframe src="https://www.youtube.com/embed/abc?x=1&amp;y=2" onload="alert(1)"></iframe>';
+
+    $this->post(route('teacher.lesson.editor.contents.store', $lesson), ['type' => 'video', 'name' => 'Video', 'url' => $markup])->assertSessionHasNoErrors();
+    $content = Content::query()->firstOrFail();
+    expect($content->contentable->path)->toBe('embed:https://www.youtube.com/embed/abc?x=1&y=2');
+    $this->get(route('teacher.course.editor', $course))->assertInertia(fn (Assert $page) => $page
+        ->loadDeferredProps(fn (Assert $reload) => $reload->where('overview.sections.0.lessons.0.contents.0.url', '<iframe src="https://www.youtube.com/embed/abc?x=1&amp;y=2"></iframe>')));
+    $this->patch(route('teacher.content.editor.update', $content), ['type' => 'video', 'name' => 'Video', 'url' => '<iframe src="https://www.aparat.com/video/video/embed/videohash/abc/vt/frame"></iframe>'])->assertSessionHasNoErrors();
+    expect($content->fresh()->contentable->path)->toBe('embed:https://www.aparat.com/video/video/embed/videohash/abc/vt/frame');
+});
+
+test('video embed rejects unsafe iframe sources', function (string $markup) {
+    [, $teacher, , , $lesson] = contentEditorData();
+    $this->actingAs($teacher->user)->post(route('teacher.lesson.editor.contents.store', $lesson), ['type' => 'video', 'name' => 'Video', 'url' => $markup])->assertSessionHasErrors('url');
+    $this->assertDatabaseCount('video_contents', 0);
+})->with(['javascript' => '<iframe src="javascript:alert(1)"></iframe>', 'missing source' => '<iframe></iframe>', 'multiple frames' => '<iframe src="https://example.com/a"></iframe><iframe src="https://example.com/b"></iframe>']);
+
+test('exercise requires a question and at least one answer format', function () {
+    [, $teacher, , , $lesson, $plan] = contentEditorData();
+    $this->actingAs($teacher->user);
+    $url = route('teacher.lesson.editor.contents.store', $lesson);
+    $this->post($url, ['type' => 'exercise', 'body' => 'Question'])->assertSessionHasErrors(['answer_body', 'answer_video_url']);
+    $this->post($url, ['type' => 'exercise', 'body' => 'Question', 'answer_video_url' => 'https://example.com/video.mp4', 'accesses' => [['plan_id' => $plan->id, 'answer_release' => 'never', 'answer_video_release' => 'always']]])->assertSessionHasNoErrors();
+    $content = Content::query()->where('contentable_type', Exercise::class)->firstOrFail();
+    expect($content->contentable->question)->toBe('Question')->and($content->contentable->answer)->toBeNull();
+    $this->assertDatabaseHas('activity_logs', ['subject_type' => Exercise::class, 'subject_id' => $content->contentable_id]);
 });

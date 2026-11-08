@@ -5,15 +5,20 @@ namespace App\Http\Controllers\Teacher;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Teacher\SaveEditorContentRequest;
 use App\Models\Assignment;
+use App\Models\Card;
 use App\Models\Content;
 use App\Models\Course;
+use App\Models\Deck;
+use App\Models\Exercise;
 use App\Models\FileContent;
 use App\Models\ImageContent;
 use App\Models\Lesson;
+use App\Models\Quiz;
 use App\Models\RemindContent;
 use App\Models\TableContent;
 use App\Models\TextContent;
 use App\Models\VideoContent;
+use App\Services\ActivityLogger;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\UploadedFile;
@@ -34,6 +39,9 @@ class EditorContentController extends Controller
         'table' => TableContent::class,
         'remind' => RemindContent::class,
         'homework' => Assignment::class,
+        'exercise' => Exercise::class,
+        'deck' => Deck::class,
+        'quiz' => Quiz::class,
     ];
 
     public function download(Content $content): StreamedResponse
@@ -51,6 +59,9 @@ class EditorContentController extends Controller
 
     public function store(SaveEditorContentRequest $request, Lesson $lesson): RedirectResponse
     {
+        if ($request->validated('type') === 'quiz') {
+            throw ValidationException::withMessages(['type' => 'آزمون را در ویرایشگر آزمون ایجاد کنید.']);
+        }
         $storedFiles = [];
         $content = null;
 
@@ -102,6 +113,9 @@ class EditorContentController extends Controller
                 $content = Content::query()->lockForUpdate()->findOrFail($content->id);
                 $current = $this->typeRecord($content);
                 $targetClass = self::TYPE_CLASSES[$request->validated('type')];
+                if ($targetClass === Quiz::class && ! $current instanceof Quiz) {
+                    throw ValidationException::withMessages(['type' => 'آزمون را در ویرایشگر آزمون ایجاد کنید.']);
+                }
                 if ($current instanceof Assignment && $targetClass !== Assignment::class && DB::table('submissions')->where('assignment_id', $current->id)->exists()) {
                     throw ValidationException::withMessages(['type' => 'تکلیف دارای ارسال قابل تغییر نوع نیست.']);
                 }
@@ -112,6 +126,9 @@ class EditorContentController extends Controller
                 if ($record !== $current) {
                     $obsoleteFiles = array_merge($obsoleteFiles, $current ? $this->recordFiles($current) : []);
                     $content->update(['contentable_type' => $record::class, 'contentable_id' => $record->id]);
+                    if ($current instanceof Deck) {
+                        $this->deleteDeckCards($current);
+                    }
                     $current?->delete();
                 }
 
@@ -144,13 +161,18 @@ class EditorContentController extends Controller
                 throw ValidationException::withMessages(['content' => $reason]);
             }
 
+            $beforeAccesses = $content->accesses()->with('requirements')->orderBy('id')->get()->toArray();
             DB::table('requirements')->whereIn('access_id', $content->accesses()->select('id'))->delete();
             $content->accesses()->delete();
+            app(ActivityLogger::class)->recordChanges('content.accesses.changed', $beforeAccesses, [], $content);
             $record = $this->typeRecord($content);
             $content->delete();
 
             if ($record !== null) {
                 $obsoleteFiles = $this->recordFiles($record);
+                if ($record instanceof Deck) {
+                    $this->deleteDeckCards($record);
+                }
                 $record->delete();
             }
         });
@@ -168,7 +190,27 @@ class EditorContentController extends Controller
     {
         $type = $request->validated('type');
 
-        if ($type === 'homework') {
+        if ($type === 'deck') {
+            $record->name = $request->validated('name');
+            $record->save();
+            $kept = [];
+            foreach ($request->validated('cards') as $item) {
+                $card = isset($item['id']) ? $record->cards()->findOrFail($item['id']) : new Card;
+                $card->question = $item['question'];
+                $card->answer = $item['answer'];
+                $record->cards()->save($card);
+                $kept[] = $card->id;
+            }
+            foreach ($record->cards()->whereNotIn('id', $kept)->get() as $removed) {
+                $this->deleteDeckCard($removed);
+            }
+
+            return;
+        } elseif ($type === 'exercise') {
+            $record->question = $request->validated('body');
+            $record->answer = $request->validated('answer_body');
+            $record->answer_video_url = $request->validated('answer_video_url');
+        } elseif ($type === 'homework') {
             $record->body = $request->validated('body');
             $record->allowed_extensions = array_values(array_unique(array_filter(array_map(fn (string $value): string => strtolower(ltrim(trim($value), '.')), explode(',', (string) $request->validated('allowed_extensions'))))));
             if ($request->exists('answer_body')) {
@@ -177,11 +219,14 @@ class EditorContentController extends Controller
             if ($request->exists('answer_video_url')) {
                 $record->answer_video_url = $request->validated('answer_video_url');
             }
+        } elseif ($type === 'quiz') {
+            return;
         } elseif ($type === 'text') {
             $record->body = $request->validated('body');
         } elseif ($type === 'video') {
             $record->name = $request->validated('name');
-            $record->path = $request->validated('url');
+            $source = VideoContent::embedSource($request->validated('url'));
+            $record->path = $source !== null ? 'embed:'.$source : $request->validated('url');
         } elseif ($type === 'table') {
             $record->table = array_values(array_map(fn (array $row): array => array_values($row), $request->validated('table')));
         } elseif ($type === 'remind') {
@@ -218,6 +263,15 @@ class EditorContentController extends Controller
 
     private function assertRemindTarget(int $targetId, Course $course, ?Content $content): void
     {
+        $existingTarget = $content?->contentable_type === RemindContent::class
+            ? RemindContent::query()->whereKey($content->contentable_id)->value('content_id') : null;
+        $target = Content::query()->with('lesson.section.course')->find($targetId);
+        if (! $target || ($targetId !== (int) $existingTarget && (
+            ! in_array($target->contentable_type, ReminderSourceController::TYPES, true)
+            || ! $target->lesson?->section?->course?->teachers()->where('teachers.user_id', auth()->id())->exists()
+        ))) {
+            throw ValidationException::withMessages(['content_id' => 'به محتوای مرجع دسترسی یادآوری ندارید.']);
+        }
         $visited = [];
         $currentId = $targetId;
 
@@ -227,8 +281,8 @@ class EditorContentController extends Controller
             }
             $visited[] = $currentId;
             $target = Content::query()->with('lesson.section')->find($currentId);
-            if ($target?->lesson?->section?->course_id !== $course->id) {
-                throw ValidationException::withMessages(['content_id' => 'محتوای مرجع باید متعلق به همین دوره باشد.']);
+            if (! $target) {
+                throw ValidationException::withMessages(['content_id' => 'محتوای مرجع پیدا نشد.']);
             }
             $currentId = $target?->contentable_type === RemindContent::class
                 ? RemindContent::query()->whereKey($target->contentable_id)->value('content_id')
@@ -243,6 +297,8 @@ class EditorContentController extends Controller
         }
 
         Gate::authorize('manageEditorCommerce', $course);
+        $logger = app(ActivityLogger::class);
+        $before = $content->accesses()->with('requirements')->orderBy('id')->get()->toArray();
         $accesses = $request->validated('accesses', []);
         $removedIds = $content->accesses()->whereNotIn('plan_id', array_column($accesses, 'plan_id'))->pluck('id');
         DB::table('requirements')->whereIn('access_id', $removedIds)->delete();
@@ -262,11 +318,30 @@ class EditorContentController extends Controller
                 );
             }
         }
+        $after = $content->accesses()->with('requirements')->orderBy('id')->get()->toArray();
+        $logger->recordChanges('content.accesses.changed', $before, $after, $content);
     }
 
     private function typeRecord(Content $content): ?Model
     {
         return in_array($content->contentable_type, self::TYPE_CLASSES, true) ? $content->contentable : null;
+    }
+
+    private function deleteDeckCards(Deck $deck): void
+    {
+        foreach ($deck->cards()->get() as $card) {
+            $this->deleteDeckCard($card);
+        }
+    }
+
+    private function deleteDeckCard(Card $card): void
+    {
+        $rows = DB::table('cards')->where('source_card_id', $card->id)->lockForUpdate()->get();
+        if ($rows->isNotEmpty()) {
+            DB::table('cards')->where('source_card_id', $card->id)->update(['source_card_id' => null]);
+            app(ActivityLogger::class)->recordChanges('flashcard.source.removed', $rows->map(fn ($row) => (array) $row)->all(), $rows->map(fn ($row) => [...(array) $row, 'source_card_id' => null])->all(), $card);
+        }
+        $card->delete();
     }
 
     /**

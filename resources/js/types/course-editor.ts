@@ -5,7 +5,8 @@ export type CourseTeacherRole =
     | 'instructor'
     | 'assistant'
     | 'reviewer'
-    | 'editor';
+    | 'editor'
+    | 'reminder';
 
 export interface CourseEditorCourse {
     id: number;
@@ -14,6 +15,8 @@ export interface CourseEditorCourse {
 }
 
 export interface CourseEditorOverview {
+    requirement_spaces: { id: number; name: string; course_title: string }[];
+    reminder_source_url: string;
     available_categories: { id: number; name: string }[];
     slug: string;
     description: string | null;
@@ -93,16 +96,29 @@ export interface CourseEditorContent {
     id: number;
     description: string | null;
     order: number;
-    type: 'text' | 'image' | 'video' | 'file' | 'table' | 'remind' | 'quiz' | 'homework' | 'unknown';
+    type:
+        | 'text'
+        | 'image'
+        | 'video'
+        | 'file'
+        | 'table'
+        | 'remind'
+        | 'quiz'
+        | 'homework'
+        | 'exercise'
+        | 'deck'
+        | 'unknown';
     allowed_extensions: string;
     answer_body: string | null;
     answer_video_url: string | null;
     quiz_space_id: number | null;
     body: string | null;
     name: string | null;
+    cards?: { id?: number; question: string; answer: string }[];
     url: string | null;
     table: string[][] | null;
     remind_content_id: number | null;
+    remind_target_label?: string | null;
     accesses: {
         plan_id: number;
         answer_release: 'never' | 'approved' | 'submitted' | 'always';
