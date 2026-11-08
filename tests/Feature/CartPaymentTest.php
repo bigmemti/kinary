@@ -68,6 +68,7 @@ test('upgrade checkout tops up only the wallet shortfall then records a separate
     $body = json_decode($history[0]['request']->getBody(), true);
     expect($body['amount'])->toBe(1100000);
     expect($body['currency'])->toBe('IRR');
+    expect($body['metadata']['mobile'])->toBe($user->phone);
     expect($body['callback_url'])->toBe(route('callback'));
     expect(Schema::hasColumn('transactions', 'order_id'))->toBeFalse();
     $transaction = $user->wallet->transactions()->sole();
@@ -90,6 +91,26 @@ test('upgrade checkout tops up only the wallet shortfall then records a separate
     $this->assertDatabaseHas('transactions', ['id' => $transaction->id, 'status' => 'paid']);
     $this->assertDatabaseHas('enrollments', ['student_id' => $user->student->id, 'plan_id' => $plan->id, 'is_active' => true]);
     $this->assertDatabaseCount('enrollments', 2);
+});
+
+test('existing users without a mobile number must add it before requesting payment', function () {
+    [$user] = paymentCart();
+    $user->update(['phone' => null]);
+    $history = [];
+    fakeCartGateway([], $history);
+
+    $this->actingAs($user)->from(route('cart.index'))->post(route('checkout'))->assertSessionHasErrors('cart');
+    expect($history)->toBe([]);
+});
+
+test('checkout sends the mobile number to the gateway', function () {
+    [$user] = paymentCart();
+    $history = [];
+    fakeCartGateway([['data' => ['code' => 100, 'authority' => 'phone-test']]], $history);
+
+    $this->actingAs($user)->post(route('checkout'))->assertRedirect();
+    $body = json_decode($history[0]['request']->getBody(), true);
+    expect($body['metadata']['mobile'])->toBe($user->phone);
 });
 
 test('sufficient wallet balance purchases without a gateway transaction and keeps the remainder', function (int $balance, int $remaining) {

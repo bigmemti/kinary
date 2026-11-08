@@ -89,6 +89,12 @@ export default function Profile({
                                     />
                                 </div>
 
+                                <div className="grid gap-2">
+                                    <Label htmlFor="phone">شماره موبایل</Label>
+                                    <Input id="phone" name="phone" type="tel" autoComplete="tel" dir="ltr" required defaultValue={auth.user.phone ?? ''} placeholder="09123456789 یا +989123456789" aria-invalid={!!errors.phone} aria-describedby={errors.phone ? 'phone-error' : undefined} />
+                                    <InputError id="phone-error" message={errors.phone} />
+                                </div>
+
                                 {mustVerifyEmail &&
                                     auth.user.email_verified_at === null && (
                                         <div>

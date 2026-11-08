@@ -42,7 +42,12 @@ export default function UserForm({
                         defaultValue={user?.email}
                         message={errors.email}
                     />
-                    <SubmitButton tabindex={3} processing={processing} />
+                    <FieldContainer>
+                        <Label htmlFor="phone">شماره موبایل</Label>
+                        <Input id="phone" name="phone" type="tel" autoComplete="tel" dir="ltr" required tabIndex={3} defaultValue={user?.phone ?? ''} placeholder="09123456789 یا +989123456789" />
+                        <InputError message={errors.phone} />
+                    </FieldContainer>
+                    <SubmitButton tabindex={4} processing={processing} />
                 </FormContainer>
             )}
         </Form>

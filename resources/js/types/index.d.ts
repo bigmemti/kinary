@@ -42,6 +42,8 @@ export interface User {
     id: number;
     name: string;
     email: string;
+    phone: string | null;
+    phone_verified_at: string | null;
     avatar?: string;
     wallet?: Wallet;
     student?: Student;

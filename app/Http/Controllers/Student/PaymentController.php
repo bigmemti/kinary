@@ -46,6 +46,9 @@ class PaymentController extends Controller
 
                     return null;
                 }
+                if (! $user->phone) {
+                    throw ValidationException::withMessages(['cart' => 'برای پرداخت، ابتدا شماره موبایل خود را در پروفایل ثبت کنید.']);
+                }
                 $pending = $wallet->transactions()->where('status', TransactionStatus::Pending)
                     ->where('amount', $shortfall)->where('gateway', 'zarinpal')->latest('id')->first();
                 if ($pending) {
@@ -54,6 +57,7 @@ class PaymentController extends Controller
                 $authority = $service->request([
                     'amount' => $shortfall,
                     'description' => 'افزایش موجودی کیف پول آکادمی',
+                    'metadata' => ['mobile' => $user->phone],
                 ]);
                 $wallet->transactions()->create([
                     'authority' => $authority,

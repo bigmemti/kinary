@@ -4,6 +4,7 @@ return [
     'required' => 'وارد کردن :attribute الزامی است.',
     'string' => ':attribute باید متن باشد.',
     'email' => 'نشانی ایمیل معتبر وارد کنید.',
+    'regex' => 'قالب :attribute معتبر نیست.',
     'unique' => 'این :attribute قبلاً ثبت شده است.',
     'confirmed' => 'تکرار :attribute با آن یکسان نیست.',
     'min' => ['string' => ':attribute باید حداقل :min نویسه داشته باشد.'],
@@ -18,6 +19,7 @@ return [
     'attributes' => [
         'name' => 'نام و نام خانوادگی',
         'email' => 'ایمیل',
+        'phone' => 'شماره موبایل',
         'password' => 'رمز عبور',
         'password_confirmation' => 'تکرار رمز عبور',
     ],

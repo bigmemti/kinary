@@ -11,7 +11,7 @@ class PaymentService
         private Client $client
     ) {}
 
-    /** @param array{amount: int, description: string} $body */
+    /** @param array{amount: int, description: string, metadata: array{mobile: string}} $body */
     public function request(array $body): string
     {
         $response = $this->client->post('https://payment.zarinpal.com/pg/v4/payment/request.json', [

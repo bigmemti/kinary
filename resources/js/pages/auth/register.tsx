@@ -67,6 +67,11 @@ export default function Register() {
                             />
                         </div>
                         <div className="grid gap-2">
+                            <Label htmlFor="phone">شماره موبایل</Label>
+                            <Input id="phone" name="phone" type="tel" autoComplete="tel" required dir="ltr" placeholder="09123456789 یا +989123456789" className="storefront-input" aria-invalid={!!errors.phone} aria-describedby={errors.phone ? 'phone-error' : undefined} />
+                            <InputError id="phone-error" message={errors.phone} role="alert" />
+                        </div>
+                        <div className="grid gap-2">
                             <Label htmlFor="password">رمز عبور</Label>
                             <Input
                                 id="password"
