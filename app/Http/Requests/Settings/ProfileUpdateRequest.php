@@ -9,6 +9,11 @@ use Illuminate\Validation\Rule;
 
 class ProfileUpdateRequest extends FormRequest
 {
+    protected function prepareForValidation(): void
+    {
+        $this->merge(['phone' => User::normalizePhone($this->input('phone'))]);
+    }
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -18,6 +23,7 @@ class ProfileUpdateRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255'],
+            'phone' => User::phoneRules(),
 
             'email' => [
                 'required',

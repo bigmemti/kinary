@@ -35,6 +35,7 @@ test('users created from the admin panel receive a wallet and student with their
     $this->actingAs($admin)->post(route('admin.user.store'), [
         'name' => 'New User',
         'email' => 'new-user@example.com',
+        'phone' => '09123456789',
     ])->assertRedirect(route('admin.user.index'));
 
     $user = User::where('email', 'new-user@example.com')->firstOrFail();
@@ -42,6 +43,16 @@ test('users created from the admin panel receive a wallet and student with their
     expect($user->wallet)->not->toBeNull()
         ->and($user->student)->not->toBeNull()
         ->and($user->getRoleNames()->sort()->values()->all())->toBe(['student', 'user']);
+});
+
+test('admin user creation requires and normalizes a mobile number', function () {
+    $admin = User::factory()->create();
+    $admin->assignRole('admin');
+    $this->actingAs($admin)->post(route('admin.user.store'), ['name' => 'New User', 'email' => 'new-user@example.com'])
+        ->assertSessionHasErrors('phone');
+    $this->post(route('admin.user.store'), ['name' => 'New User', 'email' => 'new-user@example.com', 'phone' => '+989123456789'])
+        ->assertSessionHasNoErrors()->assertRedirect(route('admin.user.index'));
+    expect(User::where('email', 'new-user@example.com')->firstOrFail()->phone)->toBe('09123456789');
 });
 
 test('removing a student revokes only the student role', function () {

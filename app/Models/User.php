@@ -26,6 +26,7 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'phone',
         'password',
     ];
 
@@ -50,9 +51,36 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
+            'phone_verified_at' => 'datetime',
             'password' => 'hashed',
             'two_factor_confirmed_at' => 'datetime',
         ];
+    }
+
+    protected static function booted(): void
+    {
+        static::saving(function (User $user): void {
+            if ($user->isDirty('phone')) {
+                $user->phone_verified_at = null;
+            }
+        });
+    }
+
+    public static function normalizePhone(mixed $phone): mixed
+    {
+        if (! is_string($phone)) {
+            return $phone;
+        }
+
+        $phone = strtr(trim($phone), ['۰' => '0', '۱' => '1', '۲' => '2', '۳' => '3', '۴' => '4', '۵' => '5', '۶' => '6', '۷' => '7', '۸' => '8', '۹' => '9', '٠' => '0', '١' => '1', '٢' => '2', '٣' => '3', '٤' => '4', '٥' => '5', '٦' => '6', '٧' => '7', '٨' => '8', '٩' => '9']);
+
+        return str_starts_with($phone, '+98') ? '0'.substr($phone, 3) : $phone;
+    }
+
+    /** @return list<string> */
+    public static function phoneRules(): array
+    {
+        return ['required', 'string', 'regex:/^09[0-9]{9}$/D'];
     }
 
     public function transactions(): HasManyThrough

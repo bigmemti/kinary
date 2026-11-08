@@ -18,6 +18,7 @@ class CreateNewUser implements CreatesNewUsers
      */
     public function create(array $input): User
     {
+        $input['phone'] = User::normalizePhone($input['phone'] ?? null);
         Validator::make($input, [
             'name' => ['required', 'string', 'max:255'],
             'email' => [
@@ -28,11 +29,13 @@ class CreateNewUser implements CreatesNewUsers
                 Rule::unique(User::class),
             ],
             'password' => $this->passwordRules(),
+            'phone' => User::phoneRules(),
         ])->validate();
 
         return User::create([
             'name' => $input['name'],
             'email' => $input['email'],
+            'phone' => $input['phone'],
             'password' => $input['password'],
         ]);
     }
