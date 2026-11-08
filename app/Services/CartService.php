@@ -49,10 +49,16 @@ class CartService
             $price = $this->price($user, $plan);
 
             if ($price === 0) {
+                $logger = app(ActivityLogger::class);
+                $beforeEnrollment = $logger->snapshot('enrollments', ['student_id' => $user->student->id], ['plan_id', 'is_active']);
                 $user->student->plans()->syncWithoutDetaching([$plan->id => ['is_active' => true]]);
+                $logger->recordChanges('enrollment.plans.changed', $beforeEnrollment, $logger->snapshot('enrollments', ['student_id' => $user->student->id], ['plan_id', 'is_active']), $user->student);
+                app(ActivityLogger::class)->record('enrollment.activated', properties: ['student_id' => $user->student->id, 'plan_id' => $plan->id]);
                 if ($order) {
+                    $beforeCart = $logger->snapshot('order_plan', ['order_id' => $order->id], ['plan_id', 'price']);
                     $this->removeSpace($order, $plan->space_id);
                     $this->updateTotal($order);
+                    $logger->recordChanges('cart.items.changed', $beforeCart, $logger->snapshot('order_plan', ['order_id' => $order->id], ['plan_id', 'price']), $order);
                 }
 
                 return true;
@@ -63,9 +69,12 @@ class CartService
                 $order->amount = 0;
                 $order->save();
             }
+            $logger = app(ActivityLogger::class);
+            $before = $logger->snapshot('order_plan', ['order_id' => $order->id], ['plan_id', 'price']);
             $this->removeSpace($order, $plan->space_id);
             $order->plans()->attach($plan->id, ['price' => $price]);
             $this->updateTotal($order);
+            $logger->recordChanges('cart.items.changed', $before, $logger->snapshot('order_plan', ['order_id' => $order->id], ['plan_id', 'price']), $order);
 
             return false;
         });
@@ -79,8 +88,11 @@ class CartService
             if (! $order) {
                 return;
             }
+            $logger = app(ActivityLogger::class);
+            $before = $logger->snapshot('order_plan', ['order_id' => $order->id], ['plan_id', 'price']);
             $order->plans()->detach($plan->id);
             $this->updateTotal($order);
+            $logger->recordChanges('cart.items.changed', $before, $logger->snapshot('order_plan', ['order_id' => $order->id], ['plan_id', 'price']), $order);
         });
     }
 
@@ -127,9 +139,14 @@ class CartService
         $wallet->balance -= $order->amount;
         $wallet->save();
         $order->update(['status' => 'paid']);
+        $logger = app(ActivityLogger::class);
+        $beforeEnrollment = $logger->snapshot('enrollments', ['student_id' => $user->student->id], ['plan_id', 'is_active']);
+        $planIds = $order->plans()->pluck('plans.id')->all();
         $user->student->plans()->syncWithoutDetaching(
-            $order->plans()->get()->mapWithKeys(fn (Plan $plan): array => [$plan->id => ['is_active' => true]])->all()
+            collect($planIds)->mapWithKeys(fn ($id): array => [$id => ['is_active' => true]])->all()
         );
+        $logger->recordChanges('enrollment.plans.changed', $beforeEnrollment, $logger->snapshot('enrollments', ['student_id' => $user->student->id], ['plan_id', 'is_active']), $user->student);
+        app(ActivityLogger::class)->record('order.purchased', properties: ['order_id' => $order->id, 'student_id' => $user->student->id, 'plan_ids' => $planIds, 'amount' => $order->amount]);
     }
 
     /** @return list<array{id: int, spaceId: int, name: string, spaceName: string, courseTitle: string, courseSlug: ?string, price: int}> */

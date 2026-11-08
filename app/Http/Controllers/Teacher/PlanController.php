@@ -8,6 +8,7 @@ use App\Http\Requests\Teacher\UpdatePlanRequest;
 use App\Models\Course;
 use App\Models\Plan;
 use App\Models\Space;
+use App\Services\ActivityLogger;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
@@ -125,7 +126,10 @@ class PlanController extends Controller
             if ($reason = $plan->deletionBlockReason()) {
                 throw ValidationException::withMessages(['delete' => $reason]);
             }
+            $logger = app(ActivityLogger::class);
+            $before = $logger->snapshot('pricings', ['plan_id' => $plan->id], ['lesson_id', 'price']);
             DB::table('pricings')->where('plan_id', $plan->id)->delete();
+            $logger->recordChanges('plan.pricings.changed', $before, [], $plan);
             $plan->delete();
         });
 

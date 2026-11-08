@@ -7,6 +7,7 @@ use App\Http\Requests\Admin\StoreCourseRequest;
 use App\Http\Requests\Admin\UpdateCourseRequest;
 use App\Models\Course;
 use App\Models\Teacher;
+use App\Services\ActivityLogger;
 use Inertia\Inertia;
 
 class CourseController extends Controller
@@ -39,6 +40,8 @@ class CourseController extends Controller
         $course = Course::create($request->validated());
 
         $course->teachers()->attach($request->input('teacher_id'));
+        $logger = app(ActivityLogger::class);
+        $logger->recordChanges('course.teachers.changed', [], $logger->snapshot('course_teacher', ['course_id' => $course->id], ['teacher_id', 'role']), $course);
     }
 
     /**

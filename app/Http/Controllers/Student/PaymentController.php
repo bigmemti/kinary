@@ -7,6 +7,7 @@ use App\Enums\TransactionStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Plan;
 use App\Models\Transaction;
+use App\Services\ActivityLogger;
 use App\Services\CartService;
 use App\Services\PaymentService;
 use GuzzleHttp\Exception\GuzzleException;
@@ -132,6 +133,8 @@ class PaymentController extends Controller
 
             return 'purchased';
         });
+
+        app(ActivityLogger::class)->record('payment.callback', $result === 'failed' ? 'failure' : 'success', ['result' => $result]);
 
         return match ($result) {
             'purchased' => to_route('dashboard')->with('cart_notice', 'پرداخت موفق بود و دسترسی شما فعال شد.'),

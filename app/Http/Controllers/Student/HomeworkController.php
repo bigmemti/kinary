@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Assignment;
 use App\Models\Content;
 use App\Models\Space;
+use App\Services\ActivityLogger;
 use App\Services\StudyService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -40,6 +41,7 @@ class HomeworkController extends Controller
                     throw ValidationException::withMessages(['files' => 'ابتدا ارسال قبلی را حذف کنید.']);
                 }
                 $id = DB::table('submissions')->insertGetId(['assignment_id' => $assignment->id, 'student_id' => $request->user()->student->id, 'body' => '', 'created_at' => now(), 'updated_at' => now()]);
+                app(ActivityLogger::class)->record('homework.submitted', properties: ['submission_id' => $id, 'assignment_id' => $assignment->id, 'student_id' => $request->user()->student->id, 'files' => array_map(fn ($file) => $file->getClientOriginalName(), $data['files'])]);
                 foreach ($data['files'] as $file) {
                     $path = $file->store('homework', 'local');
                     if ($path === false) {
@@ -68,9 +70,11 @@ class HomeworkController extends Controller
             if ($submission->approved_at !== null) {
                 throw ValidationException::withMessages(['files' => 'ارسال تأییدشده قابل حذف نیست.']);
             }
-            $paths = DB::table('submission_files')->where('submission_id', $submission->id)->pluck('path')->all();
+            $files = DB::table('submission_files')->where('submission_id', $submission->id)->get(['id', 'name', 'path']);
+            $paths = $files->pluck('path')->all();
             DB::table('submission_files')->where('submission_id', $submission->id)->delete();
             DB::table('submissions')->where('id', $submission->id)->delete();
+            app(ActivityLogger::class)->record('homework.deleted', properties: ['submission_id' => $submission->id, 'assignment_id' => $submission->assignment_id, 'student_id' => $submission->student_id, 'files' => $files->map(fn ($file): array => ['id' => $file->id, 'name' => $file->name])->all()]);
 
             return $paths;
         });

@@ -8,6 +8,7 @@ use App\Http\Requests\Admin\UpdateOrderRequest;
 use App\Models\Order;
 use App\Models\Plan;
 use App\Models\Wallet;
+use App\Services\ActivityLogger;
 
 class OrderController extends Controller
 {
@@ -41,6 +42,8 @@ class OrderController extends Controller
 
         if ($request->has('plans')) {
             $order->plans()->sync($request->plans);
+            $logger = app(ActivityLogger::class);
+            $logger->recordChanges('order.plans.changed', [], $logger->snapshot('order_plan', ['order_id' => $order->id], ['plan_id', 'price']), $order);
         }
     }
 
@@ -73,7 +76,10 @@ class OrderController extends Controller
     public function update(UpdateOrderRequest $request, Order $order)
     {
         $order->update($request->validated());
+        $logger = app(ActivityLogger::class);
+        $before = $logger->snapshot('order_plan', ['order_id' => $order->id], ['plan_id', 'price']);
         $order->plans()->syncWithPivotValues($request->plans, ['updated_at' => now()]);
+        $logger->recordChanges('order.plans.changed', $before, $logger->snapshot('order_plan', ['order_id' => $order->id], ['plan_id', 'price']), $order);
     }
 
     /**
@@ -81,7 +87,10 @@ class OrderController extends Controller
      */
     public function destroy(Order $order)
     {
+        $logger = app(ActivityLogger::class);
+        $before = $logger->snapshot('order_plan', ['order_id' => $order->id], ['plan_id', 'price']);
         $order->plans()->detach();
+        $logger->recordChanges('order.plans.changed', $before, [], $order);
         $order->delete();
     }
 }

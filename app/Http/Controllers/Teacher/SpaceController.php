@@ -8,6 +8,7 @@ use App\Http\Requests\Teacher\UpdateSpaceRequest;
 use App\Models\Category;
 use App\Models\Course;
 use App\Models\Space;
+use App\Services\ActivityLogger;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
@@ -122,7 +123,10 @@ class SpaceController extends Controller
             $category->save();
             $ids[] = $category->id;
         }
+        $logger = app(ActivityLogger::class);
+        $before = $logger->snapshot('category_space', ['space_id' => $space->id], ['category_id']);
         $space->categories()->sync($ids);
+        $logger->recordChanges('space.categories.changed', $before, $logger->snapshot('category_space', ['space_id' => $space->id], ['category_id']), $space);
     }
 
     /**

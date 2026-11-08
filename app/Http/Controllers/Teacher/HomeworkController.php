@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Teacher;
 use App\Http\Controllers\Controller;
 use App\Models\Assignment;
 use App\Models\Content;
+use App\Services\ActivityLogger;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -55,6 +56,7 @@ class HomeworkController extends Controller
             $record = DB::table('submissions')->where('assignment_id', $content->contentable_id)->where('id', $submission)->lockForUpdate()->first();
             abort_unless($record, 404);
             DB::table('submissions')->where('id', $submission)->update(['score' => $data['score'] ?? null, 'note' => $data['note'] ?? null, 'approved_at' => $record->approved_at ?? now(), 'updated_at' => now()]);
+            app(ActivityLogger::class)->record('homework.reviewed', properties: ['submission_id' => $submission, 'before' => ['score' => $record->score, 'note' => $record->note, 'approved_at' => $record->approved_at], 'after' => ['score' => $data['score'] ?? null, 'note' => $data['note'] ?? null, 'approved_at' => (string) ($record->approved_at ?? now())]]);
         });
 
         return back();
