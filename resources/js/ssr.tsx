@@ -4,14 +4,14 @@ import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import ReactDOMServer from 'react-dom/server';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
-const port = Number(process.env.INERTIA_SSR_PORT || 13714);
+const port = Number(process.env.PORT || 13714);
 
 createServer((page) =>
     createInertiaApp({
         page,
         render: ReactDOMServer.renderToString,
         title: (title) =>
-            title.endsWith(' | آکادمی')
+            title.endsWith(' | آکادمی بیگ‌ممتی')
                 ? title
                 : title
                   ? `${title} - ${appName}`
