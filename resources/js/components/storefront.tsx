@@ -1,5 +1,5 @@
 import AppLogoIcon from '@/components/app-logo-icon';
-import { MarkdownContent } from '@/components/markdown-content';
+import ReactMarkdown from 'react-markdown';
 import {
     Dialog,
     DialogContent,
@@ -361,7 +361,11 @@ export function CourseCard({ course }: { course: PublicCourse }) {
                     <h3 className="mt-3 text-lg leading-8 font-bold">
                         {course.title}
                     </h3>
-                    {course.description && <MarkdownContent links={false} className="mt-2 line-clamp-2 text-sm leading-7 opacity-70">{course.description}</MarkdownContent>}
+                    {course.description && (
+                        <div className="mt-2 line-clamp-2 text-sm leading-7 opacity-70 whitespace-pre-wrap">
+                            <ReactMarkdown allowedElements={[]} unwrapDisallowed>{course.description}</ReactMarkdown>
+                        </div>
+                    )}
                     <span className="mt-6 flex items-center justify-between border-t border-current/10 pt-4 text-sm font-semibold">
                         مشاهده دوره
                         <ArrowLeft
